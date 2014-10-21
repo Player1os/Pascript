@@ -65,7 +65,7 @@ int function main()
   
   for (int i = 0; i < n; i++)
   {
-    A[i] = read().toInt(); #read works similarly as the "<< cin" in c++, always returns a string
+    A[i] = read().toInt(); #read works similarly as the "cin >> x" in c++, always returns a string
   }
   
   A = mergesort(A);
