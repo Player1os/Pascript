@@ -1,0 +1,1 @@
+java -jar lib/antlr-4.2-complete.jar src/Pascript.g4 -visitor
