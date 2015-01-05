@@ -1,0 +1,1 @@
+g++ -std=c++0x -shared -fPIC lib/library.cpp -o output/library.so

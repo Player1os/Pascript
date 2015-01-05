@@ -1,1 +1,1 @@
-java -jar lib/antlr-4.2-complete.jar src/Pascript.g4 -visitor
+java -jar lib/antlr-4.4-complete.jar src/pascript/grammar/Pascript.g4 -visitor

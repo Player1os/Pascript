@@ -1,79 +1,83 @@
-int[] function mergesort(int[] A)
-{
-  if (A.length() <= 1)
-  {
-    return A;
-  }
-  
-  int n = A.length();
-  int mid = n // 2 #integer division
-  
-  int[] left; #initializes an empty int array
-  for (int i = 0; i < mid; i++)
-  {
-    left.insert(i, A[i]);
-  }
-  
-  int[] right; #initializes an empty int array
-  for (int i = 0; i < n - mid; i++)
-  {
-    right.insert(i, A[i + mid]);
-  }    
-  
-  left = mergesort(left);
-  right = mergesort(right);
-
-  return merge(left, right);
-}
-
-int[] function merge(int[] left, int[] right)
-{
-  int[] result;
-   
-  while ((left.length() > 0) and (right.length() > 0))
-  {
-    if (left[0] < right[0])
+<module>
+  <function>
+    int[] mergesort(int[] A)
     {
-      result.insert(result.length(), left[0]);
-      left.remove(0);
-    }
-    else
-    {
-      result.insert(result.length(), right[0]);
-      right.remove(0);
-    }
-  }
-   
-  while (left.length() > 0)
-  {
-    result.insert(result.length(), left[0]);
-    left.remove(0);
-  }
-  while (right.length() > 0)
-  {
-    result.insert(result.length(), right[0]);
-    right.remove(0);
-  }
-  
-  return result
-}
+      if (A.length() <= 1)
+      {
+        return A;
+      }
+      
+      int n = A.length();
+      int mid = n / 2; //integer division
+      
+      int[] left; //initializes an empty int array
+      for (int i = 0; i < mid; i++)
+      {
+        left.insert(i, A[i]);
+      }
+      
+      int[] right; //initializes an empty int array
+      for (int i = 0; i < n - mid; i++)
+      {
+        right.insert(i, A[i + mid]);
+      }    
+      
+      left = mergesort(left);
+      right = mergesort(right);
 
-int function main()
-{
-  int n = read().toInt();
-  int[n] A; #declares an array and initializes it to hold n values of 0
-  
-  for (int i = 0; i < n; i++)
-  {
-    A[i] = read().toInt(); #read works similarly as the "cin >> x" in c++, always returns a string
-  }
-  
-  A = mergesort(A);
-  
-  for (int i = 0; i < n; i++)
-  {
-    println(A[i].toStr()); #println is a version of print that adds the newline character at the end of its output. Both print functions accept a single string argument
-  }
-  
-  return 0;
-}
+      return merge(left, right);
+    }
+
+    int[] merge(int[] left, int[] right)
+    {
+      int[] result;
+       
+      while ((left.length() > 0) and (right.length() > 0))
+      {
+        if (left[0] < right[0])
+        {
+          result.insert(result.length(), left[0]);
+          left.remove(0);
+        }
+        else
+        {
+          result.insert(result.length(), right[0]);
+          right.remove(0);
+        }
+      }
+       
+      while (left.length() > 0)
+      {
+        result.insert(result.length(), left[0]);
+        left.remove(0);
+      }
+      while (right.length() > 0)
+      {
+        result.insert(result.length(), right[0]);
+        right.remove(0);
+      }
+      
+      return result
+    }
+  </function>
+  <main>
+    int n;
+    -> n;
+    int[] A; //declares an array
+    A.resize(n); //initializes the array to hold n values of 0
+
+    for (int i = 0; i < n; i++)
+    {
+      -> A[i]; //read works similarly as the "cin >> x" in c++
+    }
+
+    A = mergesort(A);
+
+    for (int i = 0; i < n; i++)
+    {
+      <- A[i]; #println is a version of print that adds the newline character at the end of its output. Both print functions accept a single string argument
+    }
+
+    return 0;
+  </main>
+</module>
