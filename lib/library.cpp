@@ -18,32 +18,38 @@ typedef void* TArray;
 
 // Helper String Functions
 
-TString stdStringtoTString(std::string &value)
+TString stdStringToTString(std::string value)
 {
     TString newValue = new TChar[value.length() + 1];
-    strncpy(newValue, value.c_str(), value.length() + 1);
+    const char* originalValue = value.c_str();
+    size_t valueLength = value.length();
+    for (size_t i = 0; i < valueLength; i++)
+    {
+        newValue[i] = originalValue[i];
+    }
+    newValue[valueLength] = 0;
     return newValue;
 }
 TString allocateTString()
 {
-    return stdStringtoTString(std::string());
+    return stdStringToTString(std::string());
 }
-void deallocateTString(TString value)
+void deallocateTString(TString variable)
 {
-    delete[] value;
+    delete[] variable;
 }
-TString copyTString(TString value)
+TString copyTString(TString variable)
 {
-    return stdStringtoTString(value);
+    return stdStringToTString(std::string(variable));
 }
-TInteger compareTString(TString a, TString b)
+TInteger compareTString(TString variableA, TString variableB)
 {
-    return (TInteger)std::string(a).compare(std::string(b));
+    return (TInteger)std::string(variableA).compare(std::string(variableB));
 }
 
 // Helper Array Functions
 
-TArray allocateTArray<Type>(TInteger dimensionCount)
+template <typename Type> TArray allocateTArray(TInteger dimensionCount)
 {
     if (dimensionCount > 1)
     {
@@ -52,226 +58,93 @@ TArray allocateTArray<Type>(TInteger dimensionCount)
     return (TArray)(new std::vector<Type>());
 }
 
-void deallocateTArray<Type>(TArray array, TInteger dimensionCount)
+template <typename Type> void deallocateTArray(TArray variable, TInteger dimensionCount)
 {
     if (dimensionCount > 1)
     {
-        std::vector<TArray>* arrayVector = (std::vector<TArray>*)array;
-        for (TInteger i = 0; i < arrayVector->size(); i++)
+        std::vector<TArray>* arrayVector = (std::vector<TArray>*)variable;
+        for (size_t i = 0; i < arrayVector->size(); i++)
         {
             deallocateTArray<Type>((*arrayVector)[i], dimensionCount - 1);
         }
         delete arrayVector;
         return;
     }
-    std::vector<Type>* typeVector = (std::vector<Type>*)array;
+    std::vector<Type>* typeVector = (std::vector<Type>*)variable;
     delete typeVector;
 }
-void deallocateTArrayTString(TArray array, TInteger dimensionCount)
+void deallocateTArrayTString(TArray variable, TInteger dimensionCount)
 {
     if (dimensionCount > 1)
     {
-        std::vector<TArray>* arrayVector = (std::vector<TArray>*)array;
-        for (TInteger i = 0; i < arrayVector->size(); i++)
+        std::vector<TArray>* arrayVector = (std::vector<TArray>*)variable;
+        for (size_t i = 0; i < arrayVector->size(); i++)
         {
             deallocateTArrayTString((*arrayVector)[i], dimensionCount - 1);
         }
         delete arrayVector;
         return;
     }
-    std::vector<TString>* stringVector = (std::vector<TString>*)array;
-    for (TInteger i = 0; i < stringVector->size(); i++)
+    std::vector<TString>* stringVector = (std::vector<TString>*)variable;
+    for (size_t i = 0; i < stringVector->size(); i++)
     {
         deallocateTString((*stringVector)[i]);
     }
     delete stringVector;
 }
 
-Type getValueTArray<Type>(TArray array, TInteger position)
-{
-    std::vector<Type>* typeVector = (std::vector<Type>*)array;
-    return (*typeVector)[position];
-}
-TString getValueTArrayTString(TArray array, TInteger position)
-{
-    std::vector<TString>* stringVector = (std::vector<TString>*)array;
-    return stdStringtoTString(std::string((*stringVector)[position]));
-}
-TArray getArrayTArray<Type>(TArray array, TInteger dimensionCount, TInteger position)
-{
-    std::vector<TArray>* arrayVector = (std::vector<TArray>*)array;
-    return copyTArray<Type>((*arrayVector)[position], dimensionCount - 1);
-}
-TArray getArrayTArrayTString(TArray array, TInteger dimensionCount, TInteger position)
-{
-    std::vector<TArray>* arrayVector = (std::vector<TArray>*)array;
-    return copyTArrayTString((*arrayVector)[position], dimensionCount - 1);
-}
-
-void setValueTArray<Type>(TArray array, TInteger position, Type value)
-{
-    std::vector<Type>* typeVector = (std::vector<Type>*)array;
-    (*typeVector)[position] = value;
-}
-void setValueTArrayTString(TArray array, TInteger position, TString value)
-{
-    std::vector<TString>* stringVector = (std::vector<TString>*)array;
-    deallocateTString((*stringVector)[position]);
-    (*stringVector)[position] = value;
-}
-void setArrayTArray<Type>(TArray array, TInteger dimensionCount, TInteger position, TArray value)
-{
-    std::vector<TArray>* arrayVector = (std::vector<TArray>*)array;
-    deallocateTArray<Type>((*arrayVector)[position], dimensionCount - 1);
-    (*arrayVector)[position] = value;
-}
-void setArrayTArrayTString(TArray array, TInteger dimensionCount, TInteger position, TArray value)
-{
-    std::vector<TArray>* arrayVector = (std::vector<TArray>*)array;
-    deallocateTArrayTString((*arrayVector)[position], dimensionCount - 1);
-    (*arrayVector)[position] = value;
-}
-
-void insertTArray<Type>(TArray array, TInteger position, Type value)
-{
-    std::vector<Type>* typeVector = (std::vector<Type>*)array;
-    typeVector->insert(typeVector->begin() + position, value);
-}
-
-void removeTArray<Type>(TArray array, TInteger dimensionCount, TInteger position)
+template <typename Type> TArray copyTArray(TArray variable, TInteger dimensionCount)
 {
     if (dimensionCount > 1)
     {
-        std::vector<TArray>* arrayVector = (std::vector<TArray>*)array;
-        deallocateTArray<Type>((*arrayVector)[position], dimensionCount - 1);
-        arrayVector->erase(arrayVector.begin() + position);
-        return;
-    }
-    std::vector<Type>* typeVector = (std::vector<Type>*)array;
-    typeVector->erase(typeVector.begin() + position);
-}
-void removeTArrayTString(TArray array, TInteger dimensionCount, TInteger position)
-{
-    if (dimensionCount > 1)
-    {
-        std::vector<TArray>* arrayVector = (std::vector<TArray>*)array;
-        deallocateTArrayTString((*arrayVector)[position], dimensionCount - 1);
-        arrayVector->erase(arrayVector.begin() + position);
-        return;
-    }
-    std::vector<TString>* stringVector = (std::vector<TString>*)array;
-    deallocateTString((*stringVector)[position]);
-    typeVector->erase(typeVector.begin() + position);
-}
+        std::vector<TArray>* arrayVector = (std::vector<TArray>*)variable;
 
-TInteger sizeTArray<Type>(TArray array)
-{
-    std::vector<Type>* typeVector = (std::vector<Type>*)array;
-    return (TInteger)typeVector->size();
-}
-
-void resizeTArray<Type>(TArray array, TInteger dimensionCount, TInteger newSize)
-{
-    if (dimensionCount > 1)
-    {
-        std::vector<TArray>* arrayVector = (std::vector<TArray>*)array;
-        
-        for (TInteger i = newSize; i < arrayVector->size(); i++)
-        {
-            deallocateTArray<Type>((*arrayVector)[i], dimensionCount - 1);
-        }
-        arrayVector->resize(newSize);
-        for (TInteger i = arrayVector->size(); i < newSize; i++)
-        {
-            (*arrayVector)[i] = allocateTArray<Type>(dimensionCount - 1);
-        }
-        return;
-    }
-    std::vector<Type>* typeVector = (std::vector<Type>*)array;
-    typeVector->resize(newSize);
-}
-void resizeTArrayTString(TArray array, TInteger dimensionCount, TInteger newSize)
-{
-    if (dimensionCount > 1)
-    {
-        std::vector<TArray>* arrayVector = (std::vector<TArray>*)array;
-        
-        for (TInteger i = newSize; i < arrayVector->size(); i++)
-        {
-            deallocateTArrayTString((*arrayVector)[i], dimensionCount - 1);
-        }
-        arrayVector->resize(newSize);
-        for (TInteger i = arrayVector->size(); i < newSize; i++)
-        {
-            (*arrayVector)[i] = allocateTArray<TString>(dimensionCount - 1);
-        }
-        return;
-    }
-    std::vector<TString>* stringVector = (std::vector<TString>*)array;
-    
-    for (TInteger i = newSize; i < arrayVector->size(); i++)
-    {
-        deallocateTString((*stringVector)[i]);
-    }
-    stringVector->resize(newSize);
-    for (TInteger i = arrayVector->size(); i < newSize; i++)
-    {
-        (*stringVector)[i] = allocateTString();
-    }
-}
-
-TArray copyTArray<Type>(TArray array, TInteger dimensionCount)
-{
-    if (dimensionCount > 1)
-    {
-        std::vector<TArray>* arrayVector = (std::vector<TArray>*)array;
-        
         std::vector<TArray>* newArrayVector = (std::vector<TArray>*)allocateTArray<Type>(dimensionCount);
         newArrayVector->resize(arrayVector->size());
-        
-        for (int i = 0; i < newArrayVector->size(); i++)
+
+        for (size_t i = 0; i < newArrayVector->size(); i++)
         {
             (*newArrayVector)[i] = copyTArray<Type>((*arrayVector)[i], dimensionCount - 1);
         }
-        
+
         return (TArray)newArrayVector;
     }
-    
-    std::vector<Type>* typeVector = (std::vector<Type>*)array;
-    
+
+    std::vector<Type>* typeVector = (std::vector<Type>*)variable;
+
     std::vector<Type>* newTypeVector = (std::vector<Type>*)allocateTArray<Type>(dimensionCount);
     newTypeVector->resize(typeVector->size());
 
-    for (int i = 0; i < newTypeVector->size(); i++)
+    for (size_t i = 0; i < newTypeVector->size(); i++)
     {
         (*newTypeVector)[i] = (*typeVector)[i];
     }
 
     return (TArray)newTypeVector;
 }
-TArray copyTArrayTString(TArray array, TInteger dimensionCount)
+TArray copyTArrayTString(TArray variable, TInteger dimensionCount)
 {
     if (dimensionCount > 1)
     {
-        std::vector<TArray>* arrayVector = (std::vector<TArray>*)array;
-        
+        std::vector<TArray>* arrayVector = (std::vector<TArray>*)variable;
+
         std::vector<TArray>* newArrayVector = (std::vector<TArray>*)allocateTArray<TString>(dimensionCount);
         newArrayVector->resize(arrayVector->size());
-        
-        for (int i = 0; i < newArrayVector->size(); i++)
+
+        for (size_t i = 0; i < newArrayVector->size(); i++)
         {
             (*newArrayVector)[i] = copyTArrayTString((*arrayVector)[i], dimensionCount - 1);
         }
-        
+
         return (TArray)newArrayVector;
     }
-    
-    std::vector<TString>* stringVector = (std::vector<TString>*)array;
-    
+
+    std::vector<TString>* stringVector = (std::vector<TString>*)variable;
+
     std::vector<TString>* newStringVector = (std::vector<TString>*)allocateTArray<TString>(dimensionCount);
     newStringVector->resize(stringVector->size());
 
-    for (int i = 0; i < newStringVector->size(); i++)
+    for (size_t i = 0; i < newStringVector->size(); i++)
     {
         (*newStringVector)[i] = copyTString((*stringVector)[i]);
     }
@@ -279,104 +152,241 @@ TArray copyTArrayTString(TArray array, TInteger dimensionCount)
     return (TArray)newStringVector;
 }
 
-TArray mergeTArray<Type>(TArray a, TArray b, TInteger dimensionCount)
+template <typename Type> Type getValueTArray(TArray variable, TInteger position)
+{
+    std::vector<Type>* typeVector = (std::vector<Type>*)variable;
+    return (*typeVector)[position];
+}
+TString getValueTArrayTString(TArray variable, TInteger position)
+{
+    std::vector<TString>* stringVector = (std::vector<TString>*)variable;
+    return stdStringToTString(std::string((*stringVector)[position]));
+}
+
+template <typename Type> TArray getArrayTArray(TArray variable, TInteger dimensionCount, TInteger position)
+{
+    std::vector<TArray>* arrayVector = (std::vector<TArray>*)variable;
+    return copyTArray<Type>((*arrayVector)[position], dimensionCount - 1);
+}
+TArray getArrayTArrayTString(TArray variable, TInteger dimensionCount, TInteger position)
+{
+    std::vector<TArray>* arrayVector = (std::vector<TArray>*)variable;
+    return copyTArrayTString((*arrayVector)[position], dimensionCount - 1);
+}
+
+template <typename Type> void setValueTArray(TArray variable, TInteger position, Type value)
+{
+    std::vector<Type>* typeVector = (std::vector<Type>*)variable;
+    (*typeVector)[position] = value;
+}
+void setValueTArrayTString(TArray variable, TInteger position, TString value)
+{
+    std::vector<TString>* stringVector = (std::vector<TString>*)variable;
+    deallocateTString((*stringVector)[position]);
+    (*stringVector)[position] = value;
+}
+
+template <typename Type> void setArrayTArray(TArray variable, TInteger dimensionCount, TInteger position, TArray value)
+{
+    std::vector<TArray>* arrayVector = (std::vector<TArray>*)variable;
+    deallocateTArray<Type>((*arrayVector)[position], dimensionCount - 1);
+    (*arrayVector)[position] = value;
+}
+void setArrayTArrayTString(TArray variable, TInteger dimensionCount, TInteger position, TArray value)
+{
+    std::vector<TArray>* arrayVector = (std::vector<TArray>*)variable;
+    deallocateTArrayTString((*arrayVector)[position], dimensionCount - 1);
+    (*arrayVector)[position] = value;
+}
+
+template <typename Type> void insertTArray(TArray variable, TInteger position, Type value)
+{
+    std::vector<Type>* typeVector = (std::vector<Type>*)variable;
+    typeVector->insert(typeVector->begin() + position, value);
+}
+
+template <typename Type> void removeTArray(TArray variable, TInteger dimensionCount, TInteger position)
 {
     if (dimensionCount > 1)
     {
-        std::vector<TArray>* aArrayVector = (std::vector<TArray>*)a;
-        TInteger aSize = aArrayVector->size();
-        std::vector<TArray>* bArrayVector = (std::vector<TArray>*)b;
-        TInteger bSize = bArrayVector->size();
+        std::vector<TArray>* arrayVector = (std::vector<TArray>*)variable;
+        deallocateTArray<Type>((*arrayVector)[position], dimensionCount - 1);
+        arrayVector->erase(arrayVector->begin() + position);
+        return;
+    }
+    std::vector<Type>* typeVector = (std::vector<Type>*)variable;
+    typeVector->erase(typeVector->begin() + position);
+}
+void removeTArrayTString(TArray variable, TInteger dimensionCount, TInteger position)
+{
+    if (dimensionCount > 1)
+    {
+        std::vector<TArray>* arrayVector = (std::vector<TArray>*)variable;
+        deallocateTArrayTString((*arrayVector)[position], dimensionCount - 1);
+        arrayVector->erase(arrayVector->begin() + position);
+        return;
+    }
+    std::vector<TString>* stringVector = (std::vector<TString>*)variable;
+    deallocateTString((*stringVector)[position]);
+    stringVector->erase(stringVector->begin() + position);
+}
+
+template <typename Type> TInteger sizeTArray(TArray variable)
+{
+    std::vector<Type>* typeVector = (std::vector<Type>*)variable;
+    return (TInteger)typeVector->size();
+}
+
+template <typename Type> void resizeTArray(TArray variable, TInteger dimensionCount, size_t newSize)
+{
+    if (dimensionCount > 1)
+    {
+        std::vector<TArray>* arrayVector = (std::vector<TArray>*)variable;
+        size_t oldSize = arrayVector->size();
+        
+        for (size_t i = newSize; i < oldSize; i++)
+        {
+            deallocateTArray<Type>((*arrayVector)[i], dimensionCount - 1);
+        }
+        arrayVector->resize(newSize);
+        for (size_t i = oldSize; i < newSize; i++)
+        {
+            (*arrayVector)[i] = allocateTArray<Type>(dimensionCount - 1);
+        }
+        return;
+    }
+    std::vector<Type>* typeVector = (std::vector<Type>*)variable;
+    typeVector->resize(newSize);
+}
+void resizeTArrayTString(TArray variable, TInteger dimensionCount, size_t newSize)
+{
+    if (dimensionCount > 1)
+    {
+        std::vector<TArray>* arrayVector = (std::vector<TArray>*)variable;
+        size_t oldSize = arrayVector->size();
+        
+        for (size_t i = newSize; i < oldSize; i++)
+        {
+            deallocateTArrayTString((*arrayVector)[i], dimensionCount - 1);
+        }
+        arrayVector->resize(newSize);
+        for (size_t i = oldSize; i < newSize; i++)
+        {
+            (*arrayVector)[i] = allocateTArray<TString>(dimensionCount - 1);
+        }
+        return;
+    }
+    std::vector<TString>* stringVector = (std::vector<TString>*)variable;
+    
+    for (size_t i = newSize; i < stringVector->size(); i++)
+    {
+        deallocateTString((*stringVector)[i]);
+    }
+    stringVector->resize(newSize);
+    for (size_t i = stringVector->size(); i < newSize; i++)
+    {
+        (*stringVector)[i] = allocateTString();
+    }
+}
+
+template <typename Type> TArray mergeTArray(TArray variableA, TArray variableB, TInteger dimensionCount)
+{
+    if (dimensionCount > 1)
+    {
+        std::vector<TArray>* arrayVectorA = (std::vector<TArray>*)variableA;
+        TInteger sizeA = arrayVectorA->size();
+        std::vector<TArray>* arrayVectorB = (std::vector<TArray>*)variableB;
+        TInteger sizeB = arrayVectorB->size();
         
         std::vector<TArray>* newArrayVector = (std::vector<TArray>*)allocateTArray<Type>(dimensionCount);
-        newArrayVector->resize(aSize + bSize);
+        newArrayVector->resize(sizeA + sizeB);
         
-        for (int i = 0; i < aSize; i++)
+        for (int i = 0; i < sizeA; i++)
         {
-            (*newArrayVector)[i] = copyTArray<Type>((*aArrayVector)[i], dimensionCount - 1);
+            (*newArrayVector)[i] = copyTArray<Type>((*arrayVectorA)[i], dimensionCount - 1);
         }
-        for (int i = 0; i < bSize; i++)
+        for (int i = 0; i < sizeB; i++)
         {
-            (*newArrayVector)[i + aSize] = copyTArray<Type>((*bArrayVector)[i], dimensionCount - 1);
+            (*newArrayVector)[i + sizeA] = copyTArray<Type>((*arrayVectorB)[i], dimensionCount - 1);
         }
         return (TArray)newArrayVector;
     }
-    std::vector<Type>* aTypeVector = (std::vector<Type>*)a;
-    TInteger aSize = aTypeVector->size();
-    std::vector<Type>* bTypeVector = (std::vector<Type>*)b;
-    TInteger bSize = bTypeVector->size();
+    std::vector<Type>* typeVectorA = (std::vector<Type>*)variableA;
+    TInteger sizeA = typeVectorA->size();
+    std::vector<Type>* typeVectorB = (std::vector<Type>*)variableB;
+    TInteger sizeB = typeVectorB->size();
 
     std::vector<Type>* newTypeVector = (std::vector<Type>*)allocateTArray<Type>(dimensionCount);
-    newTypeVector->resize(aSize + bSize);
+    newTypeVector->resize(sizeA + sizeB);
 
-    for (int i = 0; i < aSize; i++)
+    for (int i = 0; i < sizeA; i++)
     {
-        (*newTypeVector)[i] = (*aTypeVector)[i];
+        (*newTypeVector)[i] = (*typeVectorA)[i];
     }
-    for (int i = 0; i < bSize; i++)
+    for (int i = 0; i < sizeB; i++)
     {
-        (*newTypeVector)[i + aSize] = (*bTypeVector)[i];
+        (*newTypeVector)[i + sizeA] = (*typeVectorB)[i];
     }
     return (TArray)newTypeVector;
 }
-TArray mergeTArrayTString(TArray a, TArray b, TInteger dimensionCount)
+TArray mergeTArrayTString(TArray variableA, TArray variableB, TInteger dimensionCount)
 {
     if (dimensionCount > 1)
     {
-        std::vector<TArray>* aArrayVector = (std::vector<TArray>*)a;
-        TInteger aSize = aArrayVector->size();
-        std::vector<TArray>* bArrayVector = (std::vector<TArray>*)b;
-        TInteger bSize = bArrayVector->size();
+        std::vector<TArray>* arrayVectorA = (std::vector<TArray>*)variableA;
+        TInteger sizeA = arrayVectorA->size();
+        std::vector<TArray>* arrayVectorB = (std::vector<TArray>*)variableB;
+        TInteger sizeB = arrayVectorB->size();
         
         std::vector<TArray>* newArrayVector = (std::vector<TArray>*)allocateTArray<TString>(dimensionCount);
-        newArrayVector->resize(aSize + bSize);
+        newArrayVector->resize(sizeA + sizeB);
         
-        for (int i = 0; i < aSize; i++)
+        for (int i = 0; i < sizeA; i++)
         {
-            (*newArrayVector)[i] = copyTArrayTString((*aArrayVector)[i], dimensionCount - 1);
+            (*newArrayVector)[i] = copyTArrayTString((*arrayVectorA)[i], dimensionCount - 1);
         }
-        for (int i = 0; i < bSize; i++)
+        for (int i = 0; i < sizeB; i++)
         {
-            (*newArrayVector)[i + aSize] = copyTArrayTString((*bArrayVector)[i], dimensionCount - 1);
+            (*newArrayVector)[i + sizeA] = copyTArrayTString((*arrayVectorB)[i], dimensionCount - 1);
         }
         return (TArray)newArrayVector;
     }
-    std::vector<TString>* aStringVector = (std::vector<TString>*)a;
-    TInteger aSize = aStringVector->size();
-    std::vector<TString>* bStringVector = (std::vector<TString>*)b;
-    TInteger bSize = bStringVector->size();
+    std::vector<TString>* stringVectorA = (std::vector<TString>*)variableA;
+    TInteger sizeA = stringVectorA->size();
+    std::vector<TString>* stringVectorB = (std::vector<TString>*)variableB;
+    TInteger sizeB = stringVectorB->size();
 
     std::vector<TString>* newStringVector = (std::vector<TString>*)allocateTArray<TString>(dimensionCount);
-    newStringVector->resize(aSize + bSize);
+    newStringVector->resize(sizeA + sizeB);
 
-    for (int i = 0; i < aSize; i++)
+    for (int i = 0; i < sizeA; i++)
     {
-        (*newStringVector)[i] = copyTString((*aStringVector)[i]);
+        (*newStringVector)[i] = copyTString((*stringVectorA)[i]);
     }
-    for (int i = 0; i < bSize; i++)
+    for (int i = 0; i < sizeB; i++)
     {
-        (*newStringVector)[i + aSize] = copyTString((*bStringVector)[i]);
+        (*newStringVector)[i + sizeA] = copyTString((*stringVectorB)[i]);
     }
     return (TArray)newStringVector;
 }
 
-TBoolean equalsTArray<Type>(TArray a, TArray b, TInteger dimensionCount)
+template <typename Type> TBoolean equalsTArray(TArray variableA, TArray variableB, TInteger dimensionCount)
 {
     if (dimensionCount > 1)
     {
-        std::vector<TArray>* aArrayVector = (std::vector<TArray>*)a;
-        TInteger aSize = aArrayVector->size();
-        std::vector<TArray>* bArrayVector = (std::vector<TArray>*)b;
-        TInteger bSize = bArrayVector->size();
+        std::vector<TArray>* arrayVectorA = (std::vector<TArray>*)variableA;
+        TInteger sizeA = arrayVectorA->size();
+        std::vector<TArray>* arrayVectorB = (std::vector<TArray>*)variableB;
+        TInteger sizeB = arrayVectorB->size();
         
-        if (aSize != bSize)
+        if (sizeA != sizeB)
         {
             return (TBoolean)false;
         }
         
-        for (TInteger i = 0; i < aSize; i++)
+        for (TInteger i = 0; i < sizeA; i++)
         {
-            if (equalsTArray<Type>((*aArrayVector)[i], (*bArrayVector)[i], dimensionCount - 1) == (TBoolean)false)
+            if (equalsTArray<Type>((*arrayVectorA)[i], (*arrayVectorB)[i], dimensionCount - 1) == (TBoolean)false)
             {
                 return (TBoolean)false;
             }
@@ -384,42 +394,42 @@ TBoolean equalsTArray<Type>(TArray a, TArray b, TInteger dimensionCount)
         return (TBoolean)true;
     }
     
-    std::vector<Type>* aTypeVector = (std::vector<Type>*)a;
-    TInteger aSize = aTypeVector->size();
-    std::vector<Type>* bTypeVector = (std::vector<Type>*)b;
-    TInteger bSize = bTypeVector->size();
+    std::vector<Type>* typeVectorA = (std::vector<Type>*)variableA;
+    TInteger sizeA = typeVectorA->size();
+    std::vector<Type>* typeVectorB = (std::vector<Type>*)variableB;
+    TInteger sizeB = typeVectorB->size();
     
-    if (aSize != bSize)
+    if (sizeA != sizeB)
     {
         return (TBoolean)false;
     }
     
-    for (TInteger i = 0; i < aSize; i++)
+    for (TInteger i = 0; i < sizeA; i++)
     {
-        if ((*aTypeVector)[i] != (*bTypeVector)[i])
+        if ((*typeVectorA)[i] != (*typeVectorB)[i])
         {
             return (TBoolean)false;
         }
     }
     return (TBoolean)true;
 }
-TBoolean equalsTArrayTString(TArray a, TArray b, TInteger dimensionCount)
+TBoolean equalsTArrayTString(TArray variableA, TArray variableB, TInteger dimensionCount)
 {
     if (dimensionCount > 1)
     {
-        std::vector<TArray>* aArrayVector = (std::vector<TArray>*)a;
-        TInteger aSize = aArrayVector->size();
-        std::vector<TArray>* bArrayVector = (std::vector<TArray>*)b;
-        TInteger bSize = bArrayVector->size();
+        std::vector<TArray>* arrayVectorA = (std::vector<TArray>*)variableA;
+        TInteger sizeA = arrayVectorA->size();
+        std::vector<TArray>* arrayVectorB = (std::vector<TArray>*)variableB;
+        TInteger sizeB = arrayVectorB->size();
         
-        if (aSize != bSize)
+        if (sizeA != sizeB)
         {
             return (TBoolean)false;
         }
         
-        for (TInteger i = 0; i < aSize; i++)
+        for (TInteger i = 0; i < sizeA; i++)
         {
-            if (equalsTArrayTString((*aArrayVector)[i], (*bArrayVector)[i], dimensionCount - 1) == (TBoolean)false)
+            if (equalsTArrayTString((*arrayVectorA)[i], (*arrayVectorB)[i], dimensionCount - 1) == (TBoolean)false)
             {
                 return (TBoolean)false;
             }
@@ -427,19 +437,19 @@ TBoolean equalsTArrayTString(TArray a, TArray b, TInteger dimensionCount)
         return (TBoolean)true;
     }
     
-    std::vector<TString>* aStringVector = (std::vector<TString>*)a;
-    TInteger aSize = aStringVector->size();
-    std::vector<TString>* bStringVector = (std::vector<TString>*)b;
-    TInteger bSize = bStringVector->size();
+    std::vector<TString>* stringVectorA = (std::vector<TString>*)variableA;
+    TInteger sizeA = stringVectorA->size();
+    std::vector<TString>* stringVectorB = (std::vector<TString>*)variableB;
+    TInteger sizeB = stringVectorB->size();
     
-    if (aSize != bSize)
+    if (sizeA != sizeB)
     {
         return (TBoolean)false;
     }
     
-    for (TInteger i = 0; i < aSize; i++)
+    for (TInteger i = 0; i < sizeA; i++)
     {
-        if (compareTString((*aStringVector)[i], (*bStringVector)[i]) != (TInteger)0)
+        if (compareTString((*stringVectorA)[i], (*stringVectorB)[i]) != (TInteger)0)
         {
             return (TBoolean)false;
         }
@@ -474,7 +484,7 @@ extern "C"
     }
     TString __pascript__booleanToString(TBoolean value)
     {
-        return value ? TRUE_STR : FALSE_STR;
+        return stdStringToTString(std::string(value ? TRUE_STR : FALSE_STR));
     }
     
     ////// Integer functions //////
@@ -494,7 +504,7 @@ extern "C"
     // Integer Conversions
     TBoolean __pascript__integerToBoolean(TInteger value)
     {
-        return (TBoolean)value;
+        return (TBoolean)(value != 0);
     }
     TFloat __pascript__integerToFloat(TInteger value)
     {
@@ -502,22 +512,7 @@ extern "C"
     }
     TString __pascript__integerToString(TInteger value)
     {
-        return stdStringtoTString(std::to_string(value));
-    }
-    
-    // Integer Operations
-    TInteger __pascript__integerPower(TInteger a, TInteger b)
-    {
-        TInteger value = 1;
-        for (TInteger i = 0; i < b; i++)
-        {
-            value *= a;
-        }
-        return value;
-    }
-    TInteger __pascript__integerModulo(TInteger a, TInteger b)
-    {
-        return (TInteger)(a % b);
+        return stdStringToTString(std::to_string(value));
     }
     
     ////// Float functions //////
@@ -537,25 +532,15 @@ extern "C"
     // Float Conversions
     TBoolean __pascript__floatToBoolean(TFloat value)
     {
-        return (TBoolean)value;
+        return (TBoolean)(value != 0.);
     }
     TInteger __pascript__floatToInteger(TFloat value)
     {
-        return (TFloat)value;
+        return (TInteger)value;
     }
     TString __pascript__floatToString(TFloat value)
     {
-        return stdStringtoTString(std::to_string(value));
-    }
-    
-    // Float Operations
-    TFloat __pascript__floatPower(TFloat a, TFloat b)
-    {
-        return std::pow(a, b);
-    }
-    TFloat __pascript__floatModulo(TFloat a, TFloat b)
-    {
-        return (TFloat)(a % b);
+        return stdStringToTString(std::to_string(value));
     }
     
     ////// String functions //////
@@ -569,57 +554,55 @@ extern "C"
     {
         deallocateTString(variable);
     }
+    TString __pascript__stringCopy(TString variable)
+    {
+        return copyTString(variable);
+    }
     
     // String IO
     TString __pascript__stringRead()
     {
         std::string value;
         std::cin >> value;
-        return stdStringtoTString(value);
+        return stdStringToTString(value);
     }
-    void __pascript__stringPrint(TString value)
+    void __pascript__stringPrint(TString variable)
     {
-        std::cout << value << std::endl;
+        std::cout << std::string(variable) << std::endl;
     }
 
     // String Conversions
-    TBoolean __pascript__stringToBoolean(TString value)
+    TBoolean __pascript__stringToBoolean(TString variable)
     {
-        std::string stringValue = std::string(value);
-        std::string lowercaseValue = std::transform(
-            stringValue.begin(), stringValue.end(), stringValue.begin(), ::tolower
-        );
-        return lowercaseValue.compare(std::string(TRUE_STR)) == 0;
+        std::string stringValue = std::string(variable);
+        std::transform(stringValue.begin(), stringValue.end(), stringValue.begin(), ::tolower);
+        return stringValue.compare(std::string(TRUE_STR)) == 0;
     }
-    TInteger __pascript__stringToInteger(TString value)
+    TInteger __pascript__stringToInteger(TString variable)
     {
-        return std::stol(std::string(value));
+        return std::stol(std::string(variable));
     }
-    TFloat __pascript__stringToFloat(TString value)
+    TFloat __pascript__stringToFloat(TString variable)
     {
-        return std::stod(std::string(value));
+        return std::stod(std::string(variable));
     }
 
     // String Operations
-    TString __pascript__stringCopy(TString value)
+    TString __pascript__stringAt(TString variable, TInteger position)
     {
-        return copyTString(value);
+        return stdStringToTString(std::string(1, std::string(variable)[position]));
     }
-    TString __pascript__stringGetChar(TString value, TInteger position)
+    TInteger __pascript__stringLength(TString variable)
     {
-        return stdStringtoTString(std::string(1, std::string(value)[position]));
+        return (TInteger)std::string(variable).length();
     }
-    TInteger __pascript__stringLength(TString value)
+    TString __pascript__stringConcatenate(TString variableA, TString variableB)
     {
-        return (TInteger)std::string(value).length();
+        return stdStringToTString(std::string(variableA) + std::string(variableB));
     }
-    TString __pascript__stringConcatenate(TString a, TString b)
+    TInteger __pascript__stringCompare(TString variableA, TString variableB)
     {
-        return stdStringtoTString(std::string(a) + std::string(b));
-    }
-    TInteger __pascript__stringCompare(TString a, TString b)
-    {
-        return (TInteger)compareTString(a, b);
+        return (TInteger)compareTString(variableA, variableB);
     }
     TInteger __pascript__stringFind(TString variable, TString subject)
     {
@@ -627,12 +610,12 @@ extern "C"
     }
     TString __pascript__stringSubstring(TString variable, TInteger position, TInteger length)
     {
-        return stdStringtoTString(std::string(variable).substr(position, length));
+        return stdStringToTString(std::string(variable).substr(position, length));
     }
 
     ////// Array functions //////
     
-    // Array Memory Management
+    // Array Allocate Operation
     TArray __pascript__booleanArrayAllocate(TInteger dimensionCount)
     {
         return allocateTArray<TBoolean>(dimensionCount);
@@ -650,223 +633,223 @@ extern "C"
         return allocateTArray<TString>(dimensionCount);
     }
     
-    void __pascript__booleanArrayDeallocate(TArray array, TInteger dimensionCount)
+    // Array Deallocate Operation
+    void __pascript__booleanArrayDeallocate(TArray variable, TInteger dimensionCount)
     {
-        deallocateTArray<TBoolean>(array, dimensionCount);
+        deallocateTArray<TBoolean>(variable, dimensionCount);
     }
-    void __pascript__integerArrayDeallocate(TArray array, TInteger dimensionCount)
+    void __pascript__integerArrayDeallocate(TArray variable, TInteger dimensionCount)
     {
-        deallocateTArray<TInteger>(array, dimensionCount);
+        deallocateTArray<TInteger>(variable, dimensionCount);
     }
-    void __pascript__floatArrayDeallocate(TArray array, TInteger dimensionCount)
+    void __pascript__floatArrayDeallocate(TArray variable, TInteger dimensionCount)
     {
-        deallocateTArray<TFloat>(array, dimensionCount);
+        deallocateTArray<TFloat>(variable, dimensionCount);
     }
-    void __pascript__stringArrayDeallocate(TArray array, TInteger dimensionCount)
+    void __pascript__stringArrayDeallocate(TArray variable, TInteger dimensionCount)
     {
-        deallocateTArrayTString(array, dimensionCount);
-    }
-    
-    // Array Get Operation
-    TBoolean __pascript__booleanArrayGetValue(TArray array, TInteger position)
-    {
-        return getValueTArray<TBoolean>(array, position);
-    }
-    TInteger __pascript__integerArrayGetValue(TArray array, TInteger position)
-    {
-        return getValueTArray<TInteger>(array, position);
-    }
-    TFloat __pascript__floatArrayGetValue(TArray array, TInteger position)
-    {
-        return getValueTArray<TFloat>(array, position);
-    }
-    TString __pascript__stringArrayGetValue(TArray array, TInteger position)
-    {
-        return getValueTArrayTString(array, position);
-    }
-    TArray __pascript__booleanArrayGetArray(TArray array, TInteger dimensionCount, TInteger position)
-    {
-        return getArrayTArray<TBoolean>(array, dimensionCount, position);
-    }
-    TArray __pascript__integerArrayGetArray(TArray array, TInteger dimensionCount, TInteger position)
-    {
-        return getArrayTArray<TInteger>(array, dimensionCount, position);
-    }
-    TArray __pascript__floatArrayGetArray(TArray array, TInteger dimensionCount, TInteger position)
-    {
-        return getArrayTArray<TFloat>(array, dimensionCount, position);
-    }
-    TArray __pascript__stringArrayGetArray(TArray array, TInteger dimensionCount, TInteger position)
-    {
-        return getArrayTArrayTString(array, dimensionCount, position);
-    }
-    
-    // Array Set Operation
-    void __pascript__booleanArraySetValue(TArray array, TInteger position, TBoolean value)
-    {
-        return setValueTArray<TBoolean>(array, position, value);
-    }
-    void __pascript__integerArraySetValue(TArray array, TInteger position, TInteger value)
-    {
-        return setValueTArray<TInteger>(array, position, value);
-    }
-    void __pascript__floatArraySetValue(TArray array, TInteger position, TFloat value)
-    {
-        return setValueTArray<TFloat>(array, position, value);
-    }
-    void __pascript__stringArraySetValue(TArray array, TInteger position, TString value)
-    {
-        return setValueTArrayTString(array, position, value);
-    }
-    void __pascript__booleanArraySetArray(TArray array, TInteger dimensionCount, TInteger position, TBoolean value)
-    {
-        return setArrayTArray<TBoolean>(array, dimensionCount, position, value);
-    }
-    void __pascript__integerArraySetArray(TArray array, TInteger dimensionCount, TInteger position, TInteger value)
-    {
-        return setArrayTArray<TInteger>(array, dimensionCount, position, value);
-    }
-    void __pascript__floatArraySetArray(TArray array, TInteger dimensionCount, TInteger position, TFloat value)
-    {
-        return setArrayTArray<TFloat>(array, dimensionCount, position, value);
-    }
-    void __pascript__stringArraySetArray(TArray array, TInteger dimensionCount, TInteger position, TString value)
-    {
-        return setArrayTArrayTString(array, dimensionCount, position, value);
-    }
-    
-    // Array Insert Operation
-    void __pascript__booleanArrayInsertValue(TArray array, TInteger position, TBoolean value)
-    {
-        insertTArray<TBoolean>(array, position, value);
-    }
-    void __pascript__integerArrayInsertValue(TArray array, TInteger position, TInteger value)
-    {
-        insertTArray<TInteger>(array, position, value);
-    }
-    void __pascript__floatArrayInsertValue(TArray array, TInteger position, TFloat value)
-    {
-        insertTArray<TFloat>(array, position, value);
-    }
-    void __pascript__stringArrayInsertValue(TArray array, TInteger position, TString value)
-    {
-        insertTArray<TString>(array, position, value);
-    }
-    void __pascript__arrayInsertArray(TArray array, TInteger position, TArray value)
-    {
-        insertTArray<TArray>(array, position, value);
-    }
-    
-    // Array Remove Operation
-    void __pascript__booleanArrayInsertValue(TArray array, TInteger dimensionCount, TInteger position)
-    {
-        removeTArray<TBoolean>(array, dimensionCount, position);
-    }
-    void __pascript__integerArrayInsertValue(TArray array, TInteger dimensionCount, TInteger position)
-    {
-        removeTArray<TInteger>(array, dimensionCount, position);
-    }
-    void __pascript__floatArrayInsertValue(TArray array, TInteger dimensionCount, TInteger position)
-    {
-        removeTArray<TFloat>(array, dimensionCount, position);
-    }
-    void __pascript__stringArrayInsertValue(TArray array, TInteger dimensionCount, TInteger position)
-    {
-        removeTArrayTString(array, dimensionCount, position);
-    }
-    
-    // Array Size Operation
-    void __pascript__booleanArraySize(TArray array)
-    {
-        sizeTArray<TBoolean>(array);
-    }
-    void __pascript__integerArraySize(TArray array)
-    {
-        sizeTArray<TInteger>(array);
-    }
-    void __pascript__floatArraySize(TArray array)
-    {
-        sizeTArray<TFloat>(array);
-    }
-    void __pascript__stringArraySize(TArray array)
-    {
-        sizeTArray<TString>(array);
-    }
-    void __pascript__arraySize(TArray array)
-    {
-        sizeTArray<TArray>(array);
-    }
-    
-    // Array Resize Operation
-    void __pascript__booleanArrayResize(TArray array, TInteger dimensionCount, TInteger newSize)
-    {
-        resizeTArray<TBoolean>(array, dimensionCount, newSize);
-    }
-    void __pascript__integerArrayResize(TArray array, TInteger dimensionCount, TInteger newSize)
-    {
-        resizeTArray<TInteger>(array, dimensionCount, newSize);
-    }
-    void __pascript__floatArrayResize(TArray array, TInteger dimensionCount, TInteger newSize)
-    {
-        resizeTArray<TFloat>(array, dimensionCount, newSize);
-    }
-    void __pascript__stringArrayResize(TArray array, TInteger dimensionCount, TInteger newSize)
-    {
-        resizeTArrayTString(array, dimensionCount, newSize);
+        deallocateTArrayTString(variable, dimensionCount);
     }
     
     // Array Copy Operation
-    void __pascript__booleanArrayCopy(TArray array, TInteger dimensionCount)
+    void __pascript__booleanArrayCopy(TArray variable, TInteger dimensionCount)
     {
-        copyTArray<TBoolean>(array, dimensionCount);
+        copyTArray<TBoolean>(variable, dimensionCount);
     }
-    void __pascript__integerArrayCopy(TArray array, TInteger dimensionCount)
+    void __pascript__integerArrayCopy(TArray variable, TInteger dimensionCount)
     {
-        copyTArray<TInteger>(array, dimensionCount);
+        copyTArray<TInteger>(variable, dimensionCount);
     }
-    void __pascript__floatArrayCopy(TArray array, TInteger dimensionCount)
+    void __pascript__floatArrayCopy(TArray variable, TInteger dimensionCount)
     {
-        copyTArray<TFloat>(array, dimensionCount);
+        copyTArray<TFloat>(variable, dimensionCount);
     }
-    void __pascript__stringArrayCopy(TArray array, TInteger dimensionCount)
+    void __pascript__stringArrayCopy(TArray variable, TInteger dimensionCount)
     {
-        copyTArrayTString(array, dimensionCount);
+        copyTArrayTString(variable, dimensionCount);
+    }
+    
+    // Array Get Operation
+    TBoolean __pascript__booleanArrayGetValue(TArray variable, TInteger position)
+    {
+        return getValueTArray<TBoolean>(variable, position);
+    }
+    TInteger __pascript__integerArrayGetValue(TArray variable, TInteger position)
+    {
+        return getValueTArray<TInteger>(variable, position);
+    }
+    TFloat __pascript__floatArrayGetValue(TArray variable, TInteger position)
+    {
+        return getValueTArray<TFloat>(variable, position);
+    }
+    TString __pascript__stringArrayGetValue(TArray variable, TInteger position)
+    {
+        return getValueTArrayTString(variable, position);
+    }
+    TArray __pascript__booleanArrayGetArray(TArray variable, TInteger dimensionCount, TInteger position)
+    {
+        return getArrayTArray<TBoolean>(variable, dimensionCount, position);
+    }
+    TArray __pascript__integerArrayGetArray(TArray variable, TInteger dimensionCount, TInteger position)
+    {
+        return getArrayTArray<TInteger>(variable, dimensionCount, position);
+    }
+    TArray __pascript__floatArrayGetArray(TArray variable, TInteger dimensionCount, TInteger position)
+    {
+        return getArrayTArray<TFloat>(variable, dimensionCount, position);
+    }
+    TArray __pascript__stringArrayGetArray(TArray variable, TInteger dimensionCount, TInteger position)
+    {
+        return getArrayTArrayTString(variable, dimensionCount, position);
+    }
+    
+    // Array Set Operation
+    void __pascript__booleanArraySetValue(TArray variable, TInteger position, TBoolean value)
+    {
+        return setValueTArray<TBoolean>(variable, position, value);
+    }
+    void __pascript__integerArraySetValue(TArray variable, TInteger position, TInteger value)
+    {
+        return setValueTArray<TInteger>(variable, position, value);
+    }
+    void __pascript__floatArraySetValue(TArray variable, TInteger position, TFloat value)
+    {
+        return setValueTArray<TFloat>(variable, position, value);
+    }
+    void __pascript__stringArraySetValue(TArray variable, TInteger position, TString value)
+    {
+        return setValueTArrayTString(variable, position, value);
+    }
+    void __pascript__booleanArraySetArray(TArray variable, TInteger dimensionCount, TInteger position, TArray value)
+    {
+        return setArrayTArray<TBoolean>(variable, dimensionCount, position, value);
+    }
+    void __pascript__integerArraySetArray(TArray variable, TInteger dimensionCount, TInteger position, TArray value)
+    {
+        return setArrayTArray<TInteger>(variable, dimensionCount, position, value);
+    }
+    void __pascript__floatArraySetArray(TArray variable, TInteger dimensionCount, TInteger position, TArray value)
+    {
+        return setArrayTArray<TFloat>(variable, dimensionCount, position, value);
+    }
+    void __pascript__stringArraySetArray(TArray variable, TInteger dimensionCount, TInteger position, TArray value)
+    {
+        return setArrayTArrayTString(variable, dimensionCount, position, value);
+    }
+    
+    // Array Insert Operation
+    void __pascript__booleanArrayInsertValue(TArray variable, TInteger position, TBoolean value)
+    {
+        insertTArray<TBoolean>(variable, position, value);
+    }
+    void __pascript__integerArrayInsertValue(TArray variable, TInteger position, TInteger value)
+    {
+        insertTArray<TInteger>(variable, position, value);
+    }
+    void __pascript__floatArrayInsertValue(TArray variable, TInteger position, TFloat value)
+    {
+        insertTArray<TFloat>(variable, position, value);
+    }
+    void __pascript__stringArrayInsertValue(TArray variable, TInteger position, TString value)
+    {
+        insertTArray<TString>(variable, position, value);
+    }
+    void __pascript__arrayInsertArray(TArray variable, TInteger position, TArray value)
+    {
+        insertTArray<TArray>(variable, position, value);
+    }
+    
+    // Array Remove Operation
+    void __pascript__booleanArrayRemove(TArray variable, TInteger dimensionCount, TInteger position)
+    {
+        removeTArray<TBoolean>(variable, dimensionCount, position);
+    }
+    void __pascript__integerArrayRemove(TArray variable, TInteger dimensionCount, TInteger position)
+    {
+        removeTArray<TInteger>(variable, dimensionCount, position);
+    }
+    void __pascript__floatArrayRemove(TArray variable, TInteger dimensionCount, TInteger position)
+    {
+        removeTArray<TFloat>(variable, dimensionCount, position);
+    }
+    void __pascript__stringArrayRemove(TArray variable, TInteger dimensionCount, TInteger position)
+    {
+        removeTArrayTString(variable, dimensionCount, position);
+    }
+    
+    // Array Size Operation
+    void __pascript__booleanArraySize(TArray variable)
+    {
+        sizeTArray<TBoolean>(variable);
+    }
+    void __pascript__integerArraySize(TArray variable)
+    {
+        sizeTArray<TInteger>(variable);
+    }
+    void __pascript__floatArraySize(TArray variable)
+    {
+        sizeTArray<TFloat>(variable);
+    }
+    void __pascript__stringArraySize(TArray variable)
+    {
+        sizeTArray<TString>(variable);
+    }
+    void __pascript__arraySize(TArray variable)
+    {
+        sizeTArray<TArray>(variable);
+    }
+    
+    // Array Resize Operation
+    void __pascript__booleanArrayResize(TArray variable, TInteger dimensionCount, TInteger newSize)
+    {
+        resizeTArray<TBoolean>(variable, dimensionCount, (size_t)newSize);
+    }
+    void __pascript__integerArrayResize(TArray variable, TInteger dimensionCount, TInteger newSize)
+    {
+        resizeTArray<TInteger>(variable, dimensionCount, (size_t)newSize);
+    }
+    void __pascript__floatArrayResize(TArray variable, TInteger dimensionCount, TInteger newSize)
+    {
+        resizeTArray<TFloat>(variable, dimensionCount, (size_t)newSize);
+    }
+    void __pascript__stringArrayResize(TArray variable, TInteger dimensionCount, TInteger newSize)
+    {
+        resizeTArrayTString(variable, dimensionCount, (size_t)newSize);
     }
     
     // Array Merge Operation
-    TArray __pascript__booleanArrayMerge(TArray a, TArray b, TInteger dimensionCount)
+    TArray __pascript__booleanArrayMerge(TArray variableA, TArray variableB, TInteger dimensionCount)
     {
-        return mergeTArray<TBoolean>(a, b, dimensionCount);
+        return mergeTArray<TBoolean>(variableA, variableB, dimensionCount);
     }
-    TArray __pascript__integerArrayMerge(TArray a, TArray b, TInteger dimensionCount)
+    TArray __pascript__integerArrayMerge(TArray variableA, TArray variableB, TInteger dimensionCount)
     {
-        return mergeTArray<TInteger>(a, b, dimensionCount);
+        return mergeTArray<TInteger>(variableA, variableB, dimensionCount);
     }
-    TArray __pascript__floatArrayMerge(TArray a, TArray b, TInteger dimensionCount)
+    TArray __pascript__floatArrayMerge(TArray variableA, TArray variableB, TInteger dimensionCount)
     {
-        return mergeTArray<TFloat>(a, b, dimensionCount);
+        return mergeTArray<TFloat>(variableA, variableB, dimensionCount);
     }
-    TArray __pascript__stringArrayMerge(TArray a, TArray b, TInteger dimensionCount)
+    TArray __pascript__stringArrayMerge(TArray variableA, TArray variableB, TInteger dimensionCount)
     {
-        return mergeTArrayTString(a, b, dimensionCount);
+        return mergeTArrayTString(variableA, variableB, dimensionCount);
     }
     
     // Array Equals Operation
-    TBoolean __pascript__booleanArrayEquals(TArray a, TArray b, TInteger dimensionCount)
+    TBoolean __pascript__booleanArrayEquals(TArray variableA, TArray variableB, TInteger dimensionCount)
     {
-        return equalsTArray<TBoolean>(a, b, dimensionCount);
+        return equalsTArray<TBoolean>(variableA, variableB, dimensionCount);
     }
-    TBoolean __pascript__integerArrayEquals(TArray a, TArray b, TInteger dimensionCount)
+    TBoolean __pascript__integerArrayEquals(TArray variableA, TArray variableB, TInteger dimensionCount)
     {
-        return equalsTArray<TInteger>(a, b, dimensionCount);
+        return equalsTArray<TInteger>(variableA, variableB, dimensionCount);
     }
-    TBoolean __pascript__floatArrayEquals(TArray a, TArray b, TInteger dimensionCount)
+    TBoolean __pascript__floatArrayEquals(TArray variableA, TArray variableB, TInteger dimensionCount)
     {
-        return equalsTArray<TFloat>(a, b, dimensionCount);
+        return equalsTArray<TFloat>(variableA, variableB, dimensionCount);
     }
-    TBoolean __pascript__stringArrayEquals(TArray a, TArray b, TInteger dimensionCount)
+    TBoolean __pascript__stringArrayEquals(TArray variableA, TArray variableB, TInteger dimensionCount)
     {
-        return equalsTArrayTString(a, b, dimensionCount);
+        return equalsTArrayTString(variableA, variableB, dimensionCount);
     }
-    
 }

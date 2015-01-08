@@ -15,20 +15,14 @@ import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 public interface PascriptVisitor<T> extends ParseTreeVisitor<T> {
 	/**
 	 * Visit a parse tree produced by the {@code ExpressionStatement}
-	 * labeled alternative in {@link PascriptParser#simpleStatement}.
+	 * labeled alternative in {@link PascriptParser#basicStatement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitExpressionStatement(@NotNull PascriptParser.ExpressionStatementContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link PascriptParser#doWhileLoop}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitDoWhileLoop(@NotNull PascriptParser.DoWhileLoopContext ctx);
-	/**
 	 * Visit a parse tree produced by the {@code FloatLiteral}
-	 * labeled alternative in {@link PascriptParser#primitiveLiteral}.
+	 * labeled alternative in {@link PascriptParser#literal}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
@@ -41,12 +35,25 @@ public interface PascriptVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitReturnVoidDataType(@NotNull PascriptParser.ReturnVoidDataTypeContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code SimpleStatement}
+	 * labeled alternative in {@link PascriptParser#statement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSimpleStatement(@NotNull PascriptParser.SimpleStatementContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code BinaryOperation}
 	 * labeled alternative in {@link PascriptParser#expression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitBinaryOperation(@NotNull PascriptParser.BinaryOperationContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link PascriptParser#arrayDataType}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitArrayDataType(@NotNull PascriptParser.ArrayDataTypeContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link PascriptParser#variableSection}.
 	 * @param ctx the parse tree
@@ -55,18 +62,18 @@ public interface PascriptVisitor<T> extends ParseTreeVisitor<T> {
 	T visitVariableSection(@NotNull PascriptParser.VariableSectionContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code ReturnValueStatement}
-	 * labeled alternative in {@link PascriptParser#simpleStatement}.
+	 * labeled alternative in {@link PascriptParser#basicStatement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitReturnValueStatement(@NotNull PascriptParser.ReturnValueStatementContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code PowerBinaryOperation}
-	 * labeled alternative in {@link PascriptParser#expression}.
+	 * Visit a parse tree produced by the {@code CompositeStatement}
+	 * labeled alternative in {@link PascriptParser#statement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitPowerBinaryOperation(@NotNull PascriptParser.PowerBinaryOperationContext ctx);
+	T visitCompositeStatement(@NotNull PascriptParser.CompositeStatementContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link PascriptParser#parameterList}.
 	 * @param ctx the parse tree
@@ -74,32 +81,12 @@ public interface PascriptVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitParameterList(@NotNull PascriptParser.ParameterListContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code Assignemnt}
-	 * labeled alternative in {@link PascriptParser#expression}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitAssignemnt(@NotNull PascriptParser.AssignemntContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link PascriptParser#forLoop}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitForLoop(@NotNull PascriptParser.ForLoopContext ctx);
-	/**
 	 * Visit a parse tree produced by the {@code AssignDeclaration}
 	 * labeled alternative in {@link PascriptParser#variableDeclaration}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitAssignDeclaration(@NotNull PascriptParser.AssignDeclarationContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code ListLiteral}
-	 * labeled alternative in {@link PascriptParser#containerLiteral}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitListLiteral(@NotNull PascriptParser.ListLiteralContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code BooleanDataType}
 	 * labeled alternative in {@link PascriptParser#primitiveDataType}.
@@ -116,7 +103,7 @@ public interface PascriptVisitor<T> extends ParseTreeVisitor<T> {
 	T visitSimpleGlobalDeclaration(@NotNull PascriptParser.SimpleGlobalDeclarationContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code DeclarationStatement}
-	 * labeled alternative in {@link PascriptParser#simpleStatement}.
+	 * labeled alternative in {@link PascriptParser#basicStatement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
@@ -142,12 +129,6 @@ public interface PascriptVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitFunctionCall(@NotNull PascriptParser.FunctionCallContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link PascriptParser#statement}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitStatement(@NotNull PascriptParser.StatementContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link PascriptParser#functionDefinition}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -162,7 +143,7 @@ public interface PascriptVisitor<T> extends ParseTreeVisitor<T> {
 	T visitUnaryOperation(@NotNull PascriptParser.UnaryOperationContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code DeleteStatement}
-	 * labeled alternative in {@link PascriptParser#simpleStatement}.
+	 * labeled alternative in {@link PascriptParser#basicStatement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
@@ -203,12 +184,12 @@ public interface PascriptVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitParenthesis(@NotNull PascriptParser.ParenthesisContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code ArrayDataType}
-	 * labeled alternative in {@link PascriptParser#containerDataType}.
+	 * Visit a parse tree produced by the {@code DoWhileLoop}
+	 * labeled alternative in {@link PascriptParser#statement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitArrayDataType(@NotNull PascriptParser.ArrayDataTypeContext ctx);
+	T visitDoWhileLoop(@NotNull PascriptParser.DoWhileLoopContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code SimpleDeclaration}
 	 * labeled alternative in {@link PascriptParser#variableDeclaration}.
@@ -224,6 +205,13 @@ public interface PascriptVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitStringDataType(@NotNull PascriptParser.StringDataTypeContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code Assignment}
+	 * labeled alternative in {@link PascriptParser#expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAssignment(@NotNull PascriptParser.AssignmentContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link PascriptParser#blockStatement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -238,14 +226,14 @@ public interface PascriptVisitor<T> extends ParseTreeVisitor<T> {
 	T visitMethodCall(@NotNull PascriptParser.MethodCallContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code ReturnVoidStatement}
-	 * labeled alternative in {@link PascriptParser#simpleStatement}.
+	 * labeled alternative in {@link PascriptParser#basicStatement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitReturnVoidStatement(@NotNull PascriptParser.ReturnVoidStatementContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code ReadStatement}
-	 * labeled alternative in {@link PascriptParser#simpleStatement}.
+	 * labeled alternative in {@link PascriptParser#basicStatement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
@@ -258,11 +246,18 @@ public interface PascriptVisitor<T> extends ParseTreeVisitor<T> {
 	T visitExternalFunctionDeclaration(@NotNull PascriptParser.ExternalFunctionDeclarationContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code StringLiteral}
-	 * labeled alternative in {@link PascriptParser#primitiveLiteral}.
+	 * labeled alternative in {@link PascriptParser#literal}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitStringLiteral(@NotNull PascriptParser.StringLiteralContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code WhileLoop}
+	 * labeled alternative in {@link PascriptParser#statement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitWhileLoop(@NotNull PascriptParser.WhileLoopContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link PascriptParser#module}.
 	 * @param ctx the parse tree
@@ -277,7 +272,7 @@ public interface PascriptVisitor<T> extends ParseTreeVisitor<T> {
 	T visitExternalSection(@NotNull PascriptParser.ExternalSectionContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code PrintStatement}
-	 * labeled alternative in {@link PascriptParser#simpleStatement}.
+	 * labeled alternative in {@link PascriptParser#basicStatement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
@@ -288,6 +283,13 @@ public interface PascriptVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitFunctionSection(@NotNull PascriptParser.FunctionSectionContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code ForLoop}
+	 * labeled alternative in {@link PascriptParser#statement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitForLoop(@NotNull PascriptParser.ForLoopContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link PascriptParser#argumentList}.
 	 * @param ctx the parse tree
@@ -302,17 +304,18 @@ public interface PascriptVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitReAssignment(@NotNull PascriptParser.ReAssignmentContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link PascriptParser#ifStatement}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitIfStatement(@NotNull PascriptParser.IfStatementContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link PascriptParser#dataType}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitDataType(@NotNull PascriptParser.DataTypeContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code IfStatement}
+	 * labeled alternative in {@link PascriptParser#statement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIfStatement(@NotNull PascriptParser.IfStatementContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code ReturnValueDataType}
 	 * labeled alternative in {@link PascriptParser#returnDataType}.
@@ -322,7 +325,7 @@ public interface PascriptVisitor<T> extends ParseTreeVisitor<T> {
 	T visitReturnValueDataType(@NotNull PascriptParser.ReturnValueDataTypeContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code IntegerLiteral}
-	 * labeled alternative in {@link PascriptParser#primitiveLiteral}.
+	 * labeled alternative in {@link PascriptParser#literal}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
@@ -334,12 +337,6 @@ public interface PascriptVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitFunctionDeclaration(@NotNull PascriptParser.FunctionDeclarationContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link PascriptParser#whileLoop}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitWhileLoop(@NotNull PascriptParser.WhileLoopContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link PascriptParser#namedParameterList}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -347,15 +344,9 @@ public interface PascriptVisitor<T> extends ParseTreeVisitor<T> {
 	T visitNamedParameterList(@NotNull PascriptParser.NamedParameterListContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code BooleanLiteral}
-	 * labeled alternative in {@link PascriptParser#primitiveLiteral}.
+	 * labeled alternative in {@link PascriptParser#literal}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitBooleanLiteral(@NotNull PascriptParser.BooleanLiteralContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link PascriptParser#literal}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitLiteral(@NotNull PascriptParser.LiteralContext ctx);
 }

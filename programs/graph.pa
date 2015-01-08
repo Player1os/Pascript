@@ -2,16 +2,16 @@
   <function>
     int findset(int v, int[] roots)
     {
-      if (roots[v] != v)
+      if (roots.get(v) != v)
       {
-        roots[v] = findset(roots[v], roots);
+        roots.set(v, findset(roots.get(v), roots));
       }
-      return roots[v];
+      return roots.get(v);
     }
 
     void union(int u, int v, int[] roots)
     {
-      roots[v] = findset(u, roots);
+      roots.set(v, findset(u, roots));
     }
   </function>
   <main>
@@ -21,11 +21,11 @@
     -> m;
 
     int[] roots;
-    roots.resize[n];
+    roots.resize(n);
 
     for (int i = 0; i < n; i++)
     {
-      roots[i] = i;
+      roots.set(i, i);
     }
 
     for (int i = 0; i < m; i++)
@@ -46,7 +46,7 @@
 
     if (n > 0)
     {
-      int first_root = roots[0];
+      int first_root = roots.get(0);
       for (int i = 1; i < n; i++)
       {
         if (first_root != root)
@@ -58,6 +58,5 @@
     }
 
     <- "ANO";
-    return 0;
   </main>
 </module>

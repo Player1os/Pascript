@@ -31,18 +31,6 @@ public class PascriptBaseListener implements PascriptListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterDoWhileLoop(@NotNull PascriptParser.DoWhileLoopContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitDoWhileLoop(@NotNull PascriptParser.DoWhileLoopContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterFloatLiteral(@NotNull PascriptParser.FloatLiteralContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -67,6 +55,18 @@ public class PascriptBaseListener implements PascriptListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterSimpleStatement(@NotNull PascriptParser.SimpleStatementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitSimpleStatement(@NotNull PascriptParser.SimpleStatementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterBinaryOperation(@NotNull PascriptParser.BinaryOperationContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -74,6 +74,18 @@ public class PascriptBaseListener implements PascriptListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitBinaryOperation(@NotNull PascriptParser.BinaryOperationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterArrayDataType(@NotNull PascriptParser.ArrayDataTypeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitArrayDataType(@NotNull PascriptParser.ArrayDataTypeContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -103,13 +115,13 @@ public class PascriptBaseListener implements PascriptListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterPowerBinaryOperation(@NotNull PascriptParser.PowerBinaryOperationContext ctx) { }
+	@Override public void enterCompositeStatement(@NotNull PascriptParser.CompositeStatementContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitPowerBinaryOperation(@NotNull PascriptParser.PowerBinaryOperationContext ctx) { }
+	@Override public void exitCompositeStatement(@NotNull PascriptParser.CompositeStatementContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -127,30 +139,6 @@ public class PascriptBaseListener implements PascriptListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterAssignemnt(@NotNull PascriptParser.AssignemntContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitAssignemnt(@NotNull PascriptParser.AssignemntContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterForLoop(@NotNull PascriptParser.ForLoopContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitForLoop(@NotNull PascriptParser.ForLoopContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterAssignDeclaration(@NotNull PascriptParser.AssignDeclarationContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -158,18 +146,6 @@ public class PascriptBaseListener implements PascriptListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitAssignDeclaration(@NotNull PascriptParser.AssignDeclarationContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterListLiteral(@NotNull PascriptParser.ListLiteralContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitListLiteral(@NotNull PascriptParser.ListLiteralContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -242,18 +218,6 @@ public class PascriptBaseListener implements PascriptListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitFunctionCall(@NotNull PascriptParser.FunctionCallContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterStatement(@NotNull PascriptParser.StatementContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitStatement(@NotNull PascriptParser.StatementContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -355,13 +319,13 @@ public class PascriptBaseListener implements PascriptListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterArrayDataType(@NotNull PascriptParser.ArrayDataTypeContext ctx) { }
+	@Override public void enterDoWhileLoop(@NotNull PascriptParser.DoWhileLoopContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitArrayDataType(@NotNull PascriptParser.ArrayDataTypeContext ctx) { }
+	@Override public void exitDoWhileLoop(@NotNull PascriptParser.DoWhileLoopContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -386,6 +350,18 @@ public class PascriptBaseListener implements PascriptListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitStringDataType(@NotNull PascriptParser.StringDataTypeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterAssignment(@NotNull PascriptParser.AssignmentContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitAssignment(@NotNull PascriptParser.AssignmentContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -463,6 +439,18 @@ public class PascriptBaseListener implements PascriptListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterWhileLoop(@NotNull PascriptParser.WhileLoopContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitWhileLoop(@NotNull PascriptParser.WhileLoopContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterModule(@NotNull PascriptParser.ModuleContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -511,6 +499,18 @@ public class PascriptBaseListener implements PascriptListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterForLoop(@NotNull PascriptParser.ForLoopContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitForLoop(@NotNull PascriptParser.ForLoopContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterArgumentList(@NotNull PascriptParser.ArgumentListContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -535,18 +535,6 @@ public class PascriptBaseListener implements PascriptListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterIfStatement(@NotNull PascriptParser.IfStatementContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitIfStatement(@NotNull PascriptParser.IfStatementContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterDataType(@NotNull PascriptParser.DataTypeContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -554,6 +542,18 @@ public class PascriptBaseListener implements PascriptListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitDataType(@NotNull PascriptParser.DataTypeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterIfStatement(@NotNull PascriptParser.IfStatementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitIfStatement(@NotNull PascriptParser.IfStatementContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -595,18 +595,6 @@ public class PascriptBaseListener implements PascriptListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterWhileLoop(@NotNull PascriptParser.WhileLoopContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitWhileLoop(@NotNull PascriptParser.WhileLoopContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterNamedParameterList(@NotNull PascriptParser.NamedParameterListContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -626,18 +614,6 @@ public class PascriptBaseListener implements PascriptListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitBooleanLiteral(@NotNull PascriptParser.BooleanLiteralContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterLiteral(@NotNull PascriptParser.LiteralContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitLiteral(@NotNull PascriptParser.LiteralContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

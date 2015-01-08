@@ -1,6 +1,6 @@
 <module>
   <function>
-    int[] eratosthenes(limit)
+    int[] eratosthenes(int limit)
     {
       int[] primes;
       
@@ -17,19 +17,19 @@
         
         for (int i = 0; i < n; i++)
         {
-          int p = nums[i];
+          int p = nums.get(i);
           if (p > 0)
           {
             for (int j = (p * p) - 2; j < n; j = j + p)
             {
-              nums[j] = 0;
+              nums.set(j, 0);
             }
           }
         }
         
         for (int i = 0; i < n; i++)
         {
-          int p = nums[i];
+          int p = nums.get(i);
           if (p > 0)
           {
             primes.insert(primes.length(), p);
@@ -47,9 +47,7 @@
 
     for (int i = 0; i < n; i++)
     {
-      <- result[i];
+      <- result.get(i);
     }
-
-    return 0;
   </main>
 </module>

@@ -32,11 +32,10 @@ variableSection
 // The function section contains definitions of local functions
 
 functionSection
-    : VARIABLE_SECTION_BEGIN (functionDeclaration functionDefinition)* VARIABLE_SECTION_END
+    : FUNCTION_SECTION_BEGIN (functionDeclaration functionDefinition)* FUNCTION_SECTION_END
     ;
 
 // The main section contains the code that is executed upon running the program
-
 mainSection
     : MAIN_SECTION_BEGIN statement* MAIN_SECTION_END
     ;
@@ -66,45 +65,26 @@ namedParameterList
     : dataType IDENTIFIER ( COMMA dataType IDENTIFIER )*
     ;
 
-argumentList
-    : IDENTIFIER ( COMMA IDENTIFIER )*
-    ;
-
 statement
-    : blockStatement
-    | ifStatement
-    | whileLoop
-    | doWhileLoop
-    | forLoop
-    | simpleStatement END_STATEMENT
+    : blockStatement                                                 # CompositeStatement
+    | IF PAREN_OPEN condition=expression PAREN_CLOSE
+      trueStatement=statement (ELSE falseStatement=statement)?       # IfStatement
+    | WHILE PAREN_OPEN condition=expression PAREN_CLOSE statement    # WhileLoop
+    | DO statement WHILE
+      PAREN_OPEN condition=expression PAREN_CLOSE END_STATEMENT      # DoWhileLoop
+    | FOR PAREN_OPEN
+      initializer=variableDeclaration END_STATEMENT
+      condition=expression END_STATEMENT
+      step=expression
+      PAREN_CLOSE statement                                          # ForLoop
+    | basicStatement END_STATEMENT                                   # SimpleStatement
     ;
 
 blockStatement
     : CURLY_OPEN statement* CURLY_CLOSE
     ;
 
-ifStatement
-    : IF PAREN_OPEN condition=expression PAREN_CLOSE
-      trueStatement=statement (ELSE falseStatement=statement)?
-    ;
-
-whileLoop
-    : WHILE PAREN_OPEN condition=expression PAREN_CLOSE statement
-    ;
-
-doWhileLoop
-    : DO statement WHILE PAREN_OPEN condition=expression PAREN_CLOSE END_STATEMENT
-    ;
-
-forLoop
-    : FOR PAREN_OPEN
-      initializer=variableDeclaration END_STATEMENT
-      condition=expression END_STATEMENT
-      step=expression
-      PAREN_CLOSE statement
-    ;
-
-simpleStatement
+basicStatement
     : variableDeclaration                                            # DeclarationStatement
     
     | PRINT expression                                               # PrintStatement
@@ -115,6 +95,7 @@ simpleStatement
     | RETURN expression                                              # ReturnValueStatement
       
     | expression                                                     # ExpressionStatement
+
     ;
 
 globalVariableDeclaration
@@ -129,7 +110,6 @@ variableDeclaration
 
 expression
     : operator=(SUBTRACT | NOT) expression                           # UnaryOperation
-    | expression operator=POWER<assoc=right> expression              # PowerBinaryOperation
     | expression
       operator=
       ( MULTIPLY | DIVIDE | MODULO
@@ -147,16 +127,20 @@ expression
     | variableName=IDENTIFIER DOT methodName=IDENTIFIER
       PAREN_OPEN argumentList? PAREN_CLOSE                           # MethodCall
     
-    | IDENTIFIER ASSIGN expression                                   # Assignemnt
+    | IDENTIFIER ASSIGN expression                                   # Assignment
     | IDENTIFIER operator=(INCREMENT | DECREMENT)                    # ReAssignment
     | IDENTIFIER                                                     # VariableValue
 
     | literal                                                        # ConstantValue
     ;
 
+argumentList
+    : expression ( COMMA expression )*
+    ;
+
 dataType
     : primitiveDataType
-    | containerDataType
+    | arrayDataType
     ;
                      
 primitiveDataType
@@ -166,28 +150,20 @@ primitiveDataType
     | STRING_DATATYPE                                                # StringDataType
     ;
 
-containerDataType
-    : primitiveDataType (SQUARE_OPEN SQUARE_CLOSE)+                  # ArrayDataType
+arrayDataType
+    : primitiveDataType (SQUARE_OPEN SQUARE_CLOSE)+
     ;
 
 literal
-    : primitiveLiteral
-    | containerLiteral
-    ;
-
-primitiveLiteral 
     : value=(TRUE | FALSE)                                           # BooleanLiteral
     | value=INTEGER                                                  # IntegerLiteral
     | value=FLOAT                                                    # FloatLiteral
-    | QUOTES value=.*? QUOTES                                        # StringLiteral
-    ;
-
-containerLiteral
-    : SQUARE_OPEN (literal (COMMA literal)* )? SQUARE_CLOSE          # ListLiteral
-    ;
+    | value=STRING                                                   # StringLiteral
+    ;    
 
 LINE_COMMENT: '//' .*? NEWLINE+ -> skip;
 BLOCK_COMMENT: '/*' .*? '*/' -> skip;
+
 NEWLINE: [\n\r] -> skip;
 WHITESPACE: [\t ] -> skip;
 
@@ -203,10 +179,8 @@ FUNCTION_SECTION_END: '</function>';
 MAIN_SECTION_BEGIN: '<main>';
 MAIN_SECTION_END: '</main>';
 
-QUOTES: '"';
 COMMA: ',';
 DOT: '.';
-PAIR_DELIMITER: ':';
 END_STATEMENT: ';';
 
 PAREN_OPEN: '(';
@@ -229,8 +203,6 @@ ELSE: 'else';
 WHILE: 'while';
 DO: 'do';
 FOR: 'for';
-
-POWER: '**';
 
 MULTIPLY: '*';
 DIVIDE: '/';
@@ -264,6 +236,7 @@ INTEGER_DATATYPE: 'int';
 FLOAT_DATATYPE: 'float';
 STRING_DATATYPE: 'string';
 
+STRING: '"' (~[\n\r])*? '"';
 FLOAT: ('0' | [1-9][0-9]*)'.'[0-9]*;
 INTEGER: '0' | [1-9][0-9]*;
 TRUE: 'true';

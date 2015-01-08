@@ -1,12 +1,15 @@
 package pascript;
 
+import java.io.FileInputStream;
 import pascript.grammar.PascriptLexer;
 import pascript.grammar.PascriptParser;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintStream;
 import java.text.Normalizer;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.misc.Interval;
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -17,7 +20,6 @@ import org.antlr.v4.runtime.tree.ParseTree;
  */
 public class Compiler
 {
-
     private static class PascriptInputStream extends ANTLRInputStream
     {
         public PascriptInputStream(InputStream inputStream) throws IOException
@@ -35,31 +37,57 @@ public class Compiler
                 .toLowerCase();
         }
     }
+
+    public static void printCompilationError(String errorMessage, Token errorToken)
+    {
+        String position = String.format("%d:%d", errorToken.getLine(), errorToken.getCharPositionInLine());
+        System.err.println(errorMessage + " @ " + position);
+    }
     
     /**
      * @param args the command line arguments
-     * @return 
      */
-    public static int main(String[] args)
+    public static void main(String[] args)
     {
         try
         {
-            PascriptInputStream input = new PascriptInputStream(System.in);
+            String inputFileName = null;
+            if (args.length > 0)
+            {
+                inputFileName = args[0];
+            }
+            InputStream inputStream = System.in;
+            if (inputFileName != null)
+            {
+                inputStream = new FileInputStream(inputFileName);
+            }
+            
+            //PascriptInputStream input = new PascriptInputStream(inputStream);
+            ANTLRInputStream input = new ANTLRInputStream(inputStream);
             PascriptLexer lexer = new PascriptLexer(input);
             CommonTokenStream tokens = new CommonTokenStream(lexer);
             PascriptParser parser = new PascriptParser(tokens);
             ParseTree tree = parser.module();
+            
+            String outputFileName = null;
+            if (args.length > 1)
+            {
+                outputFileName = args[1];
+            }
+            PrintStream printStream = System.out;
+            if (outputFileName != null)
+            {
+                printStream = new PrintStream(outputFileName);
+            }
 
             CodeVisitor codeVisitor = new CodeVisitor();
-            CodeFragment code = codeVisitor.visit(tree);
-            System.out.println(code.toString());
+            printStream.println(codeVisitor.visit(tree).toString());
         }
         catch (IOException ex)
         {
             System.err.println("Error while reading from input :");
             System.err.println(ex.getMessage());
-            return -1;
+            System.exit(-1);
         }
-        return 0;
     }
 }

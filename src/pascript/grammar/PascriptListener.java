@@ -12,35 +12,25 @@ import org.antlr.v4.runtime.tree.ParseTreeListener;
 public interface PascriptListener extends ParseTreeListener {
 	/**
 	 * Enter a parse tree produced by the {@code ExpressionStatement}
-	 * labeled alternative in {@link PascriptParser#simpleStatement}.
+	 * labeled alternative in {@link PascriptParser#basicStatement}.
 	 * @param ctx the parse tree
 	 */
 	void enterExpressionStatement(@NotNull PascriptParser.ExpressionStatementContext ctx);
 	/**
 	 * Exit a parse tree produced by the {@code ExpressionStatement}
-	 * labeled alternative in {@link PascriptParser#simpleStatement}.
+	 * labeled alternative in {@link PascriptParser#basicStatement}.
 	 * @param ctx the parse tree
 	 */
 	void exitExpressionStatement(@NotNull PascriptParser.ExpressionStatementContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link PascriptParser#doWhileLoop}.
-	 * @param ctx the parse tree
-	 */
-	void enterDoWhileLoop(@NotNull PascriptParser.DoWhileLoopContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link PascriptParser#doWhileLoop}.
-	 * @param ctx the parse tree
-	 */
-	void exitDoWhileLoop(@NotNull PascriptParser.DoWhileLoopContext ctx);
-	/**
 	 * Enter a parse tree produced by the {@code FloatLiteral}
-	 * labeled alternative in {@link PascriptParser#primitiveLiteral}.
+	 * labeled alternative in {@link PascriptParser#literal}.
 	 * @param ctx the parse tree
 	 */
 	void enterFloatLiteral(@NotNull PascriptParser.FloatLiteralContext ctx);
 	/**
 	 * Exit a parse tree produced by the {@code FloatLiteral}
-	 * labeled alternative in {@link PascriptParser#primitiveLiteral}.
+	 * labeled alternative in {@link PascriptParser#literal}.
 	 * @param ctx the parse tree
 	 */
 	void exitFloatLiteral(@NotNull PascriptParser.FloatLiteralContext ctx);
@@ -57,6 +47,18 @@ public interface PascriptListener extends ParseTreeListener {
 	 */
 	void exitReturnVoidDataType(@NotNull PascriptParser.ReturnVoidDataTypeContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code SimpleStatement}
+	 * labeled alternative in {@link PascriptParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterSimpleStatement(@NotNull PascriptParser.SimpleStatementContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code SimpleStatement}
+	 * labeled alternative in {@link PascriptParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitSimpleStatement(@NotNull PascriptParser.SimpleStatementContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code BinaryOperation}
 	 * labeled alternative in {@link PascriptParser#expression}.
 	 * @param ctx the parse tree
@@ -69,6 +71,16 @@ public interface PascriptListener extends ParseTreeListener {
 	 */
 	void exitBinaryOperation(@NotNull PascriptParser.BinaryOperationContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link PascriptParser#arrayDataType}.
+	 * @param ctx the parse tree
+	 */
+	void enterArrayDataType(@NotNull PascriptParser.ArrayDataTypeContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link PascriptParser#arrayDataType}.
+	 * @param ctx the parse tree
+	 */
+	void exitArrayDataType(@NotNull PascriptParser.ArrayDataTypeContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link PascriptParser#variableSection}.
 	 * @param ctx the parse tree
 	 */
@@ -80,28 +92,28 @@ public interface PascriptListener extends ParseTreeListener {
 	void exitVariableSection(@NotNull PascriptParser.VariableSectionContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code ReturnValueStatement}
-	 * labeled alternative in {@link PascriptParser#simpleStatement}.
+	 * labeled alternative in {@link PascriptParser#basicStatement}.
 	 * @param ctx the parse tree
 	 */
 	void enterReturnValueStatement(@NotNull PascriptParser.ReturnValueStatementContext ctx);
 	/**
 	 * Exit a parse tree produced by the {@code ReturnValueStatement}
-	 * labeled alternative in {@link PascriptParser#simpleStatement}.
+	 * labeled alternative in {@link PascriptParser#basicStatement}.
 	 * @param ctx the parse tree
 	 */
 	void exitReturnValueStatement(@NotNull PascriptParser.ReturnValueStatementContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code PowerBinaryOperation}
-	 * labeled alternative in {@link PascriptParser#expression}.
+	 * Enter a parse tree produced by the {@code CompositeStatement}
+	 * labeled alternative in {@link PascriptParser#statement}.
 	 * @param ctx the parse tree
 	 */
-	void enterPowerBinaryOperation(@NotNull PascriptParser.PowerBinaryOperationContext ctx);
+	void enterCompositeStatement(@NotNull PascriptParser.CompositeStatementContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code PowerBinaryOperation}
-	 * labeled alternative in {@link PascriptParser#expression}.
+	 * Exit a parse tree produced by the {@code CompositeStatement}
+	 * labeled alternative in {@link PascriptParser#statement}.
 	 * @param ctx the parse tree
 	 */
-	void exitPowerBinaryOperation(@NotNull PascriptParser.PowerBinaryOperationContext ctx);
+	void exitCompositeStatement(@NotNull PascriptParser.CompositeStatementContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link PascriptParser#parameterList}.
 	 * @param ctx the parse tree
@@ -112,28 +124,6 @@ public interface PascriptListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitParameterList(@NotNull PascriptParser.ParameterListContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code Assignemnt}
-	 * labeled alternative in {@link PascriptParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void enterAssignemnt(@NotNull PascriptParser.AssignemntContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code Assignemnt}
-	 * labeled alternative in {@link PascriptParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void exitAssignemnt(@NotNull PascriptParser.AssignemntContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link PascriptParser#forLoop}.
-	 * @param ctx the parse tree
-	 */
-	void enterForLoop(@NotNull PascriptParser.ForLoopContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link PascriptParser#forLoop}.
-	 * @param ctx the parse tree
-	 */
-	void exitForLoop(@NotNull PascriptParser.ForLoopContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code AssignDeclaration}
 	 * labeled alternative in {@link PascriptParser#variableDeclaration}.
@@ -146,18 +136,6 @@ public interface PascriptListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitAssignDeclaration(@NotNull PascriptParser.AssignDeclarationContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code ListLiteral}
-	 * labeled alternative in {@link PascriptParser#containerLiteral}.
-	 * @param ctx the parse tree
-	 */
-	void enterListLiteral(@NotNull PascriptParser.ListLiteralContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code ListLiteral}
-	 * labeled alternative in {@link PascriptParser#containerLiteral}.
-	 * @param ctx the parse tree
-	 */
-	void exitListLiteral(@NotNull PascriptParser.ListLiteralContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code BooleanDataType}
 	 * labeled alternative in {@link PascriptParser#primitiveDataType}.
@@ -184,13 +162,13 @@ public interface PascriptListener extends ParseTreeListener {
 	void exitSimpleGlobalDeclaration(@NotNull PascriptParser.SimpleGlobalDeclarationContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code DeclarationStatement}
-	 * labeled alternative in {@link PascriptParser#simpleStatement}.
+	 * labeled alternative in {@link PascriptParser#basicStatement}.
 	 * @param ctx the parse tree
 	 */
 	void enterDeclarationStatement(@NotNull PascriptParser.DeclarationStatementContext ctx);
 	/**
 	 * Exit a parse tree produced by the {@code DeclarationStatement}
-	 * labeled alternative in {@link PascriptParser#simpleStatement}.
+	 * labeled alternative in {@link PascriptParser#basicStatement}.
 	 * @param ctx the parse tree
 	 */
 	void exitDeclarationStatement(@NotNull PascriptParser.DeclarationStatementContext ctx);
@@ -229,16 +207,6 @@ public interface PascriptListener extends ParseTreeListener {
 	 */
 	void exitFunctionCall(@NotNull PascriptParser.FunctionCallContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link PascriptParser#statement}.
-	 * @param ctx the parse tree
-	 */
-	void enterStatement(@NotNull PascriptParser.StatementContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link PascriptParser#statement}.
-	 * @param ctx the parse tree
-	 */
-	void exitStatement(@NotNull PascriptParser.StatementContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link PascriptParser#functionDefinition}.
 	 * @param ctx the parse tree
 	 */
@@ -262,13 +230,13 @@ public interface PascriptListener extends ParseTreeListener {
 	void exitUnaryOperation(@NotNull PascriptParser.UnaryOperationContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code DeleteStatement}
-	 * labeled alternative in {@link PascriptParser#simpleStatement}.
+	 * labeled alternative in {@link PascriptParser#basicStatement}.
 	 * @param ctx the parse tree
 	 */
 	void enterDeleteStatement(@NotNull PascriptParser.DeleteStatementContext ctx);
 	/**
 	 * Exit a parse tree produced by the {@code DeleteStatement}
-	 * labeled alternative in {@link PascriptParser#simpleStatement}.
+	 * labeled alternative in {@link PascriptParser#basicStatement}.
 	 * @param ctx the parse tree
 	 */
 	void exitDeleteStatement(@NotNull PascriptParser.DeleteStatementContext ctx);
@@ -333,17 +301,17 @@ public interface PascriptListener extends ParseTreeListener {
 	 */
 	void exitParenthesis(@NotNull PascriptParser.ParenthesisContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code ArrayDataType}
-	 * labeled alternative in {@link PascriptParser#containerDataType}.
+	 * Enter a parse tree produced by the {@code DoWhileLoop}
+	 * labeled alternative in {@link PascriptParser#statement}.
 	 * @param ctx the parse tree
 	 */
-	void enterArrayDataType(@NotNull PascriptParser.ArrayDataTypeContext ctx);
+	void enterDoWhileLoop(@NotNull PascriptParser.DoWhileLoopContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code ArrayDataType}
-	 * labeled alternative in {@link PascriptParser#containerDataType}.
+	 * Exit a parse tree produced by the {@code DoWhileLoop}
+	 * labeled alternative in {@link PascriptParser#statement}.
 	 * @param ctx the parse tree
 	 */
-	void exitArrayDataType(@NotNull PascriptParser.ArrayDataTypeContext ctx);
+	void exitDoWhileLoop(@NotNull PascriptParser.DoWhileLoopContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code SimpleDeclaration}
 	 * labeled alternative in {@link PascriptParser#variableDeclaration}.
@@ -369,6 +337,18 @@ public interface PascriptListener extends ParseTreeListener {
 	 */
 	void exitStringDataType(@NotNull PascriptParser.StringDataTypeContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code Assignment}
+	 * labeled alternative in {@link PascriptParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterAssignment(@NotNull PascriptParser.AssignmentContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code Assignment}
+	 * labeled alternative in {@link PascriptParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitAssignment(@NotNull PascriptParser.AssignmentContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link PascriptParser#blockStatement}.
 	 * @param ctx the parse tree
 	 */
@@ -392,25 +372,25 @@ public interface PascriptListener extends ParseTreeListener {
 	void exitMethodCall(@NotNull PascriptParser.MethodCallContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code ReturnVoidStatement}
-	 * labeled alternative in {@link PascriptParser#simpleStatement}.
+	 * labeled alternative in {@link PascriptParser#basicStatement}.
 	 * @param ctx the parse tree
 	 */
 	void enterReturnVoidStatement(@NotNull PascriptParser.ReturnVoidStatementContext ctx);
 	/**
 	 * Exit a parse tree produced by the {@code ReturnVoidStatement}
-	 * labeled alternative in {@link PascriptParser#simpleStatement}.
+	 * labeled alternative in {@link PascriptParser#basicStatement}.
 	 * @param ctx the parse tree
 	 */
 	void exitReturnVoidStatement(@NotNull PascriptParser.ReturnVoidStatementContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code ReadStatement}
-	 * labeled alternative in {@link PascriptParser#simpleStatement}.
+	 * labeled alternative in {@link PascriptParser#basicStatement}.
 	 * @param ctx the parse tree
 	 */
 	void enterReadStatement(@NotNull PascriptParser.ReadStatementContext ctx);
 	/**
 	 * Exit a parse tree produced by the {@code ReadStatement}
-	 * labeled alternative in {@link PascriptParser#simpleStatement}.
+	 * labeled alternative in {@link PascriptParser#basicStatement}.
 	 * @param ctx the parse tree
 	 */
 	void exitReadStatement(@NotNull PascriptParser.ReadStatementContext ctx);
@@ -426,16 +406,28 @@ public interface PascriptListener extends ParseTreeListener {
 	void exitExternalFunctionDeclaration(@NotNull PascriptParser.ExternalFunctionDeclarationContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code StringLiteral}
-	 * labeled alternative in {@link PascriptParser#primitiveLiteral}.
+	 * labeled alternative in {@link PascriptParser#literal}.
 	 * @param ctx the parse tree
 	 */
 	void enterStringLiteral(@NotNull PascriptParser.StringLiteralContext ctx);
 	/**
 	 * Exit a parse tree produced by the {@code StringLiteral}
-	 * labeled alternative in {@link PascriptParser#primitiveLiteral}.
+	 * labeled alternative in {@link PascriptParser#literal}.
 	 * @param ctx the parse tree
 	 */
 	void exitStringLiteral(@NotNull PascriptParser.StringLiteralContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code WhileLoop}
+	 * labeled alternative in {@link PascriptParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterWhileLoop(@NotNull PascriptParser.WhileLoopContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code WhileLoop}
+	 * labeled alternative in {@link PascriptParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitWhileLoop(@NotNull PascriptParser.WhileLoopContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link PascriptParser#module}.
 	 * @param ctx the parse tree
@@ -458,13 +450,13 @@ public interface PascriptListener extends ParseTreeListener {
 	void exitExternalSection(@NotNull PascriptParser.ExternalSectionContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code PrintStatement}
-	 * labeled alternative in {@link PascriptParser#simpleStatement}.
+	 * labeled alternative in {@link PascriptParser#basicStatement}.
 	 * @param ctx the parse tree
 	 */
 	void enterPrintStatement(@NotNull PascriptParser.PrintStatementContext ctx);
 	/**
 	 * Exit a parse tree produced by the {@code PrintStatement}
-	 * labeled alternative in {@link PascriptParser#simpleStatement}.
+	 * labeled alternative in {@link PascriptParser#basicStatement}.
 	 * @param ctx the parse tree
 	 */
 	void exitPrintStatement(@NotNull PascriptParser.PrintStatementContext ctx);
@@ -478,6 +470,18 @@ public interface PascriptListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitFunctionSection(@NotNull PascriptParser.FunctionSectionContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code ForLoop}
+	 * labeled alternative in {@link PascriptParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterForLoop(@NotNull PascriptParser.ForLoopContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code ForLoop}
+	 * labeled alternative in {@link PascriptParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitForLoop(@NotNull PascriptParser.ForLoopContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link PascriptParser#argumentList}.
 	 * @param ctx the parse tree
@@ -501,16 +505,6 @@ public interface PascriptListener extends ParseTreeListener {
 	 */
 	void exitReAssignment(@NotNull PascriptParser.ReAssignmentContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link PascriptParser#ifStatement}.
-	 * @param ctx the parse tree
-	 */
-	void enterIfStatement(@NotNull PascriptParser.IfStatementContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link PascriptParser#ifStatement}.
-	 * @param ctx the parse tree
-	 */
-	void exitIfStatement(@NotNull PascriptParser.IfStatementContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link PascriptParser#dataType}.
 	 * @param ctx the parse tree
 	 */
@@ -520,6 +514,18 @@ public interface PascriptListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitDataType(@NotNull PascriptParser.DataTypeContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code IfStatement}
+	 * labeled alternative in {@link PascriptParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterIfStatement(@NotNull PascriptParser.IfStatementContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code IfStatement}
+	 * labeled alternative in {@link PascriptParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitIfStatement(@NotNull PascriptParser.IfStatementContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code ReturnValueDataType}
 	 * labeled alternative in {@link PascriptParser#returnDataType}.
@@ -534,13 +540,13 @@ public interface PascriptListener extends ParseTreeListener {
 	void exitReturnValueDataType(@NotNull PascriptParser.ReturnValueDataTypeContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code IntegerLiteral}
-	 * labeled alternative in {@link PascriptParser#primitiveLiteral}.
+	 * labeled alternative in {@link PascriptParser#literal}.
 	 * @param ctx the parse tree
 	 */
 	void enterIntegerLiteral(@NotNull PascriptParser.IntegerLiteralContext ctx);
 	/**
 	 * Exit a parse tree produced by the {@code IntegerLiteral}
-	 * labeled alternative in {@link PascriptParser#primitiveLiteral}.
+	 * labeled alternative in {@link PascriptParser#literal}.
 	 * @param ctx the parse tree
 	 */
 	void exitIntegerLiteral(@NotNull PascriptParser.IntegerLiteralContext ctx);
@@ -555,16 +561,6 @@ public interface PascriptListener extends ParseTreeListener {
 	 */
 	void exitFunctionDeclaration(@NotNull PascriptParser.FunctionDeclarationContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link PascriptParser#whileLoop}.
-	 * @param ctx the parse tree
-	 */
-	void enterWhileLoop(@NotNull PascriptParser.WhileLoopContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link PascriptParser#whileLoop}.
-	 * @param ctx the parse tree
-	 */
-	void exitWhileLoop(@NotNull PascriptParser.WhileLoopContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link PascriptParser#namedParameterList}.
 	 * @param ctx the parse tree
 	 */
@@ -576,24 +572,14 @@ public interface PascriptListener extends ParseTreeListener {
 	void exitNamedParameterList(@NotNull PascriptParser.NamedParameterListContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code BooleanLiteral}
-	 * labeled alternative in {@link PascriptParser#primitiveLiteral}.
+	 * labeled alternative in {@link PascriptParser#literal}.
 	 * @param ctx the parse tree
 	 */
 	void enterBooleanLiteral(@NotNull PascriptParser.BooleanLiteralContext ctx);
 	/**
 	 * Exit a parse tree produced by the {@code BooleanLiteral}
-	 * labeled alternative in {@link PascriptParser#primitiveLiteral}.
+	 * labeled alternative in {@link PascriptParser#literal}.
 	 * @param ctx the parse tree
 	 */
 	void exitBooleanLiteral(@NotNull PascriptParser.BooleanLiteralContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link PascriptParser#literal}.
-	 * @param ctx the parse tree
-	 */
-	void enterLiteral(@NotNull PascriptParser.LiteralContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link PascriptParser#literal}.
-	 * @param ctx the parse tree
-	 */
-	void exitLiteral(@NotNull PascriptParser.LiteralContext ctx);
 }
