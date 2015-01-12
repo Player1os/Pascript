@@ -33,8 +33,7 @@ public class Compiler
         {
             return Normalizer
                 .normalize(super.getText(interval), Normalizer.Form.NFD)
-                .replaceAll("[^\\x00-\\x7F]", "")
-                .toLowerCase();
+                .replaceAll("[^\\x00-\\x7F]", "");
         }
     }
 
@@ -62,8 +61,7 @@ public class Compiler
                 inputStream = new FileInputStream(inputFileName);
             }
             
-            //PascriptInputStream input = new PascriptInputStream(inputStream);
-            ANTLRInputStream input = new ANTLRInputStream(inputStream);
+            PascriptInputStream input = new PascriptInputStream(inputStream);
             PascriptLexer lexer = new PascriptLexer(input);
             CommonTokenStream tokens = new CommonTokenStream(lexer);
             PascriptParser parser = new PascriptParser(tokens);

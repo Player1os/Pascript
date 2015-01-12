@@ -23,6 +23,16 @@ public interface PascriptListener extends ParseTreeListener {
 	 */
 	void exitExpressionStatement(@NotNull PascriptParser.ExpressionStatementContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link PascriptParser#variableValue}.
+	 * @param ctx the parse tree
+	 */
+	void enterVariableValue(@NotNull PascriptParser.VariableValueContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link PascriptParser#variableValue}.
+	 * @param ctx the parse tree
+	 */
+	void exitVariableValue(@NotNull PascriptParser.VariableValueContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code FloatLiteral}
 	 * labeled alternative in {@link PascriptParser#literal}.
 	 * @param ctx the parse tree
@@ -124,6 +134,18 @@ public interface PascriptListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitParameterList(@NotNull PascriptParser.ParameterListContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code LoadedValue}
+	 * labeled alternative in {@link PascriptParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterLoadedValue(@NotNull PascriptParser.LoadedValueContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code LoadedValue}
+	 * labeled alternative in {@link PascriptParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitLoadedValue(@NotNull PascriptParser.LoadedValueContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code AssignDeclaration}
 	 * labeled alternative in {@link PascriptParser#variableDeclaration}.
@@ -229,18 +251,6 @@ public interface PascriptListener extends ParseTreeListener {
 	 */
 	void exitUnaryOperation(@NotNull PascriptParser.UnaryOperationContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code DeleteStatement}
-	 * labeled alternative in {@link PascriptParser#basicStatement}.
-	 * @param ctx the parse tree
-	 */
-	void enterDeleteStatement(@NotNull PascriptParser.DeleteStatementContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code DeleteStatement}
-	 * labeled alternative in {@link PascriptParser#basicStatement}.
-	 * @param ctx the parse tree
-	 */
-	void exitDeleteStatement(@NotNull PascriptParser.DeleteStatementContext ctx);
-	/**
 	 * Enter a parse tree produced by the {@code AssignGlobalDeclaration}
 	 * labeled alternative in {@link PascriptParser#globalVariableDeclaration}.
 	 * @param ctx the parse tree
@@ -276,18 +286,6 @@ public interface PascriptListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitIntegerDataType(@NotNull PascriptParser.IntegerDataTypeContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code VariableValue}
-	 * labeled alternative in {@link PascriptParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void enterVariableValue(@NotNull PascriptParser.VariableValueContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code VariableValue}
-	 * labeled alternative in {@link PascriptParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void exitVariableValue(@NotNull PascriptParser.VariableValueContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code Parenthesis}
 	 * labeled alternative in {@link PascriptParser#expression}.

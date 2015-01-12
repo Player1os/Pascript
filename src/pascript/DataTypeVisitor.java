@@ -46,8 +46,8 @@ public class DataTypeVisitor extends PascriptBaseVisitor<DataType>
     
     public static interface PrimitiveDataType
     {
-        public String getOutputPrintFunction();
-        public String getOutputReadFunction();
+        public String getOutputPrintFunctionName();
+        public String getOutputReadFunctionName();
     }
     
     public static class BooleanDataType extends ValueDataType implements PrimitiveDataType
@@ -65,13 +65,13 @@ public class DataTypeVisitor extends PascriptBaseVisitor<DataType>
         }
 
         @Override
-        public String getOutputPrintFunction()
+        public String getOutputPrintFunctionName()
         {
             return "@__pascript__booleanPrint";
         }
 
         @Override
-        public String getOutputReadFunction()
+        public String getOutputReadFunctionName()
         {
             return "@__pascript__booleanRead";
         }
@@ -92,13 +92,13 @@ public class DataTypeVisitor extends PascriptBaseVisitor<DataType>
         }
 
         @Override
-        public String getOutputPrintFunction()
+        public String getOutputPrintFunctionName()
         {
             return "@__pascript__integerPrint";
         }
 
         @Override
-        public String getOutputReadFunction()
+        public String getOutputReadFunctionName()
         {
             return "@__pascript__integerRead";
         }
@@ -119,13 +119,13 @@ public class DataTypeVisitor extends PascriptBaseVisitor<DataType>
         }
 
         @Override
-        public String getOutputPrintFunction()
+        public String getOutputPrintFunctionName()
         {
             return "@__pascript__floatPrint";
         }
 
         @Override
-        public String getOutputReadFunction()
+        public String getOutputReadFunctionName()
         {
             return "@__pascript__floatRead";
         }
@@ -133,9 +133,9 @@ public class DataTypeVisitor extends PascriptBaseVisitor<DataType>
     
     public static abstract class DynamicDataType extends ValueDataType
     {
-        public abstract String getAllocationFunctionName();
-        public abstract String getDeallocationFunctionCall(String valueRegister);
-        public abstract String getCopyFunctionCall(String valueRegister);
+        public abstract String generateAllocationFunctionCall(String valueRegister);
+        public abstract String generateDeallocationFunctionCall(String valueRegister);
+        public abstract String generateCopyFunctionCall(String copyRegister, String valueRegister);
     }
     
     public static class StringDataType extends DynamicDataType implements PrimitiveDataType 
@@ -153,39 +153,42 @@ public class DataTypeVisitor extends PascriptBaseVisitor<DataType>
         }
 
         @Override
-        public String getOutputPrintFunction()
+        public String getOutputPrintFunctionName()
         {
             return "@__pascript__stringPrint";
         }
 
         @Override
-        public String getOutputReadFunction()
+        public String getOutputReadFunctionName()
         {
             return "@__pascript__stringRead";
         }
         
         @Override
-        public String getAllocationFunctionName()
+        public String generateAllocationFunctionCall(String valueRegister)
         {
-            return "@__pascript__stringAllocate";
+            ST template = new ST("<value_register> = call i8* @__pascript__stringAllocate()\n");
+            template.add("value_register", valueRegister);
+            return template.render();
         }
         
         @Override
-        public String getDeallocationFunctionCall(String valueRegister)
+        public String generateDeallocationFunctionCall(String valueRegister)
         {
             ST template = new ST("call void @__pascript__stringDeallocate(<data_type> <value_register>)\n");
             template.add("data_type", this.getOutputType());
             template.add("value_register", valueRegister);
-            return template.toString();
+            return template.render();
         }
 
         @Override
-        public String getCopyFunctionCall(String valueRegister)
+        public String generateCopyFunctionCall(String copyRegister, String valueRegister)
         {
-            ST template = new ST("call <data_type> @__pascript__stringCopy(<data_type> <value_register>)\n");
+            ST template = new ST("<copy_register> = call <data_type> @__pascript__stringCopy(<data_type> <value_register>)\n");
+            template.add("copy_register", copyRegister);
             template.add("data_type", this.getOutputType());
             template.add("value_register", valueRegister);
-            return template.toString();
+            return template.render();
         }
     }
     
@@ -249,94 +252,52 @@ public class DataTypeVisitor extends PascriptBaseVisitor<DataType>
         }
         
         @Override
-        public String getAllocationFunctionName()
+        public String generateAllocationFunctionCall(String valueRegister)
         {
-            if (this._primitiveDataType instanceof BooleanDataType)
-            {
-                return "@__pascript__booleanArrayAllocate";
-            }
-            else if (this._primitiveDataType instanceof IntegerDataType)
-            {
-                return "@__pascript__integerArrayAllocate";
-            }
-            else if (this._primitiveDataType instanceof FloatDataType)
-            {
-                return "@__pascript__floatArrayAllocate";
-            }
-            else if (this._primitiveDataType instanceof StringDataType)
-            {
-                return "@__pascript__stringArrayAllocate";
-            }
-            return null;
+            ST template = new ST(
+                "<value_register> = call <data_type> @__pascript__<primitive_data_type_name>ArrayAllocate"
+                    + "(<dimension_data_type> <dimension_count>)\n"
+            );
+            
+            template.add("value_register", valueRegister);
+            template.add("data_type", this.getOutputType());
+            template.add("primitive_data_type_name", this.getPrimitiveDataTypeName());
+            template.add("dimension_data_type", (new IntegerDataType()).getOutputType());
+            template.add("dimension_count", Integer.toString(this.getDimensionCount()));
+            return template.render();
         }
         
         @Override
-        public String getDeallocationFunctionCall(String valueRegister)
+        public String generateDeallocationFunctionCall(String valueRegister)
         {
-            String templateString = "call void <function_name>(<data_type> <value_register>, <dimension_data_type> <dimension_count>)\n";
+            ST template = new ST(
+                "call void @__pascript__<primitive_data_type_name>ArrayDeallocate"
+                    + "(<data_type> <value_register>, <dimension_data_type> <dimension_count>)\n"
+            );
             
-            ST template = new ST(templateString);
-            
-            if (this._primitiveDataType instanceof BooleanDataType)
-            {
-                template.add("function_name", "@__pascript__booleanArrayDeallocate");
-            }
-            else if (this._primitiveDataType instanceof IntegerDataType)
-            {
-                template.add("function_name", "@__pascript__integerArrayDeallocate");
-            }
-            else if (this._primitiveDataType instanceof FloatDataType)
-            {
-                template.add("function_name", "@__pascript__floatArrayDeallocate");
-            }
-            else if (this._primitiveDataType instanceof StringDataType)
-            {
-                template.add("function_name", "@__pascript__stringArrayDeallocate");
-            }
-            else
-            {
-                return null;
-            }
-            
+            template.add("primitive_data_type_name", this.getPrimitiveDataTypeName());
             template.add("data_type", this.getOutputType());
             template.add("value_register", valueRegister);
             template.add("dimension_data_type", (new IntegerDataType()).getOutputType());
             template.add("dimension_count", Integer.toString(this.getDimensionCount()));
-
-            return template.toString();
+            return template.render();
         }
         
         @Override
-        public String getCopyFunctionCall(String valueRegister)
+        public String generateCopyFunctionCall(String copyRegister, String valueRegister)
         {
-            ST template = new ST("call <data_type> <function_name>(<data_type> <value_register>, <integer_data_type> <dimension_count>)\n");
+            ST template = new ST(
+                "<copy_register> = call <data_type> @__pascript__<primitive_data_type_name>ArrayCopy"
+                    + "(<data_type> <value_register>, <integer_data_type> <dimension_count>)\n"
+            );
             
-            if (this._primitiveDataType instanceof BooleanDataType)
-            {
-                template.add("function_name", "@__pascript__booleanArrayCopy");
-            }
-            else if (this._primitiveDataType instanceof IntegerDataType)
-            {
-                template.add("function_name", "@__pascript__integerArrayCopy");
-            }
-            else if (this._primitiveDataType instanceof FloatDataType)
-            {
-                template.add("function_name", "@__pascript__floatArrayCopy");
-            }
-            else if (this._primitiveDataType instanceof StringDataType)
-            {
-                template.add("function_name", "@__pascript__stringArrayCopy");
-            }
-            else
-            {
-                return null;
-            }
-            
+            template.add("copy_register", copyRegister);
             template.add("data_type", this.getOutputType());
+            template.add("primitive_data_type_name", this.getPrimitiveDataTypeName());
             template.add("value_register", valueRegister);
             template.add("integer_data_type", (new IntegerDataType()).getOutputType());
             template.add("dimension_count", Integer.toString(this.getDimensionCount()));
-            return template.toString();
+            return template.render();
         }
         
         @Override
@@ -363,7 +324,7 @@ public class DataTypeVisitor extends PascriptBaseVisitor<DataType>
             return hash;
         }
     }
-/* @test1
+
     @Override
     public DataType visitReturnVoidDataType(PascriptParser.ReturnVoidDataTypeContext ctx)
     {
@@ -399,5 +360,5 @@ public class DataTypeVisitor extends PascriptBaseVisitor<DataType>
     {
         PrimitiveDataType primitiveDataType = (PrimitiveDataType)this.visit(ctx.primitiveDataType());
         return new ArrayDataType(primitiveDataType, ctx.SQUARE_OPEN().size());
-    }*/
+    }
 }

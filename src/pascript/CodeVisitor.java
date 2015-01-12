@@ -63,20 +63,89 @@ public class CodeVisitor extends PascriptBaseVisitor<CodeVisitor.CodeFragment>
         return ((pt == null) ? new CodeFragment() : super.visit(pt));
     }
     
-    @Override
-    protected CodeFragment aggregateResult(CodeFragment aggregate, CodeFragment nextResult)
+    private String processExternalFunctions()
     {
-        if (aggregate == null)
+        StringBuilder resultCode = new StringBuilder();
+        String templateString = 
+            "declare <return_data_type> <function_name>(<parameter_list_code>)\n";
+        
+        for (FunctionRecord externalFunctionRecord : this._symbolTable.getExternalFunctions())
         {
-            return nextResult;
+            StringBuilder parameterListCode = new StringBuilder();
+            
+            boolean firstParameter = true;
+            for (DataType parameterDataType : externalFunctionRecord.getParameterDataTypes())
+            {
+                if (!firstParameter)
+                {
+                    parameterListCode.append(", ");
+                }
+                else
+                {
+                    firstParameter = false;
+                }
+                parameterListCode.append(parameterDataType.getOutputType());
+            }
+                        
+            ST template = new ST(templateString);
+            template.add("return_data_type", externalFunctionRecord.getReturnDataType().getOutputType());
+            template.add("function_name", externalFunctionRecord.getOutputFunctionName());
+            template.add("parameter_list_code", parameterListCode.toString());
+            
+            resultCode.append(template.render());
         }
-        return aggregate;
+        
+        return resultCode.toString();
+    }
+    
+    private String processStringConstants()
+    {
+        StringBuilder resultCode = new StringBuilder();
+        String templateString =
+            "<memory_register> = constant [<length> x i8] c\"<value>\\00\"\n";
+        
+        for (Map.Entry<String, String> stringConstant : this._symbolTable.getStringConstants().entrySet())
+        {
+            String value = stringConstant.getValue();
+            
+            ST template = new ST(templateString);
+            template.add("memory_register", stringConstant.getKey());
+            template.add("length", Integer.toString(value.length() + 1));
+            template.add("value", value);
+            
+            resultCode.append(template.render());
+        }
+        
+        return resultCode.toString();
+    }
+    
+    private String processGlobalVariableInitializers()
+    {
+        StringBuilder resultCode = new StringBuilder();
+        String templateString = 
+            "<value_code>" +
+            "store <data_type> <value_register>, <data_type>* <variable_register>\n";
+        
+        for (Map.Entry<String, ExpressionCodeFragment> globalVariableInitializer : this._symbolTable.getGlobalVariableInitializers().entrySet())
+        {
+            ExpressionCodeFragment expressionCodeFragment = globalVariableInitializer.getValue();
+            
+            ST template = new ST(templateString);
+            template.add("value_code", expressionCodeFragment.toString());
+            template.add("value_register", expressionCodeFragment.getValueRegister());
+            template.add("data_type", expressionCodeFragment.getDataType().getOutputType());
+            template.add("variable_register", globalVariableInitializer.getKey());
+            
+            resultCode.append(template.render());
+        }
+        
+        return resultCode.toString();
     }
     
     @Override
     public CodeFragment visitModule(PascriptParser.ModuleContext ctx)
     {
-        CodeFragment externalFunctionsCodeFragment = this.visit(ctx.externalSection());
+        this.visit(ctx.externalSection());
         CodeFragment globalVariablesCodeFragment = this.visit(ctx.variableSection());
         CodeFragment localFunctionsCodeFragment = this.visit(ctx.functionSection());
         CodeFragment mainCodeFragment = this.visit(ctx.mainSection());
@@ -86,80 +155,19 @@ public class CodeVisitor extends PascriptBaseVisitor<CodeVisitor.CodeFragment>
             "<global_variables_code>\n" +
             "<string_constants_code>\n" +
             "<local_functions_code>\n" +
-            "define i32 @main()\n" +
-            "{\n" +
-            "start:\n" +
+            "define i32 @main() {\n" +
             "<global_variable_initializers_code>" +
-            "<main_code>" +
+            "<main_body_code>" +
             "ret i32 0\n" +
             "}"
         );
         
-        String externalFunctionCodeTemplateString = 
-            "declare <return_data_type> <function_name>(<parameter_data_types>)\n";
-        
-        for (FunctionRecord externalFunctionRecord : this._symbolTable.getExternalFunctions())
-        {
-            StringBuilder parameterDataTypesCode = new StringBuilder();
-            boolean firstParameter = true;
-            for (DataType parameterDataType : externalFunctionRecord.getParameterDataTypes())
-            {
-                if (!firstParameter)
-                {
-                    parameterDataTypesCode.append(", ");
-                }
-                else
-                {
-                    firstParameter = false;
-                }
-                parameterDataTypesCode.append(parameterDataType.getOutputType());
-            }
-                        
-            ST externalFunctionCodeTemplate = new ST(externalFunctionCodeTemplateString);
-            externalFunctionCodeTemplate.add("return_data_type", externalFunctionRecord.getReturnDataType().getOutputType());
-            externalFunctionCodeTemplate.add("function_name", externalFunctionRecord.getOutputFunctionName());
-            externalFunctionCodeTemplate.add("parameter_data_types", parameterDataTypesCode.toString());
-            externalFunctionsCodeFragment.addCode(externalFunctionCodeTemplate.render());
-        }
-        
-        StringBuilder stringConstantsCode = new StringBuilder();
-        String stringConstantCodeTemplateString =
-            "<memory_register> = constant [<length> x i8] c\"<value>\\00\"\n";
-        for (Map.Entry<String, String> stringConstant : this._symbolTable.getStringConstants().entrySet())
-        {
-            String value = stringConstant.getValue();
-            
-            ST stringConstantCodeTemplate = new ST(stringConstantCodeTemplateString);
-            stringConstantCodeTemplate.add("memory_register", stringConstant.getKey());
-            stringConstantCodeTemplate.add("length", Integer.toString(value.length() + 1));
-            stringConstantCodeTemplate.add("value", value);
-            
-            stringConstantsCode.append(stringConstantCodeTemplate.render());
-        }
-        
-        StringBuilder globalVarableInitializersCode = new StringBuilder();
-        String globalVarableInitializerCodeTemplateString = 
-            "<value_code>" +
-            "store <data_type> <value_register>, <data_type>* <variable_register>\n";
-        for (Map.Entry<String, ExpressionCodeFragment> globalVarableInitializer : this._symbolTable.getGlobalVarableInitializers().entrySet())
-        {
-            ExpressionCodeFragment expressionCodeFragment = globalVarableInitializer.getValue();
-            
-            ST globalVarableInitializerCodeTemplate = new ST(globalVarableInitializerCodeTemplateString);
-            globalVarableInitializerCodeTemplate.add("value_code", expressionCodeFragment.toString());
-            globalVarableInitializerCodeTemplate.add("value_register", expressionCodeFragment.getValueRegister());
-            globalVarableInitializerCodeTemplate.add("data_type", expressionCodeFragment.getDataType().getOutputType());
-            globalVarableInitializerCodeTemplate.add("variable_register", globalVarableInitializer.getKey());
-            
-            globalVarableInitializersCode.append(globalVarableInitializerCodeTemplate.render());
-        }
-        
-        template.add("external_functions_code", externalFunctionsCodeFragment.toString());
+        template.add("external_functions_code", this.processExternalFunctions());
         template.add("global_variables_code", globalVariablesCodeFragment.toString());
-        template.add("string_constants_code", stringConstantsCode.toString());
+        template.add("string_constants_code", this.processStringConstants());
         template.add("local_functions_code", localFunctionsCodeFragment.toString());
-        template.add("global_variable_initializers_code", globalVarableInitializersCode.toString());
-        template.add("main_code", mainCodeFragment.toString());
+        template.add("global_variable_initializers_code", this.processGlobalVariableInitializers());
+        template.add("main_body_code", mainCodeFragment.toString());
         
         return new CodeFragment(template.render());
     }
@@ -188,8 +196,19 @@ public class CodeVisitor extends PascriptBaseVisitor<CodeVisitor.CodeFragment>
         
         return new CodeFragment();
     }
+    
+    @Override
+    public CodeFragment visitVariableSection(PascriptParser.VariableSectionContext ctx)
+    {
+        CodeFragment codeFragment = new CodeFragment();
+        for (PascriptParser.GlobalVariableDeclarationContext globalVariableDeclarationCtx : ctx.globalVariableDeclaration())
+        {
+            codeFragment.addCode(this.visit(globalVariableDeclarationCtx).toString());
+        }
+        return codeFragment;
+    }
 
-    public CodeFragment processGlobalVariableDeclaration(Token nameToken, ValueDataType dataType, ExpressionCodeFragment expressionCodeFragment)
+    private CodeFragment processGlobalVariableDeclaration(Token nameToken, ValueDataType dataType, ExpressionCodeFragment expressionCodeFragment)
     {
         VariableRecord variableRecord = this._symbolTable.addGlobalVariable(nameToken.getText(), dataType);
         if (variableRecord == null)
@@ -200,12 +219,13 @@ public class CodeVisitor extends PascriptBaseVisitor<CodeVisitor.CodeFragment>
         
         this._symbolTable.addGlobalVariableInitializer(variableRecord.getMemoryRegister(), expressionCodeFragment);
         
-        ST globalVariableCodeTemplate = new ST("<memory_register> = global <data_type> <value>\n");
-        globalVariableCodeTemplate.add("memory_register", variableRecord.getMemoryRegister());
-        globalVariableCodeTemplate.add("data_type", dataType.getOutputType());
-        globalVariableCodeTemplate.add("value", dataType.getDefaultOutputValue());
-        
-        return new CodeFragment(globalVariableCodeTemplate.render());
+        ST template = new ST(
+            "<memory_register> = global <data_type> <default_value>\n"
+        );
+        template.add("memory_register", variableRecord.getMemoryRegister());
+        template.add("data_type", dataType.getOutputType());
+        template.add("default_value", dataType.getDefaultOutputValue());
+        return new CodeFragment(template.render());
     }
 
     @Override
@@ -213,12 +233,6 @@ public class CodeVisitor extends PascriptBaseVisitor<CodeVisitor.CodeFragment>
     {
         ValueDataType valueDataType = (ValueDataType)this._dataTypeVisitor.visit(ctx.dataType());
         ExpressionCodeFragment expressionCodeFragment = this._expressionCodeVisitor.getDefaultExpression(valueDataType);
-        if (expressionCodeFragment == null)
-        {
-            Compiler.printCompilationError("An internal error occured while parsing the global variable's data type", ctx.dataType().getStart());
-            System.exit(-2);
-        }
-        
         return this.processGlobalVariableDeclaration(ctx.IDENTIFIER().getSymbol(), valueDataType, expressionCodeFragment);
     }
     
@@ -236,23 +250,124 @@ public class CodeVisitor extends PascriptBaseVisitor<CodeVisitor.CodeFragment>
         return this.processGlobalVariableDeclaration(ctx.IDENTIFIER().getSymbol(), valueDataType, expressionCodeFragment);
     }
 
+    private String processVariableDeallocation(ArrayList<VariableRecord> dynamicVariableRecords)
+    {
+        StringBuilder resultCode = new StringBuilder();
+        String templateString =
+            "<value_register> = load <data_type>* <memory_register>\n" +
+            "<value_deallocation_code>";
+        
+        for (VariableRecord variableRecord : dynamicVariableRecords)
+        {
+            DynamicDataType dynamicDataType = (DynamicDataType)variableRecord.getDataType();
+            String valueRegister = this._symbolTable.generateNewRegisterName();
+            
+            ST template = new ST(templateString);
+            template.add("value_register", valueRegister);
+            template.add("data_type", dynamicDataType.getOutputType());
+            template.add("memory_register", variableRecord.getMemoryRegister());
+            template.add("value_deallocation_code", dynamicDataType.generateDeallocationFunctionCall(valueRegister));
+            
+            resultCode.append(template.render());
+        }
+        
+        return resultCode.toString();
+    }
+    
+    private String processFunctionDefinition(FunctionRecord functionRecord, ArrayList<String> parameterNames, 
+        PascriptParser.FunctionDeclarationContext functionDeclarationCtx, PascriptParser.FunctionDefinitionContext functionDefinitionCtx)
+    {
+        ST template = new ST(
+            "define <return_data_type> <function_name>(<named_parameter_list_code>) {\n" +
+            "<argument_to_variable_code>" +
+            "<function_body_code>" +
+            "<variable_deallocation_code>" +
+            "<return_value_code>" +
+            "ret <return_value>\n" +
+            "}\n"
+        );
+        
+        DataType returnDataType = functionRecord.getReturnDataType();
+        ArrayList<DataType> parameterDataTypes = functionRecord.getParameterDataTypes();
+        
+        this._symbolTable.enterFunction(returnDataType, false);
+
+        StringBuilder namedParameterListCode = new StringBuilder();
+        
+        StringBuilder argumentToVariableCode = new StringBuilder();
+        String argumentToVariableTemplateString =
+            "<memory_register> = alloca <data_type>\n" +
+            "<copy_allocation_code>" +
+            "store <data_type> <value_register>, <data_type>* <memory_register>\n";
+
+        for (int i = 0; i < parameterDataTypes.size(); i++)
+        {
+            DataType parameterDataType = parameterDataTypes.get(i);
+            String parameterRegister = this._symbolTable.generateNewRegisterName();
+            
+            VariableRecord parameterVariableRecord = this._symbolTable.addLocalVariable(parameterNames.get(i), parameterDataType);
+            if (parameterVariableRecord == null)
+            {
+                Token identifierToken = functionDeclarationCtx.namedParameterList().IDENTIFIER(i).getSymbol();
+                Compiler.printCompilationError("A parameter with the same name already exists", identifierToken);
+                System.exit(-1);
+            }
+            
+            if (i > 0)
+            {
+                namedParameterListCode.append(", ");
+            }
+            namedParameterListCode.append(parameterDataType.getOutputType()).append(" ").append(parameterRegister);
+
+            ST argumentToVariableTemplate = new ST(argumentToVariableTemplateString);
+            argumentToVariableTemplate.add("memory_register", parameterVariableRecord.getMemoryRegister());
+            argumentToVariableTemplate.add("data_type", parameterDataType.getOutputType());
+
+            if (parameterDataType instanceof DynamicDataType)
+            {
+                String valueRegister = this._symbolTable.generateNewRegisterName();
+                argumentToVariableTemplate.add("copy_allocation_code",
+                    ((DynamicDataType)parameterDataType).generateCopyFunctionCall(valueRegister, parameterRegister)
+                );
+                argumentToVariableTemplate.add("value_register", valueRegister);
+            }
+            else
+            {
+                argumentToVariableTemplate.add("copy_allocation_code", "");
+                argumentToVariableTemplate.add("value_register", parameterRegister);
+            }
+
+            argumentToVariableCode.append(argumentToVariableTemplate.render());
+        }
+        
+        template.add("return_data_type", returnDataType.getOutputType());
+        template.add("function_name", functionRecord.getOutputFunctionName());
+        template.add("named_parameter_list_code", namedParameterListCode.toString());
+        
+        template.add("argument_to_variable_code", argumentToVariableCode.toString());
+        template.add("function_body_code", this.visit(functionDefinitionCtx.blockStatement()));
+        template.add("variable_deallocation_code", 
+            this.processVariableDeallocation(this._symbolTable.getLocalDynamicVariableRecords()));
+
+        if (returnDataType.equals(new VoidDataType()))
+        {
+            template.add("return_value_code", "");
+            template.add("return_value", returnDataType.getOutputType());
+        }
+        else
+        {
+            ExpressionCodeFragment expressionCodeFragment = this._expressionCodeVisitor.getDefaultExpression((ValueDataType)returnDataType);
+            template.add("return_value_code", expressionCodeFragment.toString());
+            template.add("return_value", returnDataType.getOutputType() + " " + expressionCodeFragment.getValueRegister());
+        }
+        return template.render();
+    }
+    
     @Override
     public CodeFragment visitFunctionSection(PascriptParser.FunctionSectionContext ctx)
     {
-        String functionHeaderTemplateString = 
-            "define <return_data_type> <function_name>(<parameter_list>)\n" +
-            "{\n" +
-            "<start_label>:\n";
-        String functionFooterTemplateString =
-            "<return_value_code>" +
-            "<dynamic_variable_deallocation_code>" +
-            "ret <return_data_type_value>\n" +
-            "}\n";
-        
-        ArrayList<String> functionHeaders = new ArrayList<>();
         ArrayList<FunctionRecord> functionRecords = new ArrayList<>();
-        ArrayList<ArrayList<String>> functionParameterNames = new ArrayList<>();
-        ArrayList<ArrayList<String>> functionParameterRegisters = new ArrayList<>();
+        ArrayList<ArrayList<String>> functionsParameterNames = new ArrayList<>();
         
         for (PascriptParser.FunctionDeclarationContext functionDeclarationCtx : ctx.functionDeclaration())
         {
@@ -260,29 +375,12 @@ public class CodeVisitor extends PascriptBaseVisitor<CodeVisitor.CodeFragment>
             DataType returnDataType = this._dataTypeVisitor.visit(functionDeclarationCtx.returnDataType());
             ArrayList<DataType> parameterDataTypes = new ArrayList<>();
             ArrayList<String> parameterNames = new ArrayList<>();
-            ArrayList<String> parameterRegisters = new ArrayList<>();
-            
-            ST functionHeaderTemplate = new ST(functionHeaderTemplateString);
-            StringBuilder parameterListString = new StringBuilder();
-            
+
             PascriptParser.NamedParameterListContext parameterListCtx = functionDeclarationCtx.namedParameterList();
-            int parameterCount = parameterListCtx.dataType().size();
-            for (int iParameter = 0; iParameter < parameterCount; iParameter++)
+            for (int i = 0; i < parameterListCtx.dataType().size(); i++)
             {
-                if (iParameter > 0)
-                {
-                    parameterListString.append(", ");
-                }
-                
-                DataType parameterDataType = this._dataTypeVisitor.visit(parameterListCtx.dataType(iParameter));
-                String parameterName = parameterListCtx.IDENTIFIER(iParameter).toString();
-                String parameterRegister = this._symbolTable.generateNewRegisterName();
-                
-                parameterDataTypes.add(parameterDataType);
-                parameterNames.add(parameterName);
-                parameterRegisters.add(parameterRegister);
-                
-                parameterListString.append(parameterDataType.getOutputType()).append(" ").append(parameterRegister);
+                parameterDataTypes.add(this._dataTypeVisitor.visit(parameterListCtx.dataType(i)));
+                parameterNames.add(parameterListCtx.IDENTIFIER(i).toString());
             }
             
             FunctionRecord functionRecord = this._symbolTable.addLocalFunction(functionName, returnDataType, parameterDataTypes);
@@ -291,130 +389,19 @@ public class CodeVisitor extends PascriptBaseVisitor<CodeVisitor.CodeFragment>
                 Compiler.printCompilationError("A function with the same name already exists", functionDeclarationCtx.functionName);
                 System.exit(-1);
             }
-            
-            functionHeaderTemplate.add("return_data_type", returnDataType.getOutputType());
-            functionHeaderTemplate.add("function_name", functionName);
-            functionHeaderTemplate.add("parameter_list", parameterListString.toString());
-            functionHeaderTemplate.add("start_label", this._symbolTable.generateNewLabelName());
-            
-            functionHeaders.add(functionHeaderTemplate.render());
+           
             functionRecords.add(functionRecord);
-            functionParameterNames.add(parameterNames);
-            functionParameterRegisters.add(parameterRegisters);
+            functionsParameterNames.add(parameterNames);
         }
         
         CodeFragment codeFragment = new CodeFragment();
-        
-        String argumentToVariableTemplateString =
-            "<variable_register> = alloca <data_type>\n" +
-            "<dynammic_copy_allocation_code>" +
-            "store <data_type> <parameter_register>, <data_type>* <variable_register>\n";
-        String dynamicCopyAllocationTemplateString =
-            "<value_register> = <copy_function_call>";
-        String loadValueFromVariableTemplateString =
-            "<value_register> = load <data_type>* <memory_register>\n";
-        
-        int functionCount = functionHeaders.size();
-        for (int iFunction = 0; iFunction < functionCount; iFunction++)
+        for (int i = 0; i < functionRecords.size(); i++)
         {
-            FunctionRecord functionRecord = functionRecords.get(iFunction);
-            DataType functionReturnDataType = functionRecord.getReturnDataType();
-            this._symbolTable.enterFunction(functionReturnDataType, false);
-            
-            ArrayList<DataType> parameterDataTypes = functionRecord.getParameterDataTypes();
-            ArrayList<String> parameterNames = functionParameterNames.get(iFunction);
-            ArrayList<String> parameterRegisters = functionParameterRegisters.get(iFunction);
-            
-            StringBuilder argumentAllocationCodeString = new StringBuilder();
-            
-            int parameterCount = parameterDataTypes.size();
-            for (int iParameter = 0; iParameter < parameterCount; iParameter++)
-            {
-                DataType parameterDataType = parameterDataTypes.get(iParameter);
-                VariableRecord parameterVariableRecord = this._symbolTable
-                    .addLocalVariable(parameterNames.get(iParameter), parameterDataType);
-                
-                if (parameterVariableRecord == null)
-                {
-                    Token identifierToken = ctx.functionDeclaration(iFunction).namedParameterList().IDENTIFIER(iParameter).getSymbol();
-                    Compiler.printCompilationError("A parameter with the same name already exists", identifierToken);
-                    System.exit(-1);
-                }
-                
-                ST argumentToVariableTemplate = new ST(argumentToVariableTemplateString);
-                argumentToVariableTemplate.add("variable_register", parameterVariableRecord.getMemoryRegister());
-                argumentToVariableTemplate.add("data_type", parameterDataType.getOutputType());
-                
-                if (parameterDataType instanceof DynamicDataType)
-                {
-                    DynamicDataType parameterDynamicDataType = (DynamicDataType)parameterDataType;
-                    String valueRegister = this._symbolTable.generateNewRegisterName();
-                    
-                    ST dynamicCopyAllocationTemplate = new ST(dynamicCopyAllocationTemplateString);
-                    dynamicCopyAllocationTemplate.add("value_register", valueRegister);
-                    dynamicCopyAllocationTemplate.add("data_type", parameterDataType.getOutputType());
-                    dynamicCopyAllocationTemplate.add("copy_function_name", parameterDynamicDataType.getCopyFunctionCall(parameterRegisters.get(iParameter)));
-                    
-                    argumentToVariableTemplate.add("dynammic_copy_allocation_code", dynamicCopyAllocationTemplate.render());
-                    argumentToVariableTemplate.add("parameter_register", valueRegister);
-                }
-                else
-                {
-                    argumentToVariableTemplate.add("dynammic_copy_allocation_code", "");
-                    argumentToVariableTemplate.add("parameter_register", parameterRegisters.get(iParameter));
-                }
-                
-                argumentAllocationCodeString.append(argumentToVariableTemplate.render());
-            }
-            
-            CodeFragment functionDefinitionCodeFragment = this.visit(ctx.functionDefinition(iFunction).blockStatement());
-            
-            ST functionFooterTemplate = new ST(functionFooterTemplateString);
-            
-            StringBuilder dynamicVariableDeallocationCode = new StringBuilder();
-            for (VariableRecord variableRecord : this._symbolTable.getFunctionDynamicVariableRecords())
-            {
-                String valueRegister = this._symbolTable.generateNewRegisterName();
-                
-                ST loadValueFromVariableTemplate = new ST(loadValueFromVariableTemplateString);
-                loadValueFromVariableTemplate.add("value_register", valueRegister);
-                loadValueFromVariableTemplate.add("data_type", variableRecord.getDataType().getOutputType());
-                loadValueFromVariableTemplate.add("memory_register", variableRecord.getMemoryRegister());
-                dynamicVariableDeallocationCode.append(loadValueFromVariableTemplate.render());
-                
-                DynamicDataType dynamicDataType = (DynamicDataType)variableRecord.getDataType();
-                dynamicVariableDeallocationCode.append(dynamicDataType.getDeallocationFunctionCall(valueRegister));
-            }
-            functionFooterTemplate.add("dynamic_variable_deallocation_code", dynamicVariableDeallocationCode.toString());
-            
-            VoidDataType voidDataType = new VoidDataType();
-            if (functionReturnDataType.equals(voidDataType))
-            {
-                functionFooterTemplate.add("return_value_code", "");
-                functionFooterTemplate.add("return_data_type_value", voidDataType.getOutputType());
-            }
-            else
-            {
-                ExpressionCodeFragment expressionCodeFragment = this._expressionCodeVisitor.getDefaultExpression((ValueDataType)functionReturnDataType);
-                if (expressionCodeFragment == null)
-                {
-                    Compiler.printCompilationError("An internal error occured while parsing the function's return data type",
-                        ctx.functionDeclaration(iFunction).returnDataType().getStart());
-                    System.exit(-2);
-                }
-                
-                functionFooterTemplate.add("return_value_code", expressionCodeFragment.toString());
-                functionFooterTemplate.add("return_data_type_value",
-                    functionReturnDataType.getOutputType() + " " + expressionCodeFragment.getValueRegister());
-            }
-            
-            codeFragment
-                .addCode(functionHeaders.get(iFunction))
-                .addCode(argumentAllocationCodeString.toString())
-                .addCode(functionDefinitionCodeFragment.toString())
-                .addCode(functionFooterTemplate.toString());
+            codeFragment.addCode(this.processFunctionDefinition(
+                functionRecords.get(i), functionsParameterNames.get(i),
+                ctx.functionDeclaration(i), ctx.functionDefinition(i)
+            ));
         }
-        
         return codeFragment;
     }
 
@@ -428,36 +415,8 @@ public class CodeVisitor extends PascriptBaseVisitor<CodeVisitor.CodeFragment>
         {
             codeFragment.addCode(this.visit(statement).toString());
         }
-        
-        String loadValueFromVariableTemplateString =
-            "<value_register> = load <data_type>* <memory_register>\n";
-        
-        for (VariableRecord variableRecord : this._symbolTable.getFunctionDynamicVariableRecords())
-        {
-            String valueRegister = this._symbolTable.generateNewRegisterName();
-            
-            ST loadValueFromVariableTemplate = new ST(loadValueFromVariableTemplateString);
-            loadValueFromVariableTemplate.add("value_register", valueRegister);
-            loadValueFromVariableTemplate.add("data_type", variableRecord.getDataType().getOutputType());
-            loadValueFromVariableTemplate.add("memory_register", variableRecord.getMemoryRegister());
-            codeFragment.addCode(loadValueFromVariableTemplate.render());
-            
-            DynamicDataType dynamicDataType = (DynamicDataType)variableRecord.getDataType();
-            codeFragment.addCode(dynamicDataType.getDeallocationFunctionCall(valueRegister));
-        }
-        for (VariableRecord globalVariableRecord : this._symbolTable.getGlobalDynamicVariableRecords())
-        {
-            String valueRegister = this._symbolTable.generateNewRegisterName();
-            
-            ST loadValueFromVariableTemplate = new ST(loadValueFromVariableTemplateString);
-            loadValueFromVariableTemplate.add("value_register", valueRegister);
-            loadValueFromVariableTemplate.add("data_type", globalVariableRecord.getDataType().getOutputType());
-            loadValueFromVariableTemplate.add("memory_register", globalVariableRecord.getMemoryRegister());
-            codeFragment.addCode(loadValueFromVariableTemplate.render());
-            
-            DynamicDataType dynamicDataType = (DynamicDataType)globalVariableRecord.getDataType();
-            codeFragment.addCode(dynamicDataType.getDeallocationFunctionCall(valueRegister));
-        }
+        codeFragment.addCode(this.processVariableDeallocation(this._symbolTable.getLocalDynamicVariableRecords()));
+        codeFragment.addCode(this.processVariableDeallocation(this._symbolTable.getGlobalDynamicVariableRecords()));
         
         return codeFragment;
     }
@@ -472,23 +431,7 @@ public class CodeVisitor extends PascriptBaseVisitor<CodeVisitor.CodeFragment>
         {
             codeFragment.addCode(this.visit(statement).toString());
         }
-        
-        String loadValueFromVariableTemplateString =
-            "<value_register> = load <data_type>* <memory_register>\n";
-        
-        for (VariableRecord variableRecord : this._symbolTable.getBlockDynamicVariableRecords())
-        {
-            String valueRegister = this._symbolTable.generateNewRegisterName();
-            
-            ST loadValueFromVariableTemplate = new ST(loadValueFromVariableTemplateString);
-            loadValueFromVariableTemplate.add("value_register", valueRegister);
-            loadValueFromVariableTemplate.add("data_type", variableRecord.getDataType().getOutputType());
-            loadValueFromVariableTemplate.add("memory_register", variableRecord.getMemoryRegister());
-            codeFragment.addCode(loadValueFromVariableTemplate.render());
-            
-            DynamicDataType dynamicDataType = (DynamicDataType)variableRecord.getDataType();
-            codeFragment.addCode(dynamicDataType.getDeallocationFunctionCall(valueRegister));
-        }
+        codeFragment.addCode(this.processVariableDeallocation(this._symbolTable.getBlockDynamicVariableRecords()));
         
         this._symbolTable.exitBlock();
         return codeFragment;
@@ -511,8 +454,9 @@ public class CodeVisitor extends PascriptBaseVisitor<CodeVisitor.CodeFragment>
         String templateCommonSuffix = 
             "<end_label>:\n";
         
+        BooleanDataType booleanDataType = new BooleanDataType();
         ExpressionCodeFragment conditionCodeFragment = this._expressionCodeVisitor.visit(ctx.condition);
-        if (!conditionCodeFragment.getDataType().equals(new BooleanDataType()))
+        if (!conditionCodeFragment.getDataType().equals(booleanDataType))
         {
             Compiler.printCompilationError("The condition expression must evaluate to a boolean data type", ctx.condition.getStart());
             System.exit(-1);
@@ -537,7 +481,7 @@ public class CodeVisitor extends PascriptBaseVisitor<CodeVisitor.CodeFragment>
         }
         
         template.add("break_register", this._symbolTable.generateNewRegisterName());
-        template.add("boolean_data_type", (new BooleanDataType()).getOutputType());
+        template.add("boolean_data_type", booleanDataType.getOutputType());
         template.add("condition_code", conditionCodeFragment.toString());
         template.add("condition_register", conditionCodeFragment.getValueRegister());
         template.add("true_label", this._symbolTable.generateNewLabelName());
@@ -561,8 +505,9 @@ public class CodeVisitor extends PascriptBaseVisitor<CodeVisitor.CodeFragment>
             "<end_label>:\n"
         );
         
+        BooleanDataType booleanDataType = new BooleanDataType();
         ExpressionCodeFragment conditionCodeFragment = this._expressionCodeVisitor.visit(ctx.condition);
-        if (!conditionCodeFragment.getDataType().equals(new BooleanDataType()))
+        if (!conditionCodeFragment.getDataType().equals(booleanDataType))
         {
             Compiler.printCompilationError("The condition expression must evaluate to a boolean data type", ctx.condition.getStart());
             System.exit(-1);
@@ -570,7 +515,7 @@ public class CodeVisitor extends PascriptBaseVisitor<CodeVisitor.CodeFragment>
         
         template.add("condition_label", this._symbolTable.generateNewLabelName());
         template.add("break_register", this._symbolTable.generateNewRegisterName());
-        template.add("boolean_data_type", (new BooleanDataType()).getOutputType());
+        template.add("boolean_data_type", booleanDataType.getOutputType());
         template.add("condition_code", conditionCodeFragment.toString());
         template.add("condition_register", conditionCodeFragment.getValueRegister());
         template.add("body_label", this._symbolTable.generateNewLabelName());
@@ -595,8 +540,9 @@ public class CodeVisitor extends PascriptBaseVisitor<CodeVisitor.CodeFragment>
             "<end_label>:\n"
         );
         
+        BooleanDataType booleanDataType = new BooleanDataType();
         ExpressionCodeFragment conditionCodeFragment = this._expressionCodeVisitor.visit(ctx.condition);
-        if (!conditionCodeFragment.getDataType().equals(new BooleanDataType()))
+        if (!conditionCodeFragment.getDataType().equals(booleanDataType))
         {
             Compiler.printCompilationError("The condition expression must evaluate to a boolean data type", ctx.condition.getStart());
             System.exit(-1);
@@ -604,7 +550,7 @@ public class CodeVisitor extends PascriptBaseVisitor<CodeVisitor.CodeFragment>
         
         template.add("condition_label", this._symbolTable.generateNewLabelName());
         template.add("break_register", this._symbolTable.generateNewRegisterName());
-        template.add("boolean_data_type", (new BooleanDataType()).getOutputType());
+        template.add("boolean_data_type", booleanDataType.getOutputType());
         template.add("condition_code", conditionCodeFragment.toString());
         template.add("condition_register", conditionCodeFragment.getValueRegister());
         template.add("body_label", this._symbolTable.generateNewLabelName());
@@ -627,13 +573,14 @@ public class CodeVisitor extends PascriptBaseVisitor<CodeVisitor.CodeFragment>
             "<body_label>:\n" +
             "<body_code>" +
             "<step_code>" +
-            "<step_dynamic_value_deallocation_code>" +
+            "<step_value_deallocation_code>" +
             "br label %<condition_label>\n" +
             "<end_label>:\n"
         );
         
+        BooleanDataType booleanDataType = new BooleanDataType();
         ExpressionCodeFragment conditionCodeFragment = this._expressionCodeVisitor.visit(ctx.condition);
-        if (!conditionCodeFragment.getDataType().equals(new BooleanDataType()))
+        if (!conditionCodeFragment.getDataType().equals(booleanDataType))
         {
             Compiler.printCompilationError("The condition expression must evaluate to a boolean data type", ctx.condition.getStart());
             System.exit(-1);
@@ -643,9 +590,9 @@ public class CodeVisitor extends PascriptBaseVisitor<CodeVisitor.CodeFragment>
         
         template.add("initializer_code", this.visit(ctx.initializer).toString());
         template.add("condition_label", this._symbolTable.generateNewLabelName());
-        template.add("break_register", this._symbolTable.generateNewRegisterName());
-        template.add("boolean_data_type", (new BooleanDataType()).getOutputType());
         template.add("condition_code", conditionCodeFragment.toString());
+        template.add("break_register", this._symbolTable.generateNewRegisterName());
+        template.add("boolean_data_type", booleanDataType.getOutputType());
         template.add("condition_register", conditionCodeFragment.getValueRegister());
         template.add("body_label", this._symbolTable.generateNewLabelName());
         template.add("body_code", this.visit(ctx.statement()).toString());
@@ -655,19 +602,25 @@ public class CodeVisitor extends PascriptBaseVisitor<CodeVisitor.CodeFragment>
         DataType stepDataType = stepCodeFragment.getDataType();
         if (stepDataType instanceof DynamicDataType)
         {
-            DynamicDataType stepDynamicDataType = (DynamicDataType)stepDataType;
-            template.add("step_dynamic_value_deallocation_code",
-                stepDynamicDataType.getDeallocationFunctionCall(stepCodeFragment.getValueRegister()));
+            template.add("step_value_deallocation_code",
+                ((DynamicDataType)stepDataType).generateDeallocationFunctionCall(stepCodeFragment.getValueRegister())
+            );
         }
         else
         {
-            template.add("step_dynamic_value_deallocation_code", "");
+            template.add("step_value_deallocation_code", "");
         }
                 
         return new CodeFragment(template.render());
     }
     
-    public CodeFragment processVariableDeclaration(Token nameToken, ValueDataType dataType, ExpressionCodeFragment expressionCodeFragment)
+    @Override
+    public CodeFragment visitSimpleStatement(PascriptParser.SimpleStatementContext ctx)
+    {
+        return this.visit(ctx.basicStatement());
+    }
+    
+    private CodeFragment processVariableDeclaration(Token nameToken, ValueDataType dataType, ExpressionCodeFragment expressionCodeFragment)
     {
         VariableRecord variableRecord = this._symbolTable.addLocalVariable(nameToken.getText(), dataType);
         if (variableRecord == null)
@@ -676,33 +629,23 @@ public class CodeVisitor extends PascriptBaseVisitor<CodeVisitor.CodeFragment>
             System.exit(-1);
         }
         
-        this._symbolTable.addGlobalVariableInitializer(variableRecord.getMemoryRegister(), expressionCodeFragment);
-        
-        ST localVariableCodeTemplate = new ST(
+        ST template = new ST(
             "<value_code>" +
-            "<variable_register> = alloca <data_type>\n" +
-            "store <data_type> <value_register>, <data_type>* <variable_register>\n"
+            "<memory_register> = alloca <data_type>\n" +
+            "store <data_type> <value_register>, <data_type>* <memory_register>\n"
         );
-        
-        localVariableCodeTemplate.add("value_code", expressionCodeFragment.toString());
-        localVariableCodeTemplate.add("variable_register", variableRecord.getMemoryRegister());
-        localVariableCodeTemplate.add("data_type", dataType.getOutputType());
-        localVariableCodeTemplate.add("value_register", expressionCodeFragment.getValueRegister());
-        
-        return new CodeFragment(localVariableCodeTemplate.render());
+        template.add("value_code", expressionCodeFragment.toString());
+        template.add("memory_register", variableRecord.getMemoryRegister());
+        template.add("data_type", dataType.getOutputType());
+        template.add("value_register", expressionCodeFragment.getValueRegister());
+        return new CodeFragment(template.render());
     }
 
     @Override
     public CodeFragment visitSimpleDeclaration(PascriptParser.SimpleDeclarationContext ctx)
     {
         ValueDataType variableDataType = (ValueDataType)this._dataTypeVisitor.visit(ctx.dataType());
-        ExpressionCodeFragment expressionCodeFragment = this._expressionCodeVisitor.getDefaultExpression(variableDataType);
-        if (expressionCodeFragment == null)
-        {
-            Compiler.printCompilationError("An internal error occured while parsing the variable's data type", ctx.dataType().getStart());
-            System.exit(-2);
-        }
-                
+        ExpressionCodeFragment expressionCodeFragment = this._expressionCodeVisitor.getDefaultExpression(variableDataType);                
         return this.processVariableDeclaration(ctx.IDENTIFIER().getSymbol(), variableDataType, expressionCodeFragment);
     }
 
@@ -710,7 +653,6 @@ public class CodeVisitor extends PascriptBaseVisitor<CodeVisitor.CodeFragment>
     public CodeFragment visitAssignDeclaration(PascriptParser.AssignDeclarationContext ctx)
     {
         ValueDataType variableDataType = (ValueDataType)this._dataTypeVisitor.visit(ctx.dataType());
-        
         ExpressionCodeFragment expressionCodeFragment = this._expressionCodeVisitor.visit(ctx.expression());
         if (!variableDataType.equals(expressionCodeFragment.getDataType()))
         {
@@ -728,26 +670,28 @@ public class CodeVisitor extends PascriptBaseVisitor<CodeVisitor.CodeFragment>
         DataType dataType = expressionCodeFragment.getDataType();
         if (!(dataType instanceof PrimitiveDataType))
         {
-            Compiler.printCompilationError("Can only print an expression that evaluates to a primitive data types", ctx.expression().getStart());
+            Compiler.printCompilationError("Can only print an expression that evaluates to a primitive data type", ctx.expression().getStart());
             System.exit(-1);
         }
         PrimitiveDataType primitiveDataType = (PrimitiveDataType)dataType;
         
         ST template = new ST(
             "<value_code>" + 
-            "call void @<function_name>(<data_type> <value_register>)\n" +
+            "call void <function_name>(<data_type> <value_register>)\n" +
             "<value_deallocation_code>"
         );
+        
         String valueRegister = expressionCodeFragment.getValueRegister();
         template.add("value_code", expressionCodeFragment.toString());
         template.add("value_register", valueRegister);
-        template.add("function_name", primitiveDataType.getOutputPrintFunction());
+        template.add("function_name", primitiveDataType.getOutputPrintFunctionName());
         template.add("data_type", dataType.getOutputType());
         
         if (dataType instanceof DynamicDataType)
         {
-            DynamicDataType dynamicDataType = (DynamicDataType)dataType;
-            template.add("value_deallocation_code", dynamicDataType.getDeallocationFunctionCall(valueRegister));
+            template.add("value_deallocation_code", 
+                ((DynamicDataType)dataType).generateDeallocationFunctionCall(valueRegister)
+            );
         }
         else
         {
@@ -777,27 +721,27 @@ public class CodeVisitor extends PascriptBaseVisitor<CodeVisitor.CodeFragment>
         
         ST template = new ST(
             "<value_deallocation_code>" +
-            "<value_register> = call <data_type> @<function_name>()\n" +
+            "<value_register> = call <data_type> <function_name>()\n" +
             "store <data_type> <value_register>, <data_type>* <memory_register>\n"
         );
         template.add("value_register", this._symbolTable.generateNewRegisterName());
         template.add("data_type", dataType.getOutputType());
-        template.add("function_name", primitiveDataType.getOutputReadFunction());
+        template.add("function_name", primitiveDataType.getOutputReadFunctionName());
         template.add("memory_register", variableRecord.getMemoryRegister());
         
         if (dataType instanceof DynamicDataType)
         {
-            DynamicDataType dynamicDataType = (DynamicDataType)dataType;
-            
             ST valueDeallocationtemplate = new ST(
                 "<value_register> = load <data_type>* <memory_register>\n" +
-                "<value_deallocation_code>"
+                "<value_deallocation_call>"
             );
             String valueRegister = this._symbolTable.generateNewRegisterName();
             valueDeallocationtemplate.add("value_register", valueRegister);
             valueDeallocationtemplate.add("data_type", dataType.getOutputType());
             valueDeallocationtemplate.add("memory_register", variableRecord.getMemoryRegister());
-            valueDeallocationtemplate.add("value_deallocation_code", dynamicDataType.getDeallocationFunctionCall(valueRegister));
+            valueDeallocationtemplate.add("value_deallocation_call", 
+                ((DynamicDataType)dataType).generateDeallocationFunctionCall(valueRegister)
+            );
             
             template.add("value_deallocation_code", valueDeallocationtemplate.render());
         }
@@ -807,39 +751,6 @@ public class CodeVisitor extends PascriptBaseVisitor<CodeVisitor.CodeFragment>
         }
         
         return new CodeFragment(template.render());
-    }
-
-    @Override
-    public CodeFragment visitDeleteStatement(PascriptParser.DeleteStatementContext ctx)
-    {
-        VariableRecord variableRecord = this._symbolTable.removeVariableRecord(ctx.IDENTIFIER().getText());
-        if (variableRecord == null)
-        {
-            Compiler.printCompilationError("A local variable with this name does not exist", ctx.IDENTIFIER().getSymbol());
-            System.exit(-1);
-        }
-        
-        DataType dataType = variableRecord.getDataType();
-        CodeFragment codeFragment = new CodeFragment();
-        
-        if (dataType instanceof DynamicDataType)
-        {
-            DynamicDataType dynamicDataType = (DynamicDataType)dataType;
-            
-            ST valueDeallocationtemplate = new ST(
-                "<value_register> = load <data_type>* <memory_register>\n" +
-                "<value_deallocation_code>"
-            );
-            String valueRegister = this._symbolTable.generateNewRegisterName();
-            valueDeallocationtemplate.add("value_register", valueRegister);
-            valueDeallocationtemplate.add("data_type", dataType.getOutputType());
-            valueDeallocationtemplate.add("memory_register", variableRecord.getMemoryRegister());
-            valueDeallocationtemplate.add("value_deallocation_code", dynamicDataType.getDeallocationFunctionCall(valueRegister));
-            
-            codeFragment.addCode(valueDeallocationtemplate.render());
-        }
-        
-        return codeFragment;
     }
 
     @Override
@@ -857,47 +768,23 @@ public class CodeVisitor extends PascriptBaseVisitor<CodeVisitor.CodeFragment>
         
         ST template = new ST(
             "<value_code>" +
-            "<dynamic_variable_deallocation_code>" +
+            "<variable_deallocation_code>" +
             "ret <data_type> <value_register>\n"
         );
         template.add("value_code", expressionCodeFragment.toString());
         template.add("data_type", functionReturnDataType.getOutputType());
         template.add("value_register", expressionCodeFragment.getValueRegister());
         
-        String loadValueFromVariableTemplateString =
-            "<value_register> = load <data_type>* <memory_register>\n";
-        
-        StringBuilder dynamicVariableDeallocationCode = new StringBuilder();
-        for (VariableRecord variableRecord : this._symbolTable.getFunctionDynamicVariableRecords())
-        {
-            String valueRegister = this._symbolTable.generateNewRegisterName();
-            
-            ST loadValueFromVariableTemplate = new ST(loadValueFromVariableTemplateString);
-            loadValueFromVariableTemplate.add("value_register", valueRegister);
-            loadValueFromVariableTemplate.add("data_type", variableRecord.getDataType().getOutputType());
-            loadValueFromVariableTemplate.add("memory_register", variableRecord.getMemoryRegister());
-            dynamicVariableDeallocationCode.append(loadValueFromVariableTemplate.render());
-            
-            DynamicDataType dynamicDataType = (DynamicDataType)variableRecord.getDataType();
-            dynamicVariableDeallocationCode.append(dynamicDataType.getDeallocationFunctionCall(valueRegister));
-        }
+        StringBuilder variableDeallocationCode = new StringBuilder(
+            this.processVariableDeallocation(this._symbolTable.getLocalDynamicVariableRecords())
+        );
         if (this._symbolTable.isCurrentFunctionMain())
         {
-            for (VariableRecord globalVariableRecord : this._symbolTable.getGlobalDynamicVariableRecords())
-            {
-                String valueRegister = this._symbolTable.generateNewRegisterName();
-
-                ST loadValueFromVariableTemplate = new ST(loadValueFromVariableTemplateString);
-                loadValueFromVariableTemplate.add("value_register", valueRegister);
-                loadValueFromVariableTemplate.add("data_type", globalVariableRecord.getDataType().getOutputType());
-                loadValueFromVariableTemplate.add("memory_register", globalVariableRecord.getMemoryRegister());
-                dynamicVariableDeallocationCode.append(loadValueFromVariableTemplate.render());
-
-                DynamicDataType dynamicDataType = (DynamicDataType)globalVariableRecord.getDataType();
-                dynamicVariableDeallocationCode.append(dynamicDataType.getDeallocationFunctionCall(valueRegister));
-            }
+            variableDeallocationCode.append(
+                this.processVariableDeallocation(this._symbolTable.getGlobalDynamicVariableRecords())
+            );
         }
-        template.add("dynamic_variable_deallocation_code", dynamicVariableDeallocationCode.toString());
+        template.add("variable_deallocation_code", variableDeallocationCode.toString());
         
         return new CodeFragment(template.render());
     }
@@ -913,47 +800,23 @@ public class CodeVisitor extends PascriptBaseVisitor<CodeVisitor.CodeFragment>
         }
         
         ST template = new ST(
-            "<dynamic_variable_deallocation_code>" +
+            "<variable_deallocation_code>" +
             "ret <data_type>\n"
         );
         template.add("data_type", voidDataType.getOutputType());
         
-        String loadValueFromVariableTemplateString =
-            "<value_register> = load <data_type>* <memory_register>\n";
-        
-        StringBuilder dynamicVariableDeallocationCode = new StringBuilder();
-        for (VariableRecord variableRecord : this._symbolTable.getFunctionDynamicVariableRecords())
-        {
-            String valueRegister = this._symbolTable.generateNewRegisterName();
-            
-            ST loadValueFromVariableTemplate = new ST(loadValueFromVariableTemplateString);
-            loadValueFromVariableTemplate.add("value_register", valueRegister);
-            loadValueFromVariableTemplate.add("data_type", variableRecord.getDataType().getOutputType());
-            loadValueFromVariableTemplate.add("memory_register", variableRecord.getMemoryRegister());
-            dynamicVariableDeallocationCode.append(loadValueFromVariableTemplate.render());
-            
-            DynamicDataType dynamicDataType = (DynamicDataType)variableRecord.getDataType();
-            dynamicVariableDeallocationCode.append(dynamicDataType.getDeallocationFunctionCall(valueRegister));
-        }
+        StringBuilder variableDeallocationCode = new StringBuilder(
+            this.processVariableDeallocation(this._symbolTable.getLocalDynamicVariableRecords())
+        );
         if (this._symbolTable.isCurrentFunctionMain())
         {
-            for (VariableRecord globalVariableRecord : this._symbolTable.getGlobalDynamicVariableRecords())
-            {
-                String valueRegister = this._symbolTable.generateNewRegisterName();
-
-                ST loadValueFromVariableTemplate = new ST(loadValueFromVariableTemplateString);
-                loadValueFromVariableTemplate.add("value_register", valueRegister);
-                loadValueFromVariableTemplate.add("data_type", globalVariableRecord.getDataType().getOutputType());
-                loadValueFromVariableTemplate.add("memory_register", globalVariableRecord.getMemoryRegister());
-                dynamicVariableDeallocationCode.append(loadValueFromVariableTemplate.render());
-
-                DynamicDataType dynamicDataType = (DynamicDataType)globalVariableRecord.getDataType();
-                dynamicVariableDeallocationCode.append(dynamicDataType.getDeallocationFunctionCall(valueRegister));
-            }
+            variableDeallocationCode.append(
+                this.processVariableDeallocation(this._symbolTable.getGlobalDynamicVariableRecords())
+            );
         }
-        template.add("dynamic_variable_deallocation_code", dynamicVariableDeallocationCode.toString());
+        template.add("variable_deallocation_code", variableDeallocationCode.toString());
         
-        return new CodeFragment("ret " + (new VoidDataType()).getOutputType() + "\n");
+        return new CodeFragment(template.render());
     }
 
     @Override
@@ -963,23 +826,22 @@ public class CodeVisitor extends PascriptBaseVisitor<CodeVisitor.CodeFragment>
         
         ST template = new ST(
             "<value_code>" +
-            "<dynamic_value_deallocation_code>"
+            "<value_deallocation_code>"
         );
         template.add("value_code", expressionCodeFragment.toString());
         
         DataType dataType = expressionCodeFragment.getDataType();        
         if (dataType instanceof DynamicDataType)
         {
-            DynamicDataType dynamicDataType = (DynamicDataType)dataType;
-            template.add("dynamic_value_deallocation_code", dynamicDataType.getDeallocationFunctionCall(expressionCodeFragment.getValueRegister()));
+            template.add("value_deallocation_code",
+                ((DynamicDataType)dataType).generateDeallocationFunctionCall(expressionCodeFragment.getValueRegister())
+            );
         }
         else
         {
-            template.add("dynamic_value_deallocation_code", "");
+            template.add("value_deallocation_code", "");
         }
         
-        
-        
-        return new CodeFragment(template.toString());
+        return new CodeFragment(template.render());
     }
 }

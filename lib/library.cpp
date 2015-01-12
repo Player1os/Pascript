@@ -470,7 +470,7 @@ extern "C"
     }
     void __pascript__booleanPrint(TBoolean value)
     {
-        std::cout << value << std::endl;
+        std::cout << (value ? TRUE_STR : FALSE_STR) << std::endl;
     }
     
     // Boolean Conversions
@@ -532,7 +532,7 @@ extern "C"
     // Float Conversions
     TBoolean __pascript__floatToBoolean(TFloat value)
     {
-        return (TBoolean)(value != 0.);
+        return (TBoolean)(value != 0.0);
     }
     TInteger __pascript__floatToInteger(TFloat value)
     {
@@ -754,7 +754,19 @@ extern "C"
     {
         insertTArray<TString>(variable, position, value);
     }
-    void __pascript__arrayInsertArray(TArray variable, TInteger position, TArray value)
+    void __pascript__booleanArrayInsertArray(TArray variable, TInteger dimensionCount, TInteger position, TArray value)
+    {
+        insertTArray<TArray>(variable, position, value);
+    }
+    void __pascript__integerArrayInsertArray(TArray variable, TInteger dimensionCount, TInteger position, TArray value)
+    {
+        insertTArray<TArray>(variable, position, value);
+    }
+    void __pascript__floatArrayInsertArray(TArray variable, TInteger dimensionCount, TInteger position, TArray value)
+    {
+        insertTArray<TArray>(variable, position, value);
+    }
+    void __pascript__stringArrayInsertArray(TArray variable, TInteger dimensionCount, TInteger position, TArray value)
     {
         insertTArray<TArray>(variable, position, value);
     }
@@ -794,7 +806,7 @@ extern "C"
     {
         sizeTArray<TString>(variable);
     }
-    void __pascript__arraySize(TArray variable)
+    void __pascript__arrayArraySize(TArray variable)
     {
         sizeTArray<TArray>(variable);
     }

@@ -1,7 +1,0 @@
-true
-false
-0
-abra
-True
-TrUe
-FALSE

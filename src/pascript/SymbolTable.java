@@ -66,6 +66,13 @@ public final class SymbolTable
         }
     }
     
+    private static final VoidDataType voidDataType = new VoidDataType();
+    private static final BooleanDataType booleanDataType = new BooleanDataType();
+    private static final IntegerDataType integerDataType = new IntegerDataType();
+    private static final FloatDataType floatDataType = new FloatDataType();
+    private static final StringDataType stringDataType = new StringDataType();
+    private static final ArrayDataType arrayDataType = new ArrayDataType();
+    
     private int _lableCounter = 0;
     private int _registerCounter = 0;
     
@@ -88,220 +95,226 @@ public final class SymbolTable
         ////// Boolean functions //////
         
         // Boolean IO
-        this.addExternalFunction("__pascript__booleanRead", new BooleanDataType(),
+        this.addExternalFunction("__pascript__booleanRead", booleanDataType,
             new ArrayList<DataType>());
-        this.addExternalFunction("__pascript__booleanPrint", new VoidDataType(),
-            new ArrayList<DataType>(Arrays.asList(new BooleanDataType())));
+        this.addExternalFunction("__pascript__booleanPrint", voidDataType,
+            new ArrayList<DataType>(Arrays.asList(booleanDataType)));
 
         // Boolean Conversion
-        this.addExternalFunction("__pascript__booleanToInteger", new IntegerDataType(),
-            new ArrayList<DataType>(Arrays.asList(new BooleanDataType())));
-        this.addExternalFunction("__pascript__booleanToFloat", new FloatDataType(),
-            new ArrayList<DataType>(Arrays.asList(new BooleanDataType())));
-        this.addExternalFunction("__pascript__booleanToString", new StringDataType(),
-            new ArrayList<DataType>(Arrays.asList(new BooleanDataType())));
+        this.addExternalFunction("__pascript__booleanToInteger", integerDataType,
+            new ArrayList<DataType>(Arrays.asList(booleanDataType)));
+        this.addExternalFunction("__pascript__booleanToFloat", floatDataType,
+            new ArrayList<DataType>(Arrays.asList(booleanDataType)));
+        this.addExternalFunction("__pascript__booleanToString", stringDataType,
+            new ArrayList<DataType>(Arrays.asList(booleanDataType)));
         
         ////// Integer functions //////
             
         // Integer IO
-        this.addExternalFunction("__pascript__integerRead", new IntegerDataType(),
+        this.addExternalFunction("__pascript__integerRead", integerDataType,
             new ArrayList<DataType>());
-        this.addExternalFunction("__pascript__integerPrint", new VoidDataType(),
-            new ArrayList<DataType>(Arrays.asList(new IntegerDataType())));
+        this.addExternalFunction("__pascript__integerPrint", voidDataType,
+            new ArrayList<DataType>(Arrays.asList(integerDataType)));
 
         // Integer Conversions
-        this.addExternalFunction("__pascript__integerToBoolean", new BooleanDataType(),
-            new ArrayList<DataType>(Arrays.asList(new IntegerDataType())));
-        this.addExternalFunction("__pascript__integerToFloat", new FloatDataType(),
-            new ArrayList<DataType>(Arrays.asList(new IntegerDataType())));
-        this.addExternalFunction("__pascript__integerToString", new StringDataType(),
-            new ArrayList<DataType>(Arrays.asList(new IntegerDataType())));
+        this.addExternalFunction("__pascript__integerToBoolean", booleanDataType,
+            new ArrayList<DataType>(Arrays.asList(integerDataType)));
+        this.addExternalFunction("__pascript__integerToFloat", floatDataType,
+            new ArrayList<DataType>(Arrays.asList(integerDataType)));
+        this.addExternalFunction("__pascript__integerToString", stringDataType,
+            new ArrayList<DataType>(Arrays.asList(integerDataType)));
         
         ////// Float functions //////
         
         // Float IO
-        this.addExternalFunction("__pascript__floatRead", new FloatDataType(),
+        this.addExternalFunction("__pascript__floatRead", floatDataType,
             new ArrayList<DataType>());
-        this.addExternalFunction("__pascript__floatPrint", new VoidDataType(),
-            new ArrayList<DataType>(Arrays.asList(new FloatDataType())));
+        this.addExternalFunction("__pascript__floatPrint", voidDataType,
+            new ArrayList<DataType>(Arrays.asList(floatDataType)));
 
         // Float Conversion
-        this.addExternalFunction("__pascript__floatToBoolean", new BooleanDataType(),
-            new ArrayList<DataType>(Arrays.asList(new FloatDataType())));
-        this.addExternalFunction("__pascript__floatToInteger", new IntegerDataType(),
-            new ArrayList<DataType>(Arrays.asList(new FloatDataType())));
-        this.addExternalFunction("__pascript__floatToString", new StringDataType(),
-            new ArrayList<DataType>(Arrays.asList(new FloatDataType())));
+        this.addExternalFunction("__pascript__floatToBoolean", booleanDataType,
+            new ArrayList<DataType>(Arrays.asList(floatDataType)));
+        this.addExternalFunction("__pascript__floatToInteger", integerDataType,
+            new ArrayList<DataType>(Arrays.asList(floatDataType)));
+        this.addExternalFunction("__pascript__floatToString", stringDataType,
+            new ArrayList<DataType>(Arrays.asList(floatDataType)));
         
         ////// String functions //////
         
         // String Memory Management
-        this.addExternalFunction("__pascript__stringAllocate", new StringDataType(),
+        this.addExternalFunction("__pascript__stringAllocate", stringDataType,
             new ArrayList<DataType>());
-        this.addExternalFunction("__pascript__stringDeallocate", new VoidDataType(),
-            new ArrayList<DataType>(Arrays.asList(new StringDataType())));
-        this.addExternalFunction("__pascript__stringCopy", new StringDataType(),
-            new ArrayList<DataType>(Arrays.asList(new StringDataType())));
+        this.addExternalFunction("__pascript__stringDeallocate", voidDataType,
+            new ArrayList<DataType>(Arrays.asList(stringDataType)));
+        this.addExternalFunction("__pascript__stringCopy", stringDataType,
+            new ArrayList<DataType>(Arrays.asList(stringDataType)));
         
         // String IO
-        this.addExternalFunction("__pascript__stringRead", new StringDataType(),
+        this.addExternalFunction("__pascript__stringRead", stringDataType,
             new ArrayList<DataType>());
-        this.addExternalFunction("__pascript__stringPrint", new VoidDataType(),
-            new ArrayList<DataType>(Arrays.asList(new StringDataType())));
+        this.addExternalFunction("__pascript__stringPrint", voidDataType,
+            new ArrayList<DataType>(Arrays.asList(stringDataType)));
         
         // String Conversions
-        this.addExternalFunction("__pascript__stringToBoolean", new BooleanDataType(),
-            new ArrayList<DataType>(Arrays.asList(new StringDataType())));
-        this.addExternalFunction("__pascript__stringToInteger", new IntegerDataType(),
-            new ArrayList<DataType>(Arrays.asList(new StringDataType())));
-        this.addExternalFunction("__pascript__stringToFloat", new FloatDataType(),
-            new ArrayList<DataType>(Arrays.asList(new StringDataType())));
+        this.addExternalFunction("__pascript__stringToBoolean", booleanDataType,
+            new ArrayList<DataType>(Arrays.asList(stringDataType)));
+        this.addExternalFunction("__pascript__stringToInteger", integerDataType,
+            new ArrayList<DataType>(Arrays.asList(stringDataType)));
+        this.addExternalFunction("__pascript__stringToFloat", floatDataType,
+            new ArrayList<DataType>(Arrays.asList(stringDataType)));
         
         // String Operations
-        this.addExternalFunction("__pascript__stringAt", new StringDataType(),
-            new ArrayList<DataType>(Arrays.asList(new StringDataType(), new IntegerDataType())));
-        this.addExternalFunction("__pascript__stringLength", new IntegerDataType(),
-            new ArrayList<DataType>(Arrays.asList(new StringDataType())));
-        this.addExternalFunction("__pascript__stringConcatenate", new StringDataType(),
-            new ArrayList<DataType>(Arrays.asList(new StringDataType(), new StringDataType())));
-        this.addExternalFunction("__pascript__stringCompare", new IntegerDataType(),
-            new ArrayList<DataType>(Arrays.asList(new StringDataType(), new StringDataType())));
-        this.addExternalFunction("__pascript__stringFind", new IntegerDataType(),
-            new ArrayList<DataType>(Arrays.asList(new StringDataType(), new StringDataType())));
-        this.addExternalFunction("__pascript__stringSubstring", new StringDataType(),
-            new ArrayList<DataType>(Arrays.asList(new StringDataType(), new IntegerDataType(), new IntegerDataType())));
+        this.addExternalFunction("__pascript__stringAt", stringDataType,
+            new ArrayList<DataType>(Arrays.asList(stringDataType, integerDataType)));
+        this.addExternalFunction("__pascript__stringLength", integerDataType,
+            new ArrayList<DataType>(Arrays.asList(stringDataType)));
+        this.addExternalFunction("__pascript__stringConcatenate", stringDataType,
+            new ArrayList<DataType>(Arrays.asList(stringDataType, stringDataType)));
+        this.addExternalFunction("__pascript__stringCompare", integerDataType,
+            new ArrayList<DataType>(Arrays.asList(stringDataType, stringDataType)));
+        this.addExternalFunction("__pascript__stringFind", integerDataType,
+            new ArrayList<DataType>(Arrays.asList(stringDataType, stringDataType)));
+        this.addExternalFunction("__pascript__stringSubstring", stringDataType,
+            new ArrayList<DataType>(Arrays.asList(stringDataType, integerDataType, integerDataType)));
         
         ////// Array functions //////
         
         // Array Allocate Operation
-        this.addExternalFunction("__pascript__booleanArrayAllocate", new ArrayDataType(),
-            new ArrayList<DataType>(Arrays.asList(new IntegerDataType())));
-        this.addExternalFunction("__pascript__integerArrayAllocate", new ArrayDataType(),
-            new ArrayList<DataType>(Arrays.asList(new IntegerDataType())));
-        this.addExternalFunction("__pascript__floatArrayAllocate", new ArrayDataType(),
-            new ArrayList<DataType>(Arrays.asList(new IntegerDataType())));
-        this.addExternalFunction("__pascript__stringArrayAllocate", new ArrayDataType(),
-            new ArrayList<DataType>(Arrays.asList(new IntegerDataType())));
+        this.addExternalFunction("__pascript__booleanArrayAllocate", arrayDataType,
+            new ArrayList<DataType>(Arrays.asList(integerDataType)));
+        this.addExternalFunction("__pascript__integerArrayAllocate", arrayDataType,
+            new ArrayList<DataType>(Arrays.asList(integerDataType)));
+        this.addExternalFunction("__pascript__floatArrayAllocate", arrayDataType,
+            new ArrayList<DataType>(Arrays.asList(integerDataType)));
+        this.addExternalFunction("__pascript__stringArrayAllocate", arrayDataType,
+            new ArrayList<DataType>(Arrays.asList(integerDataType)));
         
         // Array Deallocate Operation
-        this.addExternalFunction("__pascript__booleanArrayAllocate", new VoidDataType(),
-            new ArrayList<DataType>(Arrays.asList(new ArrayDataType(), new IntegerDataType())));
-        this.addExternalFunction("__pascript__integerArrayDeallocate", new VoidDataType(),
-            new ArrayList<DataType>(Arrays.asList(new ArrayDataType(), new IntegerDataType())));
-        this.addExternalFunction("__pascript__floatArrayDeallocate", new VoidDataType(),
-            new ArrayList<DataType>(Arrays.asList(new ArrayDataType(), new IntegerDataType())));
-        this.addExternalFunction("__pascript__stringArrayDeallocate", new VoidDataType(),
-            new ArrayList<DataType>(Arrays.asList(new ArrayDataType(), new IntegerDataType())));
+        this.addExternalFunction("__pascript__booleanArrayAllocate", voidDataType,
+            new ArrayList<DataType>(Arrays.asList(arrayDataType, integerDataType)));
+        this.addExternalFunction("__pascript__integerArrayDeallocate", voidDataType,
+            new ArrayList<DataType>(Arrays.asList(arrayDataType, integerDataType)));
+        this.addExternalFunction("__pascript__floatArrayDeallocate", voidDataType,
+            new ArrayList<DataType>(Arrays.asList(arrayDataType, integerDataType)));
+        this.addExternalFunction("__pascript__stringArrayDeallocate", voidDataType,
+            new ArrayList<DataType>(Arrays.asList(arrayDataType, integerDataType)));
         
         // Array Copy Operation
-        this.addExternalFunction("__pascript__booleanArrayCopy", new VoidDataType(),
-            new ArrayList<DataType>(Arrays.asList(new ArrayDataType(), new IntegerDataType())));
-        this.addExternalFunction("__pascript__integerArrayCopy", new VoidDataType(),
-            new ArrayList<DataType>(Arrays.asList(new ArrayDataType(), new IntegerDataType())));
-        this.addExternalFunction("__pascript__floatArrayCopy", new VoidDataType(),
-            new ArrayList<DataType>(Arrays.asList(new ArrayDataType(), new IntegerDataType())));
-        this.addExternalFunction("__pascript__stringArrayCopy", new VoidDataType(),
-            new ArrayList<DataType>(Arrays.asList(new ArrayDataType(), new IntegerDataType())));
+        this.addExternalFunction("__pascript__booleanArrayCopy", voidDataType,
+            new ArrayList<DataType>(Arrays.asList(arrayDataType, integerDataType)));
+        this.addExternalFunction("__pascript__integerArrayCopy", voidDataType,
+            new ArrayList<DataType>(Arrays.asList(arrayDataType, integerDataType)));
+        this.addExternalFunction("__pascript__floatArrayCopy", voidDataType,
+            new ArrayList<DataType>(Arrays.asList(arrayDataType, integerDataType)));
+        this.addExternalFunction("__pascript__stringArrayCopy", voidDataType,
+            new ArrayList<DataType>(Arrays.asList(arrayDataType, integerDataType)));
         
         // Array Get Operation
-        this.addExternalFunction("__pascript__booleanArrayGetValue", new BooleanDataType(),
-            new ArrayList<DataType>(Arrays.asList(new ArrayDataType(), new IntegerDataType())));
-        this.addExternalFunction("__pascript__integerArrayGetValue", new IntegerDataType(),
-            new ArrayList<DataType>(Arrays.asList(new ArrayDataType(), new IntegerDataType())));
-        this.addExternalFunction("__pascript__floatArrayGetValue", new FloatDataType(),
-            new ArrayList<DataType>(Arrays.asList(new ArrayDataType(), new IntegerDataType())));
-        this.addExternalFunction("__pascript__stringArrayGetValue", new StringDataType(),
-            new ArrayList<DataType>(Arrays.asList(new ArrayDataType(), new IntegerDataType())));
-        this.addExternalFunction("__pascript__booleanArrayGetArray", new ArrayDataType(),
-            new ArrayList<DataType>(Arrays.asList(new ArrayDataType(), new IntegerDataType(), new IntegerDataType())));
-        this.addExternalFunction("__pascript__integerArrayGetArray", new ArrayDataType(),
-            new ArrayList<DataType>(Arrays.asList(new ArrayDataType(), new IntegerDataType(), new IntegerDataType())));
-        this.addExternalFunction("__pascript__floatArrayGetArray", new ArrayDataType(),
-            new ArrayList<DataType>(Arrays.asList(new ArrayDataType(), new IntegerDataType(), new IntegerDataType())));
-        this.addExternalFunction("__pascript__stringArrayGetArray", new ArrayDataType(),
-            new ArrayList<DataType>(Arrays.asList(new ArrayDataType(), new IntegerDataType(), new IntegerDataType())));
+        this.addExternalFunction("__pascript__booleanArrayGetValue", booleanDataType,
+            new ArrayList<DataType>(Arrays.asList(arrayDataType, integerDataType)));
+        this.addExternalFunction("__pascript__integerArrayGetValue", integerDataType,
+            new ArrayList<DataType>(Arrays.asList(arrayDataType, integerDataType)));
+        this.addExternalFunction("__pascript__floatArrayGetValue", floatDataType,
+            new ArrayList<DataType>(Arrays.asList(arrayDataType, integerDataType)));
+        this.addExternalFunction("__pascript__stringArrayGetValue", stringDataType,
+            new ArrayList<DataType>(Arrays.asList(arrayDataType, integerDataType)));
+        this.addExternalFunction("__pascript__booleanArrayGetArray", arrayDataType,
+            new ArrayList<DataType>(Arrays.asList(arrayDataType, integerDataType, integerDataType)));
+        this.addExternalFunction("__pascript__integerArrayGetArray", arrayDataType,
+            new ArrayList<DataType>(Arrays.asList(arrayDataType, integerDataType, integerDataType)));
+        this.addExternalFunction("__pascript__floatArrayGetArray", arrayDataType,
+            new ArrayList<DataType>(Arrays.asList(arrayDataType, integerDataType, integerDataType)));
+        this.addExternalFunction("__pascript__stringArrayGetArray", arrayDataType,
+            new ArrayList<DataType>(Arrays.asList(arrayDataType, integerDataType, integerDataType)));
         
         // Array Set Operation
-        this.addExternalFunction("__pascript__booleanArraySetValue", new VoidDataType(),
-            new ArrayList<DataType>(Arrays.asList(new ArrayDataType(), new IntegerDataType(), new BooleanDataType())));
-        this.addExternalFunction("__pascript__integerArraySetValue", new VoidDataType(),
-            new ArrayList<DataType>(Arrays.asList(new ArrayDataType(), new IntegerDataType(), new IntegerDataType())));
-        this.addExternalFunction("__pascript__floatArraySetValue", new VoidDataType(),
-            new ArrayList<DataType>(Arrays.asList(new ArrayDataType(), new IntegerDataType(), new FloatDataType())));
-        this.addExternalFunction("__pascript__stringArraySetValue", new VoidDataType(),
-            new ArrayList<DataType>(Arrays.asList(new ArrayDataType(), new IntegerDataType(), new StringDataType())));
-        this.addExternalFunction("__pascript__booleanArraySetArray", new VoidDataType(),
-            new ArrayList<DataType>(Arrays.asList(new ArrayDataType(), new IntegerDataType(), new IntegerDataType(), new ArrayDataType())));
-        this.addExternalFunction("__pascript__integerArraySetArray", new VoidDataType(),
-            new ArrayList<DataType>(Arrays.asList(new ArrayDataType(), new IntegerDataType(), new IntegerDataType(), new ArrayDataType())));
-        this.addExternalFunction("__pascript__floatArraySetArray", new VoidDataType(),
-            new ArrayList<DataType>(Arrays.asList(new ArrayDataType(), new IntegerDataType(), new IntegerDataType(), new ArrayDataType())));
-        this.addExternalFunction("__pascript__stringArraySetArray", new VoidDataType(),
-            new ArrayList<DataType>(Arrays.asList(new ArrayDataType(), new IntegerDataType(), new IntegerDataType(), new ArrayDataType())));
+        this.addExternalFunction("__pascript__booleanArraySetValue", voidDataType,
+            new ArrayList<DataType>(Arrays.asList(arrayDataType, integerDataType, booleanDataType)));
+        this.addExternalFunction("__pascript__integerArraySetValue", voidDataType,
+            new ArrayList<DataType>(Arrays.asList(arrayDataType, integerDataType, integerDataType)));
+        this.addExternalFunction("__pascript__floatArraySetValue", voidDataType,
+            new ArrayList<DataType>(Arrays.asList(arrayDataType, integerDataType, floatDataType)));
+        this.addExternalFunction("__pascript__stringArraySetValue", voidDataType,
+            new ArrayList<DataType>(Arrays.asList(arrayDataType, integerDataType, stringDataType)));
+        this.addExternalFunction("__pascript__booleanArraySetArray", voidDataType,
+            new ArrayList<DataType>(Arrays.asList(arrayDataType, integerDataType, integerDataType, arrayDataType)));
+        this.addExternalFunction("__pascript__integerArraySetArray", voidDataType,
+            new ArrayList<DataType>(Arrays.asList(arrayDataType, integerDataType, integerDataType, arrayDataType)));
+        this.addExternalFunction("__pascript__floatArraySetArray", voidDataType,
+            new ArrayList<DataType>(Arrays.asList(arrayDataType, integerDataType, integerDataType, arrayDataType)));
+        this.addExternalFunction("__pascript__stringArraySetArray", voidDataType,
+            new ArrayList<DataType>(Arrays.asList(arrayDataType, integerDataType, integerDataType, arrayDataType)));
         
         // Array Insert Operation
-        this.addExternalFunction("__pascript__booleanArrayInsertValue", new VoidDataType(),
-            new ArrayList<DataType>(Arrays.asList(new ArrayDataType(), new IntegerDataType(), new BooleanDataType())));
-        this.addExternalFunction("__pascript__integerArrayInsertValue", new VoidDataType(),
-            new ArrayList<DataType>(Arrays.asList(new ArrayDataType(), new IntegerDataType(), new IntegerDataType())));
-        this.addExternalFunction("__pascript__floatArrayInsertValue", new VoidDataType(),
-            new ArrayList<DataType>(Arrays.asList(new ArrayDataType(), new IntegerDataType(), new FloatDataType())));
-        this.addExternalFunction("__pascript__stringArrayInsertValue", new VoidDataType(),
-            new ArrayList<DataType>(Arrays.asList(new ArrayDataType(), new IntegerDataType(), new StringDataType())));
-        this.addExternalFunction("__pascript__arrayInsertArray", new VoidDataType(),
-            new ArrayList<DataType>(Arrays.asList(new ArrayDataType(), new IntegerDataType(), new ArrayDataType())));
+        this.addExternalFunction("__pascript__booleanArrayInsertValue", voidDataType,
+            new ArrayList<DataType>(Arrays.asList(arrayDataType, integerDataType, booleanDataType)));
+        this.addExternalFunction("__pascript__integerArrayInsertValue", voidDataType,
+            new ArrayList<DataType>(Arrays.asList(arrayDataType, integerDataType, integerDataType)));
+        this.addExternalFunction("__pascript__floatArrayInsertValue", voidDataType,
+            new ArrayList<DataType>(Arrays.asList(arrayDataType, integerDataType, floatDataType)));
+        this.addExternalFunction("__pascript__stringArrayInsertValue", voidDataType,
+            new ArrayList<DataType>(Arrays.asList(arrayDataType, integerDataType, stringDataType)));
+        this.addExternalFunction("__pascript__booleanArrayInsertArray", voidDataType,
+            new ArrayList<DataType>(Arrays.asList(arrayDataType, integerDataType, integerDataType, arrayDataType)));
+        this.addExternalFunction("__pascript__integerArrayInsertArray", voidDataType,
+            new ArrayList<DataType>(Arrays.asList(arrayDataType, integerDataType, integerDataType, arrayDataType)));
+        this.addExternalFunction("__pascript__floatArrayInsertArray", voidDataType,
+            new ArrayList<DataType>(Arrays.asList(arrayDataType, integerDataType, integerDataType, arrayDataType)));
+        this.addExternalFunction("__pascript__stringArrayInsertArray", voidDataType,
+            new ArrayList<DataType>(Arrays.asList(arrayDataType, integerDataType, integerDataType, arrayDataType)));
         
         // Array Remove Operation
-        this.addExternalFunction("__pascript__booleanArrayRemove", new VoidDataType(),
-            new ArrayList<DataType>(Arrays.asList(new ArrayDataType(), new IntegerDataType(), new IntegerDataType())));
-        this.addExternalFunction("__pascript__integerArrayRemove", new VoidDataType(),
-            new ArrayList<DataType>(Arrays.asList(new ArrayDataType(), new IntegerDataType(), new IntegerDataType())));
-        this.addExternalFunction("__pascript__floatArrayRemove", new VoidDataType(),
-            new ArrayList<DataType>(Arrays.asList(new ArrayDataType(), new IntegerDataType(), new IntegerDataType())));
-        this.addExternalFunction("__pascript__stringArrayRemove", new VoidDataType(),
-            new ArrayList<DataType>(Arrays.asList(new ArrayDataType(), new IntegerDataType(), new IntegerDataType())));
+        this.addExternalFunction("__pascript__booleanArrayRemove", voidDataType,
+            new ArrayList<DataType>(Arrays.asList(arrayDataType, integerDataType, integerDataType)));
+        this.addExternalFunction("__pascript__integerArrayRemove", voidDataType,
+            new ArrayList<DataType>(Arrays.asList(arrayDataType, integerDataType, integerDataType)));
+        this.addExternalFunction("__pascript__floatArrayRemove", voidDataType,
+            new ArrayList<DataType>(Arrays.asList(arrayDataType, integerDataType, integerDataType)));
+        this.addExternalFunction("__pascript__stringArrayRemove", voidDataType,
+            new ArrayList<DataType>(Arrays.asList(arrayDataType, integerDataType, integerDataType)));
         
         // Array Size Operation
-        this.addExternalFunction("__pascript__booleanArraySize", new VoidDataType(),
-            new ArrayList<DataType>(Arrays.asList(new ArrayDataType())));
-        this.addExternalFunction("__pascript__integerArraySize", new VoidDataType(),
-            new ArrayList<DataType>(Arrays.asList(new ArrayDataType())));
-        this.addExternalFunction("__pascript__floatArraySize", new VoidDataType(),
-            new ArrayList<DataType>(Arrays.asList(new ArrayDataType())));
-        this.addExternalFunction("__pascript__stringArraySize", new VoidDataType(),
-            new ArrayList<DataType>(Arrays.asList(new ArrayDataType())));
-        this.addExternalFunction("__pascript__arraySize", new VoidDataType(),
-            new ArrayList<DataType>(Arrays.asList(new ArrayDataType())));
+        this.addExternalFunction("__pascript__booleanArraySize", voidDataType,
+            new ArrayList<DataType>(Arrays.asList(arrayDataType)));
+        this.addExternalFunction("__pascript__integerArraySize", voidDataType,
+            new ArrayList<DataType>(Arrays.asList(arrayDataType)));
+        this.addExternalFunction("__pascript__floatArraySize", voidDataType,
+            new ArrayList<DataType>(Arrays.asList(arrayDataType)));
+        this.addExternalFunction("__pascript__stringArraySize", voidDataType,
+            new ArrayList<DataType>(Arrays.asList(arrayDataType)));
+        this.addExternalFunction("__pascript__arrayArraySize", voidDataType,
+            new ArrayList<DataType>(Arrays.asList(arrayDataType)));
         
         // Array Resize Operation
-        this.addExternalFunction("__pascript__booleanArrayResize", new VoidDataType(),
-            new ArrayList<DataType>(Arrays.asList(new ArrayDataType(), new IntegerDataType(), new IntegerDataType())));
-        this.addExternalFunction("__pascript__integerArrayResize", new VoidDataType(),
-            new ArrayList<DataType>(Arrays.asList(new ArrayDataType(), new IntegerDataType(), new IntegerDataType())));
-        this.addExternalFunction("__pascript__floatArrayResize", new VoidDataType(),
-            new ArrayList<DataType>(Arrays.asList(new ArrayDataType(), new IntegerDataType(), new IntegerDataType())));
-        this.addExternalFunction("__pascript__stringArrayResize", new VoidDataType(),
-            new ArrayList<DataType>(Arrays.asList(new ArrayDataType(), new IntegerDataType(), new IntegerDataType())));
+        this.addExternalFunction("__pascript__booleanArrayResize", voidDataType,
+            new ArrayList<DataType>(Arrays.asList(arrayDataType, integerDataType, integerDataType)));
+        this.addExternalFunction("__pascript__integerArrayResize", voidDataType,
+            new ArrayList<DataType>(Arrays.asList(arrayDataType, integerDataType, integerDataType)));
+        this.addExternalFunction("__pascript__floatArrayResize", voidDataType,
+            new ArrayList<DataType>(Arrays.asList(arrayDataType, integerDataType, integerDataType)));
+        this.addExternalFunction("__pascript__stringArrayResize", voidDataType,
+            new ArrayList<DataType>(Arrays.asList(arrayDataType, integerDataType, integerDataType)));
         
         // Array Merge Operation
-        this.addExternalFunction("__pascript__booleanArrayMerge", new ArrayDataType(),
-            new ArrayList<DataType>(Arrays.asList(new ArrayDataType(), new ArrayDataType(), new IntegerDataType())));
-        this.addExternalFunction("__pascript__integerArrayMerge", new ArrayDataType(),
-            new ArrayList<DataType>(Arrays.asList(new ArrayDataType(), new ArrayDataType(), new IntegerDataType())));
-        this.addExternalFunction("__pascript__floatArrayMerge", new ArrayDataType(),
-            new ArrayList<DataType>(Arrays.asList(new ArrayDataType(), new ArrayDataType(), new IntegerDataType())));
-        this.addExternalFunction("__pascript__stringArrayMerge", new ArrayDataType(),
-            new ArrayList<DataType>(Arrays.asList(new ArrayDataType(), new ArrayDataType(), new IntegerDataType())));
+        this.addExternalFunction("__pascript__booleanArrayMerge", arrayDataType,
+            new ArrayList<DataType>(Arrays.asList(arrayDataType, arrayDataType, integerDataType)));
+        this.addExternalFunction("__pascript__integerArrayMerge", arrayDataType,
+            new ArrayList<DataType>(Arrays.asList(arrayDataType, arrayDataType, integerDataType)));
+        this.addExternalFunction("__pascript__floatArrayMerge", arrayDataType,
+            new ArrayList<DataType>(Arrays.asList(arrayDataType, arrayDataType, integerDataType)));
+        this.addExternalFunction("__pascript__stringArrayMerge", arrayDataType,
+            new ArrayList<DataType>(Arrays.asList(arrayDataType, arrayDataType, integerDataType)));
         
         // Array Equals Operation
-        this.addExternalFunction("__pascript__booleanArrayEquals", new BooleanDataType(),
-            new ArrayList<DataType>(Arrays.asList(new ArrayDataType(), new ArrayDataType(), new IntegerDataType())));
-        this.addExternalFunction("__pascript__integerArrayEquals", new BooleanDataType(),
-            new ArrayList<DataType>(Arrays.asList(new ArrayDataType(), new ArrayDataType(), new IntegerDataType())));
-        this.addExternalFunction("__pascript__floatArrayEquals", new BooleanDataType(),
-            new ArrayList<DataType>(Arrays.asList(new ArrayDataType(), new ArrayDataType(), new IntegerDataType())));
-        this.addExternalFunction("__pascript__stringArrayEquals", new BooleanDataType(),
-            new ArrayList<DataType>(Arrays.asList(new ArrayDataType(), new ArrayDataType(), new IntegerDataType())));
+        this.addExternalFunction("__pascript__booleanArrayEquals", booleanDataType,
+            new ArrayList<DataType>(Arrays.asList(arrayDataType, arrayDataType, integerDataType)));
+        this.addExternalFunction("__pascript__integerArrayEquals", booleanDataType,
+            new ArrayList<DataType>(Arrays.asList(arrayDataType, arrayDataType, integerDataType)));
+        this.addExternalFunction("__pascript__floatArrayEquals", booleanDataType,
+            new ArrayList<DataType>(Arrays.asList(arrayDataType, arrayDataType, integerDataType)));
+        this.addExternalFunction("__pascript__stringArrayEquals", booleanDataType,
+            new ArrayList<DataType>(Arrays.asList(arrayDataType, arrayDataType, integerDataType)));
     }
     
     public String generateNewLabelName()
@@ -393,7 +406,7 @@ public final class SymbolTable
         return variableRecord;
     }
     
-    public HashMap<String, ExpressionCodeFragment> getGlobalVarableInitializers()
+    public HashMap<String, ExpressionCodeFragment> getGlobalVariableInitializers()
     {
         return new HashMap<>(this._globalVariableInitializer);
     }
@@ -426,28 +439,6 @@ public final class SymbolTable
             HashMap<String, VariableRecord> currentVarTable = varTableIterator.next();
 
             VariableRecord variableRecord = currentVarTable.get(name);
-            if (variableRecord != null)
-            {
-                return variableRecord;
-            }
-        }
-
-        return null;
-    }
-    
-    public VariableRecord removeVariableRecord(String name)
-    {
-        Iterator<HashMap<String, VariableRecord>> varTableIterator = this._variableTables.descendingIterator();
-
-        while (varTableIterator.hasNext())
-        {
-            HashMap<String, VariableRecord> currentVarTable = varTableIterator.next();
-            if (!varTableIterator.hasNext())
-            {
-                break;
-            }
-
-            VariableRecord variableRecord = currentVarTable.remove(name);
             if (variableRecord != null)
             {
                 return variableRecord;
@@ -491,7 +482,7 @@ public final class SymbolTable
         return dynamicVariableRecords;
     }
     
-    public ArrayList<VariableRecord> getFunctionDynamicVariableRecords()
+    public ArrayList<VariableRecord> getLocalDynamicVariableRecords()
     {
         ArrayList<VariableRecord> dynamicVariableRecords = new ArrayList<>();
         

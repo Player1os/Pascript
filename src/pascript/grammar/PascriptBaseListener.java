@@ -31,6 +31,18 @@ public class PascriptBaseListener implements PascriptListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterVariableValue(@NotNull PascriptParser.VariableValueContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitVariableValue(@NotNull PascriptParser.VariableValueContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterFloatLiteral(@NotNull PascriptParser.FloatLiteralContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -134,6 +146,18 @@ public class PascriptBaseListener implements PascriptListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitParameterList(@NotNull PascriptParser.ParameterListContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterLoadedValue(@NotNull PascriptParser.LoadedValueContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitLoadedValue(@NotNull PascriptParser.LoadedValueContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -247,18 +271,6 @@ public class PascriptBaseListener implements PascriptListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterDeleteStatement(@NotNull PascriptParser.DeleteStatementContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitDeleteStatement(@NotNull PascriptParser.DeleteStatementContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterAssignGlobalDeclaration(@NotNull PascriptParser.AssignGlobalDeclarationContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -290,18 +302,6 @@ public class PascriptBaseListener implements PascriptListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitIntegerDataType(@NotNull PascriptParser.IntegerDataTypeContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterVariableValue(@NotNull PascriptParser.VariableValueContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitVariableValue(@NotNull PascriptParser.VariableValueContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

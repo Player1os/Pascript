@@ -1,0 +1,31 @@
+variable:
+
+string b = " ";
+int h8 = 77;
+
+function:
+
+string bla(string zz)
+{
+    <- h8;
+    return "Wor" + zz + b + "d";
+}
+
+main:
+
+string a = "Hello" + b + bla("l");
+//<- a;
+//string c;
+///-> c;
+//string d;
+h8 = 7;
+/*<- true & false;
+<- false | true;*/
+<- 0 + 2 + h8;
+/*<- -55 + 9;
+<- 85.05 - 80.2;
+<- -0.0 * 8.0;
+<- 0.2210 / 4.;
+<- 4 / 1;*/
+<- bla(a) + "omg this ščľľščťžťľčš is kewl";
+//<- a + b + /*d + c +*/ a;

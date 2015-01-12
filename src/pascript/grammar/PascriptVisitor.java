@@ -21,6 +21,12 @@ public interface PascriptVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitExpressionStatement(@NotNull PascriptParser.ExpressionStatementContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link PascriptParser#variableValue}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitVariableValue(@NotNull PascriptParser.VariableValueContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code FloatLiteral}
 	 * labeled alternative in {@link PascriptParser#literal}.
 	 * @param ctx the parse tree
@@ -80,6 +86,13 @@ public interface PascriptVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitParameterList(@NotNull PascriptParser.ParameterListContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code LoadedValue}
+	 * labeled alternative in {@link PascriptParser#expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitLoadedValue(@NotNull PascriptParser.LoadedValueContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code AssignDeclaration}
 	 * labeled alternative in {@link PascriptParser#variableDeclaration}.
@@ -142,13 +155,6 @@ public interface PascriptVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitUnaryOperation(@NotNull PascriptParser.UnaryOperationContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code DeleteStatement}
-	 * labeled alternative in {@link PascriptParser#basicStatement}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitDeleteStatement(@NotNull PascriptParser.DeleteStatementContext ctx);
-	/**
 	 * Visit a parse tree produced by the {@code AssignGlobalDeclaration}
 	 * labeled alternative in {@link PascriptParser#globalVariableDeclaration}.
 	 * @param ctx the parse tree
@@ -169,13 +175,6 @@ public interface PascriptVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitIntegerDataType(@NotNull PascriptParser.IntegerDataTypeContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code VariableValue}
-	 * labeled alternative in {@link PascriptParser#expression}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitVariableValue(@NotNull PascriptParser.VariableValueContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code Parenthesis}
 	 * labeled alternative in {@link PascriptParser#expression}.

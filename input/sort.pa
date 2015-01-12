@@ -1,0 +1,82 @@
+function:
+
+int[] mergesort(int[] a)
+{
+  if (a.size() <= 1)
+  {
+    return a;
+  }
+  
+  int n = a.size();
+  int mid = n / 2; //integer division
+  
+  int[] left; //initializes an empty int array
+  for (int i = 0; i < mid; i++)
+  {
+    left.insert(i, a.get(i));
+  }
+  
+  int[] right; //initializes an empty int array
+  for (int i = 0; i < n - mid; i++)
+  {
+    right.insert(i, a.get(i + mid));
+  }    
+  
+  left = mergesort(left);
+  right = mergesort(right);
+
+  return merge(left, right);
+}
+
+int[] merge(int[] left, int[] right)
+{
+  int[] result;
+   
+  while ((left.size() > 0) & (right.size() > 0))
+  {
+    if (left.get(0) < right.get(0))
+    {
+      result.insert(result.size(), left.get(0));
+      left.remove(0);
+    }
+    else
+    {
+      result.insert(result.size(), right.get(0));
+      right.remove(0);
+    }
+  }
+   
+  while (left.size() > 0)
+  {
+    result.insert(result.size(), left.get(0));
+    left.remove(0);
+  }
+  while (right.size() > 0)
+  {
+    result.insert(result.size(), right.get(0));
+    right.remove(0);
+  }
+  
+  return result;
+}
+
+main:
+
+int n;
+-> n;
+int[] a; //declares an array
+a.resize(n); //initializes the array to hold n values of 0
+
+for (int i = 0; i < n; i++)
+{
+  int x;
+  -> x;
+  a.set(i, x); //read works similarly as the "cin >> x" in c++
+}
+
+a = mergesort(a);
+
+for (int i = 0; i < n; i++)
+{
+  <- a.get(i); //println is a version of print that adds the newline character at the end of its output. Both print functions accept a single string argument
+}
