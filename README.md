@@ -12,5 +12,6 @@ The language's features include:
 - ability to incorporate external functions by linking a library during compilation, provided they support the same data types
 - native support for various methods and operations on strings and arrays including concatenation, substring, searching and lexicographic comparison for the former and merging, content equality testing and resizing for the latter
 - error messages during compilation point to the exact line and character position, that needs to be rewritten
+- support for recursive function calling
 
 To learn more please refer to the [specification](https://github.com/Player1os/Pascript/wiki/Specification)
