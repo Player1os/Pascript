@@ -43,18 +43,6 @@ public class PascriptBaseListener implements PascriptListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterFloatLiteral(@NotNull PascriptParser.FloatLiteralContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitFloatLiteral(@NotNull PascriptParser.FloatLiteralContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterReturnVoidDataType(@NotNull PascriptParser.ReturnVoidDataTypeContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -62,6 +50,18 @@ public class PascriptBaseListener implements PascriptListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitReturnVoidDataType(@NotNull PascriptParser.ReturnVoidDataTypeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterFloatLiteral(@NotNull PascriptParser.FloatLiteralContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitFloatLiteral(@NotNull PascriptParser.FloatLiteralContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -151,6 +151,18 @@ public class PascriptBaseListener implements PascriptListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterGlobalVariableDeclaration(@NotNull PascriptParser.GlobalVariableDeclarationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitGlobalVariableDeclaration(@NotNull PascriptParser.GlobalVariableDeclarationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterLoadedValue(@NotNull PascriptParser.LoadedValueContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -182,18 +194,6 @@ public class PascriptBaseListener implements PascriptListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitBooleanDataType(@NotNull PascriptParser.BooleanDataTypeContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterSimpleGlobalDeclaration(@NotNull PascriptParser.SimpleGlobalDeclarationContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitSimpleGlobalDeclaration(@NotNull PascriptParser.SimpleGlobalDeclarationContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -266,18 +266,6 @@ public class PascriptBaseListener implements PascriptListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitUnaryOperation(@NotNull PascriptParser.UnaryOperationContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterAssignGlobalDeclaration(@NotNull PascriptParser.AssignGlobalDeclarationContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitAssignGlobalDeclaration(@NotNull PascriptParser.AssignGlobalDeclarationContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

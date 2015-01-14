@@ -29,8 +29,7 @@ variableSection
     ;
 
 globalVariableDeclaration
-    : dataType IDENTIFIER                                            # SimpleGlobalDeclaration
-    | dataType IDENTIFIER ASSIGN literal                             # AssignGlobalDeclaration
+    : dataType IDENTIFIER
     ;
 
 functionSection
@@ -151,8 +150,8 @@ literal
     | value=STRING                                                   # StringLiteral
     ;    
 
-LINE_COMMENT: '//' .*? (NEWLINE | EOF)+ -> skip;
-BLOCK_COMMENT: '/*' .*? '*/' -> skip;
+LINE_COMMENT: '//' .*? (NEWLINE | EOF) -> skip;
+BLOCK_COMMENT: '/*' .*? ('*/' | EOF) -> skip;
 
 NEWLINE: [\n\r] -> skip;
 WHITESPACE: [\t ] -> skip;

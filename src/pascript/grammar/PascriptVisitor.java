@@ -27,19 +27,19 @@ public interface PascriptVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitVariableValue(@NotNull PascriptParser.VariableValueContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code FloatLiteral}
-	 * labeled alternative in {@link PascriptParser#literal}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitFloatLiteral(@NotNull PascriptParser.FloatLiteralContext ctx);
-	/**
 	 * Visit a parse tree produced by the {@code ReturnVoidDataType}
 	 * labeled alternative in {@link PascriptParser#returnDataType}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitReturnVoidDataType(@NotNull PascriptParser.ReturnVoidDataTypeContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code FloatLiteral}
+	 * labeled alternative in {@link PascriptParser#literal}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFloatLiteral(@NotNull PascriptParser.FloatLiteralContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code SimpleStatement}
 	 * labeled alternative in {@link PascriptParser#statement}.
@@ -87,6 +87,12 @@ public interface PascriptVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitParameterList(@NotNull PascriptParser.ParameterListContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link PascriptParser#globalVariableDeclaration}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitGlobalVariableDeclaration(@NotNull PascriptParser.GlobalVariableDeclarationContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code LoadedValue}
 	 * labeled alternative in {@link PascriptParser#expression}.
 	 * @param ctx the parse tree
@@ -107,13 +113,6 @@ public interface PascriptVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitBooleanDataType(@NotNull PascriptParser.BooleanDataTypeContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code SimpleGlobalDeclaration}
-	 * labeled alternative in {@link PascriptParser#globalVariableDeclaration}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitSimpleGlobalDeclaration(@NotNull PascriptParser.SimpleGlobalDeclarationContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code DeclarationStatement}
 	 * labeled alternative in {@link PascriptParser#basicStatement}.
@@ -154,13 +153,6 @@ public interface PascriptVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitUnaryOperation(@NotNull PascriptParser.UnaryOperationContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code AssignGlobalDeclaration}
-	 * labeled alternative in {@link PascriptParser#globalVariableDeclaration}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitAssignGlobalDeclaration(@NotNull PascriptParser.AssignGlobalDeclarationContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code FloatDataType}
 	 * labeled alternative in {@link PascriptParser#primitiveDataType}.

@@ -160,7 +160,7 @@ template <typename Type> Type getValueTArray(TArray variable, TInteger position)
 TString getValueTArrayTString(TArray variable, TInteger position)
 {
     std::vector<TString>* stringVector = (std::vector<TString>*)variable;
-    return stdStringToTString(std::string((*stringVector)[position]));
+    return copyTString((*stringVector)[position]);
 }
 
 template <typename Type> TArray getArrayTArray(TArray variable, TInteger dimensionCount, TInteger position)
@@ -183,26 +183,41 @@ void setValueTArrayTString(TArray variable, TInteger position, TString value)
 {
     std::vector<TString>* stringVector = (std::vector<TString>*)variable;
     deallocateTString((*stringVector)[position]);
-    (*stringVector)[position] = value;
+    (*stringVector)[position] = copyTString(value);
 }
 
 template <typename Type> void setArrayTArray(TArray variable, TInteger dimensionCount, TInteger position, TArray value)
 {
     std::vector<TArray>* arrayVector = (std::vector<TArray>*)variable;
     deallocateTArray<Type>((*arrayVector)[position], dimensionCount - 1);
-    (*arrayVector)[position] = value;
+    (*arrayVector)[position] = copyTArray<Type>(value, dimensionCount - 1);
 }
 void setArrayTArrayTString(TArray variable, TInteger dimensionCount, TInteger position, TArray value)
 {
     std::vector<TArray>* arrayVector = (std::vector<TArray>*)variable;
     deallocateTArrayTString((*arrayVector)[position], dimensionCount - 1);
-    (*arrayVector)[position] = value;
+    (*arrayVector)[position] = copyTArrayTString(value, dimensionCount - 1);
 }
 
-template <typename Type> void insertTArray(TArray variable, TInteger position, Type value)
+template <typename Type> void insertValueTArray(TArray variable, TInteger position, Type value)
 {
     std::vector<Type>* typeVector = (std::vector<Type>*)variable;
     typeVector->insert(typeVector->begin() + position, value);
+}
+void insertValueTArrayTString(TArray variable, TInteger position, TString value)
+{
+    std::vector<TString>* stringVector = (std::vector<TString>*)variable;
+    stringVector->insert(stringVector->begin() + position, copyTString(value));
+}
+template <typename Type> void insertArrayTArray(TArray variable, TInteger dimensionCount, TInteger position, TArray value)
+{
+    std::vector<TArray>* arrayVector = (std::vector<TArray>*)variable;
+    arrayVector->insert(arrayVector->begin() + position, copyTArray<Type>(value, dimensionCount - 1));
+}
+void insertArrayTArrayTString(TArray variable, TInteger dimensionCount, TInteger position, TArray value)
+{
+    std::vector<TArray>* arrayVector = (std::vector<TArray>*)variable;
+    arrayVector->insert(arrayVector->begin() + position, copyTArrayTString(value, dimensionCount - 1));
 }
 
 template <typename Type> void removeTArray(TArray variable, TInteger dimensionCount, TInteger position)
@@ -277,13 +292,14 @@ void resizeTArrayTString(TArray variable, TInteger dimensionCount, size_t newSiz
         return;
     }
     std::vector<TString>* stringVector = (std::vector<TString>*)variable;
+    size_t oldSize = stringVector->size();
     
-    for (size_t i = newSize; i < stringVector->size(); i++)
+    for (size_t i = newSize; i < oldSize; i++)
     {
         deallocateTString((*stringVector)[i]);
     }
     stringVector->resize(newSize);
-    for (size_t i = stringVector->size(); i < newSize; i++)
+    for (size_t i = oldSize; i < newSize; i++)
     {
         (*stringVector)[i] = allocateTString();
     }
@@ -652,21 +668,21 @@ extern "C"
     }
     
     // Array Copy Operation
-    void __pascript__booleanArrayCopy(TArray variable, TInteger dimensionCount)
+    TArray __pascript__booleanArrayCopy(TArray variable, TInteger dimensionCount)
     {
-        copyTArray<TBoolean>(variable, dimensionCount);
+        return copyTArray<TBoolean>(variable, dimensionCount);
     }
-    void __pascript__integerArrayCopy(TArray variable, TInteger dimensionCount)
+    TArray __pascript__integerArrayCopy(TArray variable, TInteger dimensionCount)
     {
-        copyTArray<TInteger>(variable, dimensionCount);
+        return copyTArray<TInteger>(variable, dimensionCount);
     }
-    void __pascript__floatArrayCopy(TArray variable, TInteger dimensionCount)
+    TArray __pascript__floatArrayCopy(TArray variable, TInteger dimensionCount)
     {
-        copyTArray<TFloat>(variable, dimensionCount);
+        return copyTArray<TFloat>(variable, dimensionCount);
     }
-    void __pascript__stringArrayCopy(TArray variable, TInteger dimensionCount)
+    TArray __pascript__stringArrayCopy(TArray variable, TInteger dimensionCount)
     {
-        copyTArrayTString(variable, dimensionCount);
+        return copyTArrayTString(variable, dimensionCount);
     }
     
     // Array Get Operation
@@ -706,69 +722,69 @@ extern "C"
     // Array Set Operation
     void __pascript__booleanArraySetValue(TArray variable, TInteger position, TBoolean value)
     {
-        return setValueTArray<TBoolean>(variable, position, value);
+        setValueTArray<TBoolean>(variable, position, value);
     }
     void __pascript__integerArraySetValue(TArray variable, TInteger position, TInteger value)
     {
-        return setValueTArray<TInteger>(variable, position, value);
+        setValueTArray<TInteger>(variable, position, value);
     }
     void __pascript__floatArraySetValue(TArray variable, TInteger position, TFloat value)
     {
-        return setValueTArray<TFloat>(variable, position, value);
+        setValueTArray<TFloat>(variable, position, value);
     }
     void __pascript__stringArraySetValue(TArray variable, TInteger position, TString value)
     {
-        return setValueTArrayTString(variable, position, value);
+        setValueTArrayTString(variable, position, value);
     }
     void __pascript__booleanArraySetArray(TArray variable, TInteger dimensionCount, TInteger position, TArray value)
     {
-        return setArrayTArray<TBoolean>(variable, dimensionCount, position, value);
+        setArrayTArray<TBoolean>(variable, dimensionCount, position, value);
     }
     void __pascript__integerArraySetArray(TArray variable, TInteger dimensionCount, TInteger position, TArray value)
     {
-        return setArrayTArray<TInteger>(variable, dimensionCount, position, value);
+        setArrayTArray<TInteger>(variable, dimensionCount, position, value);
     }
     void __pascript__floatArraySetArray(TArray variable, TInteger dimensionCount, TInteger position, TArray value)
     {
-        return setArrayTArray<TFloat>(variable, dimensionCount, position, value);
+        setArrayTArray<TFloat>(variable, dimensionCount, position, value);
     }
     void __pascript__stringArraySetArray(TArray variable, TInteger dimensionCount, TInteger position, TArray value)
     {
-        return setArrayTArrayTString(variable, dimensionCount, position, value);
+        setArrayTArrayTString(variable, dimensionCount, position, value);
     }
     
     // Array Insert Operation
     void __pascript__booleanArrayInsertValue(TArray variable, TInteger position, TBoolean value)
     {
-        insertTArray<TBoolean>(variable, position, value);
+        insertValueTArray<TBoolean>(variable, position, value);
     }
     void __pascript__integerArrayInsertValue(TArray variable, TInteger position, TInteger value)
     {
-        insertTArray<TInteger>(variable, position, value);
+        insertValueTArray<TInteger>(variable, position, value);
     }
     void __pascript__floatArrayInsertValue(TArray variable, TInteger position, TFloat value)
     {
-        insertTArray<TFloat>(variable, position, value);
+        insertValueTArray<TFloat>(variable, position, value);
     }
     void __pascript__stringArrayInsertValue(TArray variable, TInteger position, TString value)
     {
-        insertTArray<TString>(variable, position, value);
+        insertValueTArrayTString(variable, position, value);
     }
     void __pascript__booleanArrayInsertArray(TArray variable, TInteger dimensionCount, TInteger position, TArray value)
     {
-        insertTArray<TArray>(variable, position, value);
+        insertArrayTArray<TBoolean>(variable, dimensionCount, position, value);
     }
     void __pascript__integerArrayInsertArray(TArray variable, TInteger dimensionCount, TInteger position, TArray value)
     {
-        insertTArray<TArray>(variable, position, value);
+        insertArrayTArray<TInteger>(variable, dimensionCount, position, value);
     }
     void __pascript__floatArrayInsertArray(TArray variable, TInteger dimensionCount, TInteger position, TArray value)
     {
-        insertTArray<TArray>(variable, position, value);
+        insertArrayTArray<TFloat>(variable, dimensionCount, position, value);
     }
     void __pascript__stringArrayInsertArray(TArray variable, TInteger dimensionCount, TInteger position, TArray value)
     {
-        insertTArray<TArray>(variable, position, value);
+        insertArrayTArrayTString(variable, dimensionCount, position, value);
     }
     
     // Array Remove Operation
@@ -790,25 +806,25 @@ extern "C"
     }
     
     // Array Size Operation
-    void __pascript__booleanArraySize(TArray variable)
+    TInteger __pascript__booleanArraySize(TArray variable)
     {
-        sizeTArray<TBoolean>(variable);
+        return sizeTArray<TBoolean>(variable);
     }
-    void __pascript__integerArraySize(TArray variable)
+    TInteger __pascript__integerArraySize(TArray variable)
     {
-        sizeTArray<TInteger>(variable);
+        return sizeTArray<TInteger>(variable);
     }
-    void __pascript__floatArraySize(TArray variable)
+    TInteger __pascript__floatArraySize(TArray variable)
     {
-        sizeTArray<TFloat>(variable);
+        return sizeTArray<TFloat>(variable);
     }
-    void __pascript__stringArraySize(TArray variable)
+    TInteger __pascript__stringArraySize(TArray variable)
     {
-        sizeTArray<TString>(variable);
+        return sizeTArray<TString>(variable);
     }
-    void __pascript__arrayArraySize(TArray variable)
+    TInteger __pascript__arrayArraySize(TArray variable)
     {
-        sizeTArray<TArray>(variable);
+        return sizeTArray<TArray>(variable);
     }
     
     // Array Resize Operation

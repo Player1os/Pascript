@@ -191,7 +191,7 @@ public final class SymbolTable
             new ArrayList<DataType>(Arrays.asList(integerDataType)));
         
         // Array Deallocate Operation
-        this.addExternalFunction("__pascript__booleanArrayAllocate", voidDataType,
+        this.addExternalFunction("__pascript__booleanArrayDeallocate", voidDataType,
             new ArrayList<DataType>(Arrays.asList(arrayDataType, integerDataType)));
         this.addExternalFunction("__pascript__integerArrayDeallocate", voidDataType,
             new ArrayList<DataType>(Arrays.asList(arrayDataType, integerDataType)));
@@ -201,13 +201,13 @@ public final class SymbolTable
             new ArrayList<DataType>(Arrays.asList(arrayDataType, integerDataType)));
         
         // Array Copy Operation
-        this.addExternalFunction("__pascript__booleanArrayCopy", voidDataType,
+        this.addExternalFunction("__pascript__booleanArrayCopy", arrayDataType,
             new ArrayList<DataType>(Arrays.asList(arrayDataType, integerDataType)));
-        this.addExternalFunction("__pascript__integerArrayCopy", voidDataType,
+        this.addExternalFunction("__pascript__integerArrayCopy", arrayDataType,
             new ArrayList<DataType>(Arrays.asList(arrayDataType, integerDataType)));
-        this.addExternalFunction("__pascript__floatArrayCopy", voidDataType,
+        this.addExternalFunction("__pascript__floatArrayCopy", arrayDataType,
             new ArrayList<DataType>(Arrays.asList(arrayDataType, integerDataType)));
-        this.addExternalFunction("__pascript__stringArrayCopy", voidDataType,
+        this.addExternalFunction("__pascript__stringArrayCopy", arrayDataType,
             new ArrayList<DataType>(Arrays.asList(arrayDataType, integerDataType)));
         
         // Array Get Operation
@@ -275,15 +275,15 @@ public final class SymbolTable
             new ArrayList<DataType>(Arrays.asList(arrayDataType, integerDataType, integerDataType)));
         
         // Array Size Operation
-        this.addExternalFunction("__pascript__booleanArraySize", voidDataType,
+        this.addExternalFunction("__pascript__booleanArraySize", integerDataType,
             new ArrayList<DataType>(Arrays.asList(arrayDataType)));
-        this.addExternalFunction("__pascript__integerArraySize", voidDataType,
+        this.addExternalFunction("__pascript__integerArraySize", integerDataType,
             new ArrayList<DataType>(Arrays.asList(arrayDataType)));
-        this.addExternalFunction("__pascript__floatArraySize", voidDataType,
+        this.addExternalFunction("__pascript__floatArraySize", integerDataType,
             new ArrayList<DataType>(Arrays.asList(arrayDataType)));
-        this.addExternalFunction("__pascript__stringArraySize", voidDataType,
+        this.addExternalFunction("__pascript__stringArraySize", integerDataType,
             new ArrayList<DataType>(Arrays.asList(arrayDataType)));
-        this.addExternalFunction("__pascript__arrayArraySize", voidDataType,
+        this.addExternalFunction("__pascript__arrayArraySize", integerDataType,
             new ArrayList<DataType>(Arrays.asList(arrayDataType)));
         
         // Array Resize Operation

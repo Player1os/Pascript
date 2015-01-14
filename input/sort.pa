@@ -1,82 +1,73 @@
+variable:
+
+int[] array; //declares an array
+
 function:
 
-int[] mergesort(int[] a)
+void mergesort(int begin, int end)
 {
-  if (a.size() <= 1)
+  if (begin >= end)
   {
-    return a;
+    return;
   }
-  
-  int n = a.size();
-  int mid = n / 2; //integer division
-  
-  int[] left; //initializes an empty int array
-  for (int i = 0; i < mid; i++)
+  int mid = (begin + end) / 2;
+
+  mergesort(begin, mid);
+  mergesort(mid + 1, end);
+
+  int left = begin;
+  int right = mid + 1;
+
+  // One extra check: can we SKIP the merge?
+  if (array.get(mid) <= array.get(right))
   {
-    left.insert(i, a.get(i));
+    return;
   }
-  
-  int[] right; //initializes an empty int array
-  for (int i = 0; i < n - mid; i++)
-  {
-    right.insert(i, a.get(i + mid));
-  }    
-  
-  left = mergesort(left);
-  right = mergesort(right);
 
-  return merge(left, right);
-}
+  int tmp;
+  int i;
 
-int[] merge(int[] left, int[] right)
-{
-  int[] result;
-   
-  while ((left.size() > 0) & (right.size() > 0))
+  while ((left <= mid) & (right <= end))
   {
-    if (left.get(0) < right.get(0))
+    // Select from left:  no change, just advance left
+    if (array.get(left) <= array.get(right))
     {
-      result.insert(result.size(), left.get(0));
-      left.remove(0);
+      left++;
     }
     else
     {
-      result.insert(result.size(), right.get(0));
-      right.remove(0);
+      // Select from right:  rotate [left..right] and correct
+      tmp = array.get(right);
+      i = 0;
+      while (i < (right - left))
+      {
+        array.set(right - i, array.get(right - i - 1));
+        i++;
+      }
+      array.set(left, tmp);
+      // EVERYTHING has moved up by one
+      left++; mid++; right++;
     }
   }
-   
-  while (left.size() > 0)
-  {
-    result.insert(result.size(), left.get(0));
-    left.remove(0);
-  }
-  while (right.size() > 0)
-  {
-    result.insert(result.size(), right.get(0));
-    right.remove(0);
-  }
-  
-  return result;
+  // Whatever remains in [right..end] is in place
 }
 
 main:
 
 int n;
 -> n;
-int[] a; //declares an array
-a.resize(n); //initializes the array to hold n values of 0
+array.resize(n); //initializes the array to hold n values of 0
 
+int x;
 for (int i = 0; i < n; i++)
 {
-  int x;
-  -> x;
-  a.set(i, x); //read works similarly as the "cin >> x" in c++
+  -> x; //read works similarly as the "std::cin >> x" in c++
+  array.set(i, x); 
 }
 
-a = mergesort(a);
+mergesort(0, n - 1);
 
 for (int i = 0; i < n; i++)
 {
-  <- a.get(i); //println is a version of print that adds the newline character at the end of its output. Both print functions accept a single string argument
+  <- array.get(i);
 }

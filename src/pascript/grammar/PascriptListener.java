@@ -33,18 +33,6 @@ public interface PascriptListener extends ParseTreeListener {
 	 */
 	void exitVariableValue(@NotNull PascriptParser.VariableValueContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code FloatLiteral}
-	 * labeled alternative in {@link PascriptParser#literal}.
-	 * @param ctx the parse tree
-	 */
-	void enterFloatLiteral(@NotNull PascriptParser.FloatLiteralContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code FloatLiteral}
-	 * labeled alternative in {@link PascriptParser#literal}.
-	 * @param ctx the parse tree
-	 */
-	void exitFloatLiteral(@NotNull PascriptParser.FloatLiteralContext ctx);
-	/**
 	 * Enter a parse tree produced by the {@code ReturnVoidDataType}
 	 * labeled alternative in {@link PascriptParser#returnDataType}.
 	 * @param ctx the parse tree
@@ -56,6 +44,18 @@ public interface PascriptListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitReturnVoidDataType(@NotNull PascriptParser.ReturnVoidDataTypeContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code FloatLiteral}
+	 * labeled alternative in {@link PascriptParser#literal}.
+	 * @param ctx the parse tree
+	 */
+	void enterFloatLiteral(@NotNull PascriptParser.FloatLiteralContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code FloatLiteral}
+	 * labeled alternative in {@link PascriptParser#literal}.
+	 * @param ctx the parse tree
+	 */
+	void exitFloatLiteral(@NotNull PascriptParser.FloatLiteralContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code SimpleStatement}
 	 * labeled alternative in {@link PascriptParser#statement}.
@@ -135,6 +135,16 @@ public interface PascriptListener extends ParseTreeListener {
 	 */
 	void exitParameterList(@NotNull PascriptParser.ParameterListContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link PascriptParser#globalVariableDeclaration}.
+	 * @param ctx the parse tree
+	 */
+	void enterGlobalVariableDeclaration(@NotNull PascriptParser.GlobalVariableDeclarationContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link PascriptParser#globalVariableDeclaration}.
+	 * @param ctx the parse tree
+	 */
+	void exitGlobalVariableDeclaration(@NotNull PascriptParser.GlobalVariableDeclarationContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code LoadedValue}
 	 * labeled alternative in {@link PascriptParser#expression}.
 	 * @param ctx the parse tree
@@ -170,18 +180,6 @@ public interface PascriptListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitBooleanDataType(@NotNull PascriptParser.BooleanDataTypeContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code SimpleGlobalDeclaration}
-	 * labeled alternative in {@link PascriptParser#globalVariableDeclaration}.
-	 * @param ctx the parse tree
-	 */
-	void enterSimpleGlobalDeclaration(@NotNull PascriptParser.SimpleGlobalDeclarationContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code SimpleGlobalDeclaration}
-	 * labeled alternative in {@link PascriptParser#globalVariableDeclaration}.
-	 * @param ctx the parse tree
-	 */
-	void exitSimpleGlobalDeclaration(@NotNull PascriptParser.SimpleGlobalDeclarationContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code DeclarationStatement}
 	 * labeled alternative in {@link PascriptParser#basicStatement}.
@@ -250,18 +248,6 @@ public interface PascriptListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitUnaryOperation(@NotNull PascriptParser.UnaryOperationContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code AssignGlobalDeclaration}
-	 * labeled alternative in {@link PascriptParser#globalVariableDeclaration}.
-	 * @param ctx the parse tree
-	 */
-	void enterAssignGlobalDeclaration(@NotNull PascriptParser.AssignGlobalDeclarationContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code AssignGlobalDeclaration}
-	 * labeled alternative in {@link PascriptParser#globalVariableDeclaration}.
-	 * @param ctx the parse tree
-	 */
-	void exitAssignGlobalDeclaration(@NotNull PascriptParser.AssignGlobalDeclarationContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code FloatDataType}
 	 * labeled alternative in {@link PascriptParser#primitiveDataType}.

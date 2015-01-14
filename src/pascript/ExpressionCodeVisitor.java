@@ -247,7 +247,7 @@ public class ExpressionCodeVisitor extends PascriptBaseVisitor<ExpressionCodeVis
                     template.add("comparison_type", "eq");
                     break;
                 case PascriptParser.NOT_EQUAL:
-                    template.add("comparison_type", "neq");
+                    template.add("comparison_type", "ne");
                     break;
             }
             
@@ -317,7 +317,7 @@ public class ExpressionCodeVisitor extends PascriptBaseVisitor<ExpressionCodeVis
                     template.add("comparison_type", "eq");
                     break;
                 case PascriptParser.NOT_EQUAL:
-                    template.add("comparison_type", "neq");
+                    template.add("comparison_type", "ne");
                     break;
             }
             
@@ -441,7 +441,7 @@ public class ExpressionCodeVisitor extends PascriptBaseVisitor<ExpressionCodeVis
                     template.add("comparison_type", "eq");
                     break;
                 case PascriptParser.NOT_EQUAL:
-                    template.add("comparison_type", "neq");
+                    template.add("comparison_type", "ne");
                     break;
             }
             
@@ -454,18 +454,20 @@ public class ExpressionCodeVisitor extends PascriptBaseVisitor<ExpressionCodeVis
         return null;
     }
     
-    private ST processArrayBinaryOperator(ExpressionCodeFragment resultCodeFragment, int operatorId, ArrayDataType operatorDataType)
+    private ST processArrayBinaryOperator(ExpressionCodeFragment resultCodeFragment, int operatorId, ArrayDataType operandDataType)
     {
-        String ouputDataType = operatorDataType.getOutputType();
+        String ouputDataType = operandDataType.getOutputType();
         
         if (operatorId == PascriptParser.ADD)
         {
-            resultCodeFragment.setDataType(operatorDataType);
+            resultCodeFragment.setDataType(operandDataType);
             ST template = new ST(
                 "<value_register> = call <data_type> @__pascript__<primitive_data_type_name>ArrayMerge" +
-                    "(<data_type> <operand_a_register>, <data_type> <operand_b_register>)\n"
+                    "(<data_type> <operand_a_register>, <data_type> <operand_b_register>, <integer_data_type> <dimension_count>)\n"
             );
-            template.add("primitive_data_type_name", operatorDataType.getPrimitiveDataTypeName());
+            template.add("primitive_data_type_name", operandDataType.getPrimitiveDataTypeName());
+            template.add("integer_data_type", integerDataType.getOutputType());
+            template.add("dimension_count", Integer.toString(operandDataType.getDimensionCount()));
             return template.add("data_type", ouputDataType);
         }
         else if (Arrays.asList(PascriptParser.EQUAL, PascriptParser.NOT_EQUAL).indexOf(operatorId) != -1)
@@ -474,7 +476,7 @@ public class ExpressionCodeVisitor extends PascriptBaseVisitor<ExpressionCodeVis
             
             ST template = new ST(
                 "<register_1> = call <boolean_data_type> @__pascript__<primitive_data_type_name>ArrayEquals" +
-                    "(<data_type> <operand_a_register>, <data_type> <operand_b_register>)\n" +
+                    "(<data_type> <operand_a_register>, <data_type> <operand_b_register>, <integer_data_type> <dimension_count>)\n" +
                 "<register_2> = icmp <comparison_type> <boolean_data_type> <register_1>, 0\n" +
                 "<value_register> = zext i1 <register_2> to <boolean_data_type>\n"
             );
@@ -482,7 +484,7 @@ public class ExpressionCodeVisitor extends PascriptBaseVisitor<ExpressionCodeVis
             switch (operatorId)
             {
                 case PascriptParser.EQUAL:
-                    template.add("comparison_type", "neq");
+                    template.add("comparison_type", "ne");
                     break;
                 case PascriptParser.NOT_EQUAL:
                     template.add("comparison_type", "eq");
@@ -492,7 +494,9 @@ public class ExpressionCodeVisitor extends PascriptBaseVisitor<ExpressionCodeVis
             template.add("register_1", this._symbolTable.generateNewRegisterName());
             template.add("register_2", this._symbolTable.generateNewRegisterName());
             template.add("boolean_data_type", booleanDataType.getOutputType());
-            template.add("primitive_data_type_name", operatorDataType.getPrimitiveDataTypeName());
+            template.add("primitive_data_type_name", operandDataType.getPrimitiveDataTypeName());
+            template.add("integer_data_type", integerDataType.getOutputType());
+            template.add("dimension_count", Integer.toString(operandDataType.getDimensionCount()));
             return template.add("data_type", ouputDataType);
         }
         return null;
@@ -506,8 +510,8 @@ public class ExpressionCodeVisitor extends PascriptBaseVisitor<ExpressionCodeVis
         ExpressionCodeFragment operandBCodeFragment = this.visit(ctx.expression(1));
         if (!dataType.equals(operandBCodeFragment.getDataType()))
         {
-            Compiler.printCompilationError("Cannot apply a binary operation to operands"
-                + " of different data types", ctx.expression(0).getStart());
+            Compiler.printCompilationError("Both operands of a binary operation must have"
+                + " matching data types", ctx.expression(0).getStart());
             System.exit(-1);
         }
         
@@ -563,6 +567,12 @@ public class ExpressionCodeVisitor extends PascriptBaseVisitor<ExpressionCodeVis
         return resultCodeFragment.setRegister(valueRegister);
     }
     
+    @Override
+    public ExpressionCodeFragment visitParenthesis(PascriptParser.ParenthesisContext ctx)
+    {
+        return this.visit(ctx.expression());
+    }
+    
     private String processArgumentList(PascriptParser.ArgumentListContext argumentListCtx, Token parenthesisOpenToken,
         ArrayList<DataType> parameterDataTypes, StringBuilder argumentValuesCode, StringBuilder argumentValuesDeallocationCode)
     {
@@ -581,7 +591,9 @@ public class ExpressionCodeVisitor extends PascriptBaseVisitor<ExpressionCodeVis
         {
             Compiler.printCompilationError("The function is being called with an incorrect number of arguments", argumentListCtx.getStart());
             System.exit(-1);
-            
+        }
+        else
+        {
             for (int i = 0; i < argumentCount; i++)
             {
                 ExpressionCodeFragment argumentCodeFragment = this.visit(argumentListCtx.expression(i));
@@ -846,19 +858,32 @@ public class ExpressionCodeVisitor extends PascriptBaseVisitor<ExpressionCodeVis
         {
             String methodType = "Value";
             String variableParameterCode = "<data_type> <variable_value_register>";
+            ValueDataType valueDataType = (ValueDataType)variableDataType.getPrimitiveDataType();
             if (variableDimensionCount > 1)
             {
                 methodType = "Array";
                 variableParameterCode += ", " + integerDataType.getOutputType() + " " + Integer.toString(variableDimensionCount);
+                valueDataType = new ArrayDataType((PrimitiveDataType)valueDataType, variableDimensionCount - 1);
             }
             
-            ST template = new ST(
-                "<value_register> = call <return_data_type> @__pascript__<primitive_data_type_name>Array<method_name>"
-                    + "<method_type>(" + variableParameterCode + ", <argument_list_code>)\n"
-            );
+            ST template;
+            if (methodName.equals("get"))
+            {
+                template = new ST(
+                    "<value_register> = call <return_data_type> @__pascript__<primitive_data_type_name>Array<method_name>"
+                        + "<method_type>(" + variableParameterCode + ", <argument_list_code>)\n"
+                );
+            }
+            else
+            {
+                template = new ST(
+                    "call <return_data_type> @__pascript__<primitive_data_type_name>Array<method_name>"
+                        + "<method_type>(" + variableParameterCode + ", <argument_list_code>)\n"
+                );
+            }
             template.add("method_type", methodType);
             
-            ValueDataType valueDataType = (ValueDataType)variableDataType.getPrimitiveDataType();
+            
             switch (methodName)
             {
                 case "get":
@@ -915,6 +940,7 @@ public class ExpressionCodeVisitor extends PascriptBaseVisitor<ExpressionCodeVis
                     + "(<data_type> <variable_value_register>)\n"
             );
             
+            returnDataType = integerDataType;
             if (variableDimensionCount > 1)
             {
                 template.add("data_type_name", "array");
@@ -935,9 +961,23 @@ public class ExpressionCodeVisitor extends PascriptBaseVisitor<ExpressionCodeVis
     @Override
     public ExpressionCodeFragment visitMethodCall(PascriptParser.MethodCallContext ctx)
     {
-        ExpressionCodeFragment variableCodeFragment = this.visit(ctx.variableValue());
-        DataType variableDataType = variableCodeFragment.getDataType();
-        String variableValueRegister = variableCodeFragment.getValueRegister();
+        VariableRecord variableRecord = this._symbolTable.getVariableRecord(ctx.variableValue().IDENTIFIER().getText());
+        if (variableRecord == null)
+        {
+            Compiler.printCompilationError(
+                "A variable with the given name does not exist in the current scope", ctx.IDENTIFIER().getSymbol()
+            );
+            System.exit(-1);
+        }
+        
+        ST variableValueTemplate = new ST(
+            "<variable_value_register> = load <data_type>* <variable_memory_register>\n"
+        );
+        DataType variableDataType = variableRecord.getDataType();
+        String variableValueRegister = this._symbolTable.generateNewRegisterName();
+        variableValueTemplate.add("variable_value_register", variableValueRegister);
+        variableValueTemplate.add("data_type", variableDataType.getOutputType());
+        variableValueTemplate.add("variable_memory_register", variableRecord.getMemoryRegister());
         
         ExpressionCodeFragment resultCodeFragment = new ExpressionCodeFragment();
         
@@ -982,7 +1022,7 @@ public class ExpressionCodeVisitor extends PascriptBaseVisitor<ExpressionCodeVis
             methodCallTemplate.add("argument_list_code", argumentListCode);
         }
         
-        methodCallTemplate.add("variabl_value_register", variableValueRegister);
+        methodCallTemplate.add("variable_value_register", variableValueRegister);
         if (!(resultCodeFragment.getDataType() instanceof VoidDataType))
         {
             String valueRegister = this._symbolTable.generateNewRegisterName();
@@ -990,17 +1030,10 @@ public class ExpressionCodeVisitor extends PascriptBaseVisitor<ExpressionCodeVis
             resultCodeFragment.setRegister(valueRegister);
         }
         
-        String variableValueDeallocationCode = "";
-        if (variableDataType instanceof DynamicDataType)
-        {
-            variableValueDeallocationCode = ((DynamicDataType)variableDataType).generateDeallocationFunctionCall(variableValueRegister);
-        }
-        
         resultCodeFragment
-            .addCode(variableCodeFragment.toString())
+            .addCode(variableValueTemplate.render())
             .addCode(argumentValuesCode.toString())
             .addCode(methodCallTemplate.render())
-            .addCode(variableValueDeallocationCode)
             .addCode(argumentValuesDeallocationCode.toString());
         return resultCodeFragment;
     }
@@ -1033,8 +1066,8 @@ public class ExpressionCodeVisitor extends PascriptBaseVisitor<ExpressionCodeVis
         String variableOutputDataType = variableDataType.getOutputType();
         
         ST template = new ST(
-            "<variable_value_deallocation_code>" + 
             "<value_code>" + 
+            "<variable_value_deallocation_code>" + 
             "store <data_type> <value_register>, <data_type>* <memory_register>\n" + 
             "<copy_allocation_code>"
         );
@@ -1059,19 +1092,19 @@ public class ExpressionCodeVisitor extends PascriptBaseVisitor<ExpressionCodeVis
             variableValueDeallocationCodeTemplate.add("variable_value_deallocation_code", 
                 dynamicVariableDataType.generateDeallocationFunctionCall(variableValue)
             );
-            template.add("variable_value_deallocation_code", variableValueDeallocationCodeTemplate.toString());
+            template.add("variable_value_deallocation_code", variableValueDeallocationCodeTemplate.render());
             
             String copyRegister = this._symbolTable.generateNewRegisterName();
             template.add("copy_allocation_code", 
                 dynamicVariableDataType.generateCopyFunctionCall(copyRegister, valueRegister)
             );
-            expressionCodeFragment.setRegister(copyRegister);
+            resultCodeFragment.setRegister(copyRegister);
         }
         else
         {
             template.add("variable_value_deallocation_code", "");
             template.add("copy_allocation_code", "");
-            expressionCodeFragment.setRegister(valueRegister);
+            resultCodeFragment.setRegister(valueRegister);
         }
         
         resultCodeFragment.addCode(template.render());
@@ -1081,8 +1114,7 @@ public class ExpressionCodeVisitor extends PascriptBaseVisitor<ExpressionCodeVis
     @Override
     public ExpressionCodeFragment visitReAssignment(PascriptParser.ReAssignmentContext ctx)
     {
-        String variableName = ctx.IDENTIFIER().getText();
-        VariableRecord variableRecord = this._symbolTable.getVariableRecord(variableName);
+        VariableRecord variableRecord = this._symbolTable.getVariableRecord(ctx.IDENTIFIER().getText());
         if (variableRecord == null)
         {
             Compiler.printCompilationError(

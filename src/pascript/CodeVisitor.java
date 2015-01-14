@@ -179,11 +179,15 @@ public class CodeVisitor extends PascriptBaseVisitor<CodeVisitor.CodeFragment>
         {
             String functionName = functionDeclarationCtx.functionName.getText();
             DataType returnDataType = this._dataTypeVisitor.visit(functionDeclarationCtx.returnDataType());
-            
             ArrayList<DataType> parameterDataTypes = new ArrayList<>();
-            for (PascriptParser.DataTypeContext dataTypeContext : functionDeclarationCtx.parameterList().dataType())
+            
+            PascriptParser.ParameterListContext parameterListCtx = functionDeclarationCtx.parameterList();
+            if (parameterListCtx != null)
             {
-                parameterDataTypes.add(this._dataTypeVisitor.visit(dataTypeContext));
+                for (PascriptParser.DataTypeContext dataTypeContext : parameterListCtx.dataType())
+                {
+                    parameterDataTypes.add(this._dataTypeVisitor.visit(dataTypeContext));
+                }
             }
             
             FunctionRecord functionRecord = this._symbolTable.addExternalFunction(functionName, returnDataType, parameterDataTypes);
@@ -208,12 +212,16 @@ public class CodeVisitor extends PascriptBaseVisitor<CodeVisitor.CodeFragment>
         return codeFragment;
     }
 
-    private CodeFragment processGlobalVariableDeclaration(Token nameToken, ValueDataType dataType, ExpressionCodeFragment expressionCodeFragment)
+    @Override
+    public CodeFragment visitGlobalVariableDeclaration(PascriptParser.GlobalVariableDeclarationContext ctx)
     {
-        VariableRecord variableRecord = this._symbolTable.addGlobalVariable(nameToken.getText(), dataType);
+        ValueDataType valueDataType = (ValueDataType)this._dataTypeVisitor.visit(ctx.dataType());
+        ExpressionCodeFragment expressionCodeFragment = this._expressionCodeVisitor.getDefaultExpression(valueDataType);
+        
+        VariableRecord variableRecord = this._symbolTable.addGlobalVariable(ctx.IDENTIFIER().getSymbol().getText(), valueDataType);
         if (variableRecord == null)
         {
-            Compiler.printCompilationError("A global variable with the same name already exists", nameToken);
+            Compiler.printCompilationError("A global variable with the same name already exists", ctx.IDENTIFIER().getSymbol());
             System.exit(-1);
         }
         
@@ -223,31 +231,9 @@ public class CodeVisitor extends PascriptBaseVisitor<CodeVisitor.CodeFragment>
             "<memory_register> = global <data_type> <default_value>\n"
         );
         template.add("memory_register", variableRecord.getMemoryRegister());
-        template.add("data_type", dataType.getOutputType());
-        template.add("default_value", dataType.getDefaultOutputValue());
+        template.add("data_type", valueDataType.getOutputType());
+        template.add("default_value", valueDataType.getDefaultOutputValue());
         return new CodeFragment(template.render());
-    }
-
-    @Override
-    public CodeFragment visitSimpleGlobalDeclaration(PascriptParser.SimpleGlobalDeclarationContext ctx)
-    {
-        ValueDataType valueDataType = (ValueDataType)this._dataTypeVisitor.visit(ctx.dataType());
-        ExpressionCodeFragment expressionCodeFragment = this._expressionCodeVisitor.getDefaultExpression(valueDataType);
-        return this.processGlobalVariableDeclaration(ctx.IDENTIFIER().getSymbol(), valueDataType, expressionCodeFragment);
-    }
-    
-    @Override
-    public CodeFragment visitAssignGlobalDeclaration(PascriptParser.AssignGlobalDeclarationContext ctx)
-    {
-        ValueDataType valueDataType = (ValueDataType)this._dataTypeVisitor.visit(ctx.dataType());
-        ExpressionCodeFragment expressionCodeFragment = this._expressionCodeVisitor.visit(ctx.literal());
-        if (!valueDataType.equals(expressionCodeFragment.getDataType()))
-        {
-            Compiler.printCompilationError("Attempting to assign an expression that evaluates to a non-matching data type", ctx.literal().getStart());
-            System.exit(-1);
-        }
-        
-        return this.processGlobalVariableDeclaration(ctx.IDENTIFIER().getSymbol(), valueDataType, expressionCodeFragment);
     }
 
     private String processVariableDeallocation(ArrayList<VariableRecord> dynamicVariableRecords)
@@ -376,11 +362,15 @@ public class CodeVisitor extends PascriptBaseVisitor<CodeVisitor.CodeFragment>
             ArrayList<DataType> parameterDataTypes = new ArrayList<>();
             ArrayList<String> parameterNames = new ArrayList<>();
 
-            PascriptParser.NamedParameterListContext parameterListCtx = functionDeclarationCtx.namedParameterList();
-            for (int i = 0; i < parameterListCtx.dataType().size(); i++)
+            PascriptParser.NamedParameterListContext namedParameterListCtx = functionDeclarationCtx.namedParameterList();
+            if (namedParameterListCtx != null)
             {
-                parameterDataTypes.add(this._dataTypeVisitor.visit(parameterListCtx.dataType(i)));
-                parameterNames.add(parameterListCtx.IDENTIFIER(i).toString());
+                int parameterCount = namedParameterListCtx.dataType().size();
+                for (int i = 0; i < parameterCount; i++)
+                {
+                    parameterDataTypes.add(this._dataTypeVisitor.visit(namedParameterListCtx.dataType(i)));
+                    parameterNames.add(namedParameterListCtx.IDENTIFIER(i).toString());
+                }
             }
             
             FunctionRecord functionRecord = this._symbolTable.addLocalFunction(functionName, returnDataType, parameterDataTypes);
@@ -578,6 +568,10 @@ public class CodeVisitor extends PascriptBaseVisitor<CodeVisitor.CodeFragment>
             "<end_label>:\n"
         );
         
+        this._symbolTable.enterBlock();
+        
+        CodeFragment initializerCodeFragment = this.visit(ctx.initializer);
+        
         BooleanDataType booleanDataType = new BooleanDataType();
         ExpressionCodeFragment conditionCodeFragment = this._expressionCodeVisitor.visit(ctx.condition);
         if (!conditionCodeFragment.getDataType().equals(booleanDataType))
@@ -588,7 +582,7 @@ public class CodeVisitor extends PascriptBaseVisitor<CodeVisitor.CodeFragment>
         
         ExpressionCodeFragment stepCodeFragment = this._expressionCodeVisitor.visit(ctx.step);
         
-        template.add("initializer_code", this.visit(ctx.initializer).toString());
+        template.add("initializer_code", initializerCodeFragment.toString());
         template.add("condition_label", this._symbolTable.generateNewLabelName());
         template.add("condition_code", conditionCodeFragment.toString());
         template.add("break_register", this._symbolTable.generateNewRegisterName());
@@ -610,6 +604,8 @@ public class CodeVisitor extends PascriptBaseVisitor<CodeVisitor.CodeFragment>
         {
             template.add("step_value_deallocation_code", "");
         }
+        
+        this._symbolTable.exitBlock();
                 
         return new CodeFragment(template.render());
     }

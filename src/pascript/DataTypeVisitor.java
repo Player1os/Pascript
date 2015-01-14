@@ -303,16 +303,19 @@ public class DataTypeVisitor extends PascriptBaseVisitor<DataType>
         @Override
         public boolean equals(Object obj)
         {
-            if (obj instanceof ArrayDataType)
+            if (!(obj instanceof ArrayDataType))
             {
                 return false;
             }
             ArrayDataType arrayDataType = (ArrayDataType)obj;
             
-            return super.equals(obj) || (this.getClass().isInstance(obj)
-                && (this.getDimensionCount() == arrayDataType.getDimensionCount())
-                && ((this.getPrimitiveDataType() == null) || (arrayDataType.getPrimitiveDataType() == null) 
-                || this.getPrimitiveDataType().equals(arrayDataType.getPrimitiveDataType())));
+            if ((this.getPrimitiveDataType() == null) || (arrayDataType.getPrimitiveDataType() == null))
+            {
+                return true;
+            }
+            
+            return (this.getDimensionCount() == arrayDataType.getDimensionCount())
+                && this.getPrimitiveDataType().equals(arrayDataType.getPrimitiveDataType());
         }
 
         @Override

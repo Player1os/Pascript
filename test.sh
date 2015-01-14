@@ -1,0 +1,1 @@
+lli -load=./output/library.so output/test.ll < output/input.txt
