@@ -46,7 +46,7 @@ for (int i = 0; i < m; i++)
 
   if ((u < 0) | (u >= n) | (v < 0) | (v >= n))
   {
-    <- "NIE";
+    <- "NO";
     return 0;
   }
 
@@ -73,10 +73,10 @@ if (n > 0)
   {
     if (first_root != findset(i))
     {
-      <- "NIE";
+      <- "NO";
       return 0;
     }
   }
 }
 
-<- "ANO";
+<- "YES";
