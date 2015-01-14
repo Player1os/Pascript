@@ -79,11 +79,11 @@ public class PascriptParser extends Parser {
 		public MainSectionContext mainSection() {
 			return getRuleContext(MainSectionContext.class,0);
 		}
-		public VariableSectionContext variableSection() {
-			return getRuleContext(VariableSectionContext.class,0);
-		}
 		public ExternalSectionContext externalSection() {
 			return getRuleContext(ExternalSectionContext.class,0);
+		}
+		public VariableSectionContext variableSection() {
+			return getRuleContext(VariableSectionContext.class,0);
 		}
 		public FunctionSectionContext functionSection() {
 			return getRuleContext(FunctionSectionContext.class,0);
@@ -153,17 +153,17 @@ public class PascriptParser extends Parser {
 	}
 
 	public static class ExternalSectionContext extends ParserRuleContext {
-		public TerminalNode EXTERNAL_SECTION() { return getToken(PascriptParser.EXTERNAL_SECTION, 0); }
-		public List<ExternalFunctionDeclarationContext> externalFunctionDeclaration() {
-			return getRuleContexts(ExternalFunctionDeclarationContext.class);
-		}
-		public ExternalFunctionDeclarationContext externalFunctionDeclaration(int i) {
-			return getRuleContext(ExternalFunctionDeclarationContext.class,i);
-		}
 		public TerminalNode END_STATEMENT(int i) {
 			return getToken(PascriptParser.END_STATEMENT, i);
 		}
+		public TerminalNode EXTERNAL_SECTION() { return getToken(PascriptParser.EXTERNAL_SECTION, 0); }
+		public ExternalFunctionDeclarationContext externalFunctionDeclaration(int i) {
+			return getRuleContext(ExternalFunctionDeclarationContext.class,i);
+		}
 		public List<TerminalNode> END_STATEMENT() { return getTokens(PascriptParser.END_STATEMENT); }
+		public List<ExternalFunctionDeclarationContext> externalFunctionDeclaration() {
+			return getRuleContexts(ExternalFunctionDeclarationContext.class);
+		}
 		public ExternalSectionContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -221,14 +221,14 @@ public class PascriptParser extends Parser {
 	public static class ExternalFunctionDeclarationContext extends ParserRuleContext {
 		public Token functionName;
 		public TerminalNode PAREN_CLOSE() { return getToken(PascriptParser.PAREN_CLOSE, 0); }
-		public TerminalNode IDENTIFIER() { return getToken(PascriptParser.IDENTIFIER, 0); }
-		public TerminalNode PAREN_OPEN() { return getToken(PascriptParser.PAREN_OPEN, 0); }
 		public ReturnDataTypeContext returnDataType() {
 			return getRuleContext(ReturnDataTypeContext.class,0);
 		}
 		public ParameterListContext parameterList() {
 			return getRuleContext(ParameterListContext.class,0);
 		}
+		public TerminalNode PAREN_OPEN() { return getToken(PascriptParser.PAREN_OPEN, 0); }
+		public TerminalNode IDENTIFIER() { return getToken(PascriptParser.IDENTIFIER, 0); }
 		public ExternalFunctionDeclarationContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -285,11 +285,11 @@ public class PascriptParser extends Parser {
 		public DataTypeContext dataType(int i) {
 			return getRuleContext(DataTypeContext.class,i);
 		}
-		public TerminalNode COMMA(int i) {
-			return getToken(PascriptParser.COMMA, i);
-		}
 		public List<DataTypeContext> dataType() {
 			return getRuleContexts(DataTypeContext.class);
+		}
+		public TerminalNode COMMA(int i) {
+			return getToken(PascriptParser.COMMA, i);
 		}
 		public ParameterListContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -346,17 +346,17 @@ public class PascriptParser extends Parser {
 	}
 
 	public static class VariableSectionContext extends ParserRuleContext {
-		public List<GlobalVariableDeclarationContext> globalVariableDeclaration() {
-			return getRuleContexts(GlobalVariableDeclarationContext.class);
-		}
-		public GlobalVariableDeclarationContext globalVariableDeclaration(int i) {
-			return getRuleContext(GlobalVariableDeclarationContext.class,i);
-		}
+		public TerminalNode VARIABLE_SECTION() { return getToken(PascriptParser.VARIABLE_SECTION, 0); }
 		public TerminalNode END_STATEMENT(int i) {
 			return getToken(PascriptParser.END_STATEMENT, i);
 		}
-		public TerminalNode VARIABLE_SECTION() { return getToken(PascriptParser.VARIABLE_SECTION, 0); }
 		public List<TerminalNode> END_STATEMENT() { return getTokens(PascriptParser.END_STATEMENT); }
+		public GlobalVariableDeclarationContext globalVariableDeclaration(int i) {
+			return getRuleContext(GlobalVariableDeclarationContext.class,i);
+		}
+		public List<GlobalVariableDeclarationContext> globalVariableDeclaration() {
+			return getRuleContexts(GlobalVariableDeclarationContext.class);
+		}
 		public VariableSectionContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -457,16 +457,16 @@ public class PascriptParser extends Parser {
 	}
 
 	public static class FunctionSectionContext extends ParserRuleContext {
-		public FunctionDefinitionContext functionDefinition(int i) {
-			return getRuleContext(FunctionDefinitionContext.class,i);
+		public List<FunctionDeclarationContext> functionDeclaration() {
+			return getRuleContexts(FunctionDeclarationContext.class);
 		}
 		public FunctionDeclarationContext functionDeclaration(int i) {
 			return getRuleContext(FunctionDeclarationContext.class,i);
 		}
-		public TerminalNode FUNCTION_SECTION() { return getToken(PascriptParser.FUNCTION_SECTION, 0); }
-		public List<FunctionDeclarationContext> functionDeclaration() {
-			return getRuleContexts(FunctionDeclarationContext.class);
+		public FunctionDefinitionContext functionDefinition(int i) {
+			return getRuleContext(FunctionDefinitionContext.class,i);
 		}
+		public TerminalNode FUNCTION_SECTION() { return getToken(PascriptParser.FUNCTION_SECTION, 0); }
 		public List<FunctionDefinitionContext> functionDefinition() {
 			return getRuleContexts(FunctionDefinitionContext.class);
 		}
@@ -570,14 +570,14 @@ public class PascriptParser extends Parser {
 	public static class FunctionDeclarationContext extends ParserRuleContext {
 		public Token functionName;
 		public TerminalNode PAREN_CLOSE() { return getToken(PascriptParser.PAREN_CLOSE, 0); }
-		public TerminalNode IDENTIFIER() { return getToken(PascriptParser.IDENTIFIER, 0); }
-		public TerminalNode PAREN_OPEN() { return getToken(PascriptParser.PAREN_OPEN, 0); }
 		public ReturnDataTypeContext returnDataType() {
 			return getRuleContext(ReturnDataTypeContext.class,0);
 		}
 		public NamedParameterListContext namedParameterList() {
 			return getRuleContext(NamedParameterListContext.class,0);
 		}
+		public TerminalNode PAREN_OPEN() { return getToken(PascriptParser.PAREN_OPEN, 0); }
+		public TerminalNode IDENTIFIER() { return getToken(PascriptParser.IDENTIFIER, 0); }
 		public FunctionDeclarationContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -630,19 +630,19 @@ public class PascriptParser extends Parser {
 	}
 
 	public static class NamedParameterListContext extends ParserRuleContext {
+		public List<TerminalNode> COMMA() { return getTokens(PascriptParser.COMMA); }
 		public TerminalNode IDENTIFIER(int i) {
 			return getToken(PascriptParser.IDENTIFIER, i);
 		}
 		public List<TerminalNode> IDENTIFIER() { return getTokens(PascriptParser.IDENTIFIER); }
-		public List<TerminalNode> COMMA() { return getTokens(PascriptParser.COMMA); }
 		public DataTypeContext dataType(int i) {
 			return getRuleContext(DataTypeContext.class,i);
 		}
-		public TerminalNode COMMA(int i) {
-			return getToken(PascriptParser.COMMA, i);
-		}
 		public List<DataTypeContext> dataType() {
 			return getRuleContexts(DataTypeContext.class);
+		}
+		public TerminalNode COMMA(int i) {
+			return getToken(PascriptParser.COMMA, i);
 		}
 		public NamedParameterListContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -787,11 +787,11 @@ public class PascriptParser extends Parser {
 	}
 
 	public static class MainSectionContext extends ParserRuleContext {
-		public List<StatementContext> statement() {
-			return getRuleContexts(StatementContext.class);
-		}
 		public StatementContext statement(int i) {
 			return getRuleContext(StatementContext.class,i);
+		}
+		public List<StatementContext> statement() {
+			return getRuleContexts(StatementContext.class);
 		}
 		public TerminalNode MAIN_SECTION() { return getToken(PascriptParser.MAIN_SECTION, 0); }
 		public MainSectionContext(ParserRuleContext parent, int invokingState) {
@@ -858,48 +858,22 @@ public class PascriptParser extends Parser {
 			super.copyFrom(ctx);
 		}
 	}
-	public static class WhileLoopContext extends StatementContext {
-		public ExpressionContext condition;
-		public StatementContext statement() {
-			return getRuleContext(StatementContext.class,0);
-		}
-		public TerminalNode WHILE() { return getToken(PascriptParser.WHILE, 0); }
-		public TerminalNode PAREN_CLOSE() { return getToken(PascriptParser.PAREN_CLOSE, 0); }
-		public TerminalNode PAREN_OPEN() { return getToken(PascriptParser.PAREN_OPEN, 0); }
-		public ExpressionContext expression() {
-			return getRuleContext(ExpressionContext.class,0);
-		}
-		public WhileLoopContext(StatementContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof PascriptListener ) ((PascriptListener)listener).enterWhileLoop(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof PascriptListener ) ((PascriptListener)listener).exitWhileLoop(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof PascriptVisitor ) return ((PascriptVisitor<? extends T>)visitor).visitWhileLoop(this);
-			else return visitor.visitChildren(this);
-		}
-	}
 	public static class IfStatementContext extends StatementContext {
 		public ExpressionContext condition;
 		public StatementContext trueStatement;
 		public StatementContext falseStatement;
+		public TerminalNode ELSE() { return getToken(PascriptParser.ELSE, 0); }
+		public TerminalNode IF() { return getToken(PascriptParser.IF, 0); }
+		public TerminalNode PAREN_CLOSE() { return getToken(PascriptParser.PAREN_CLOSE, 0); }
+		public StatementContext statement(int i) {
+			return getRuleContext(StatementContext.class,i);
+		}
 		public List<StatementContext> statement() {
 			return getRuleContexts(StatementContext.class);
 		}
-		public TerminalNode IF() { return getToken(PascriptParser.IF, 0); }
-		public TerminalNode PAREN_CLOSE() { return getToken(PascriptParser.PAREN_CLOSE, 0); }
-		public TerminalNode ELSE() { return getToken(PascriptParser.ELSE, 0); }
 		public TerminalNode PAREN_OPEN() { return getToken(PascriptParser.PAREN_OPEN, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
-		}
-		public StatementContext statement(int i) {
-			return getRuleContext(StatementContext.class,i);
 		}
 		public IfStatementContext(StatementContext ctx) { copyFrom(ctx); }
 		@Override
@@ -916,22 +890,41 @@ public class PascriptParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class CompositeStatementContext extends StatementContext {
-		public BlockStatementContext blockStatement() {
-			return getRuleContext(BlockStatementContext.class,0);
+	public static class ForLoopContext extends StatementContext {
+		public VariableDeclarationContext initializer;
+		public ExpressionContext condition;
+		public ExpressionContext step;
+		public VariableDeclarationContext variableDeclaration() {
+			return getRuleContext(VariableDeclarationContext.class,0);
 		}
-		public CompositeStatementContext(StatementContext ctx) { copyFrom(ctx); }
+		public TerminalNode PAREN_CLOSE() { return getToken(PascriptParser.PAREN_CLOSE, 0); }
+		public TerminalNode END_STATEMENT(int i) {
+			return getToken(PascriptParser.END_STATEMENT, i);
+		}
+		public TerminalNode FOR() { return getToken(PascriptParser.FOR, 0); }
+		public List<TerminalNode> END_STATEMENT() { return getTokens(PascriptParser.END_STATEMENT); }
+		public ExpressionContext expression(int i) {
+			return getRuleContext(ExpressionContext.class,i);
+		}
+		public StatementContext statement() {
+			return getRuleContext(StatementContext.class,0);
+		}
+		public TerminalNode PAREN_OPEN() { return getToken(PascriptParser.PAREN_OPEN, 0); }
+		public List<ExpressionContext> expression() {
+			return getRuleContexts(ExpressionContext.class);
+		}
+		public ForLoopContext(StatementContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof PascriptListener ) ((PascriptListener)listener).enterCompositeStatement(this);
+			if ( listener instanceof PascriptListener ) ((PascriptListener)listener).enterForLoop(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof PascriptListener ) ((PascriptListener)listener).exitCompositeStatement(this);
+			if ( listener instanceof PascriptListener ) ((PascriptListener)listener).exitForLoop(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof PascriptVisitor ) return ((PascriptVisitor<? extends T>)visitor).visitCompositeStatement(this);
+			if ( visitor instanceof PascriptVisitor ) return ((PascriptVisitor<? extends T>)visitor).visitForLoop(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -955,57 +948,19 @@ public class PascriptParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class ForLoopContext extends StatementContext {
-		public VariableDeclarationContext initializer;
-		public ExpressionContext condition;
-		public ExpressionContext step;
-		public StatementContext statement() {
-			return getRuleContext(StatementContext.class,0);
-		}
-		public ExpressionContext expression(int i) {
-			return getRuleContext(ExpressionContext.class,i);
-		}
-		public TerminalNode PAREN_CLOSE() { return getToken(PascriptParser.PAREN_CLOSE, 0); }
-		public TerminalNode FOR() { return getToken(PascriptParser.FOR, 0); }
-		public TerminalNode PAREN_OPEN() { return getToken(PascriptParser.PAREN_OPEN, 0); }
-		public List<ExpressionContext> expression() {
-			return getRuleContexts(ExpressionContext.class);
-		}
-		public TerminalNode END_STATEMENT(int i) {
-			return getToken(PascriptParser.END_STATEMENT, i);
-		}
-		public VariableDeclarationContext variableDeclaration() {
-			return getRuleContext(VariableDeclarationContext.class,0);
-		}
-		public List<TerminalNode> END_STATEMENT() { return getTokens(PascriptParser.END_STATEMENT); }
-		public ForLoopContext(StatementContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof PascriptListener ) ((PascriptListener)listener).enterForLoop(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof PascriptListener ) ((PascriptListener)listener).exitForLoop(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof PascriptVisitor ) return ((PascriptVisitor<? extends T>)visitor).visitForLoop(this);
-			else return visitor.visitChildren(this);
-		}
-	}
 	public static class DoWhileLoopContext extends StatementContext {
 		public ExpressionContext condition;
-		public TerminalNode WHILE() { return getToken(PascriptParser.WHILE, 0); }
+		public TerminalNode DO() { return getToken(PascriptParser.DO, 0); }
+		public TerminalNode PAREN_CLOSE() { return getToken(PascriptParser.PAREN_CLOSE, 0); }
+		public TerminalNode END_STATEMENT() { return getToken(PascriptParser.END_STATEMENT, 0); }
 		public StatementContext statement() {
 			return getRuleContext(StatementContext.class,0);
 		}
-		public TerminalNode PAREN_CLOSE() { return getToken(PascriptParser.PAREN_CLOSE, 0); }
-		public TerminalNode DO() { return getToken(PascriptParser.DO, 0); }
+		public TerminalNode WHILE() { return getToken(PascriptParser.WHILE, 0); }
 		public TerminalNode PAREN_OPEN() { return getToken(PascriptParser.PAREN_OPEN, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
-		public TerminalNode END_STATEMENT() { return getToken(PascriptParser.END_STATEMENT, 0); }
 		public DoWhileLoopContext(StatementContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -1018,6 +973,51 @@ public class PascriptParser extends Parser {
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof PascriptVisitor ) return ((PascriptVisitor<? extends T>)visitor).visitDoWhileLoop(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class WhileLoopContext extends StatementContext {
+		public ExpressionContext condition;
+		public TerminalNode PAREN_CLOSE() { return getToken(PascriptParser.PAREN_CLOSE, 0); }
+		public StatementContext statement() {
+			return getRuleContext(StatementContext.class,0);
+		}
+		public TerminalNode WHILE() { return getToken(PascriptParser.WHILE, 0); }
+		public TerminalNode PAREN_OPEN() { return getToken(PascriptParser.PAREN_OPEN, 0); }
+		public ExpressionContext expression() {
+			return getRuleContext(ExpressionContext.class,0);
+		}
+		public WhileLoopContext(StatementContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof PascriptListener ) ((PascriptListener)listener).enterWhileLoop(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof PascriptListener ) ((PascriptListener)listener).exitWhileLoop(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof PascriptVisitor ) return ((PascriptVisitor<? extends T>)visitor).visitWhileLoop(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class CompositeStatementContext extends StatementContext {
+		public BlockStatementContext blockStatement() {
+			return getRuleContext(BlockStatementContext.class,0);
+		}
+		public CompositeStatementContext(StatementContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof PascriptListener ) ((PascriptListener)listener).enterCompositeStatement(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof PascriptListener ) ((PascriptListener)listener).exitCompositeStatement(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof PascriptVisitor ) return ((PascriptVisitor<? extends T>)visitor).visitCompositeStatement(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -1133,14 +1133,14 @@ public class PascriptParser extends Parser {
 	}
 
 	public static class BlockStatementContext extends ParserRuleContext {
-		public List<StatementContext> statement() {
-			return getRuleContexts(StatementContext.class);
-		}
+		public TerminalNode CURLY_CLOSE() { return getToken(PascriptParser.CURLY_CLOSE, 0); }
 		public TerminalNode CURLY_OPEN() { return getToken(PascriptParser.CURLY_OPEN, 0); }
 		public StatementContext statement(int i) {
 			return getRuleContext(StatementContext.class,i);
 		}
-		public TerminalNode CURLY_CLOSE() { return getToken(PascriptParser.CURLY_CLOSE, 0); }
+		public List<StatementContext> statement() {
+			return getRuleContexts(StatementContext.class);
+		}
 		public BlockStatementContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -1206,6 +1206,61 @@ public class PascriptParser extends Parser {
 			super.copyFrom(ctx);
 		}
 	}
+	public static class ReturnVoidStatementContext extends BasicStatementContext {
+		public TerminalNode RETURN() { return getToken(PascriptParser.RETURN, 0); }
+		public ReturnVoidStatementContext(BasicStatementContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof PascriptListener ) ((PascriptListener)listener).enterReturnVoidStatement(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof PascriptListener ) ((PascriptListener)listener).exitReturnVoidStatement(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof PascriptVisitor ) return ((PascriptVisitor<? extends T>)visitor).visitReturnVoidStatement(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class ReturnValueStatementContext extends BasicStatementContext {
+		public TerminalNode RETURN() { return getToken(PascriptParser.RETURN, 0); }
+		public ExpressionContext expression() {
+			return getRuleContext(ExpressionContext.class,0);
+		}
+		public ReturnValueStatementContext(BasicStatementContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof PascriptListener ) ((PascriptListener)listener).enterReturnValueStatement(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof PascriptListener ) ((PascriptListener)listener).exitReturnValueStatement(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof PascriptVisitor ) return ((PascriptVisitor<? extends T>)visitor).visitReturnValueStatement(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class ReadStatementContext extends BasicStatementContext {
+		public TerminalNode READ() { return getToken(PascriptParser.READ, 0); }
+		public TerminalNode IDENTIFIER() { return getToken(PascriptParser.IDENTIFIER, 0); }
+		public ReadStatementContext(BasicStatementContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof PascriptListener ) ((PascriptListener)listener).enterReadStatement(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof PascriptListener ) ((PascriptListener)listener).exitReadStatement(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof PascriptVisitor ) return ((PascriptVisitor<? extends T>)visitor).visitReadStatement(this);
+			else return visitor.visitChildren(this);
+		}
+	}
 	public static class ExpressionStatementContext extends BasicStatementContext {
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
@@ -1245,23 +1300,6 @@ public class PascriptParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class ReturnVoidStatementContext extends BasicStatementContext {
-		public TerminalNode RETURN() { return getToken(PascriptParser.RETURN, 0); }
-		public ReturnVoidStatementContext(BasicStatementContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof PascriptListener ) ((PascriptListener)listener).enterReturnVoidStatement(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof PascriptListener ) ((PascriptListener)listener).exitReturnVoidStatement(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof PascriptVisitor ) return ((PascriptVisitor<? extends T>)visitor).visitReturnVoidStatement(this);
-			else return visitor.visitChildren(this);
-		}
-	}
 	public static class DeclarationStatementContext extends BasicStatementContext {
 		public VariableDeclarationContext variableDeclaration() {
 			return getRuleContext(VariableDeclarationContext.class,0);
@@ -1278,44 +1316,6 @@ public class PascriptParser extends Parser {
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof PascriptVisitor ) return ((PascriptVisitor<? extends T>)visitor).visitDeclarationStatement(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class ReadStatementContext extends BasicStatementContext {
-		public TerminalNode IDENTIFIER() { return getToken(PascriptParser.IDENTIFIER, 0); }
-		public TerminalNode READ() { return getToken(PascriptParser.READ, 0); }
-		public ReadStatementContext(BasicStatementContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof PascriptListener ) ((PascriptListener)listener).enterReadStatement(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof PascriptListener ) ((PascriptListener)listener).exitReadStatement(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof PascriptVisitor ) return ((PascriptVisitor<? extends T>)visitor).visitReadStatement(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class ReturnValueStatementContext extends BasicStatementContext {
-		public TerminalNode RETURN() { return getToken(PascriptParser.RETURN, 0); }
-		public ExpressionContext expression() {
-			return getRuleContext(ExpressionContext.class,0);
-		}
-		public ReturnValueStatementContext(BasicStatementContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof PascriptListener ) ((PascriptListener)listener).enterReturnValueStatement(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof PascriptListener ) ((PascriptListener)listener).exitReturnValueStatement(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof PascriptVisitor ) return ((PascriptVisitor<? extends T>)visitor).visitReturnValueStatement(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -1488,28 +1488,6 @@ public class PascriptParser extends Parser {
 			super.copyFrom(ctx);
 		}
 	}
-	public static class UnaryOperationContext extends ExpressionContext {
-		public Token operator;
-		public TerminalNode NOT() { return getToken(PascriptParser.NOT, 0); }
-		public ExpressionContext expression() {
-			return getRuleContext(ExpressionContext.class,0);
-		}
-		public TerminalNode SUBTRACT() { return getToken(PascriptParser.SUBTRACT, 0); }
-		public UnaryOperationContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof PascriptListener ) ((PascriptListener)listener).enterUnaryOperation(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof PascriptListener ) ((PascriptListener)listener).exitUnaryOperation(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof PascriptVisitor ) return ((PascriptVisitor<? extends T>)visitor).visitUnaryOperation(this);
-			else return visitor.visitChildren(this);
-		}
-	}
 	public static class AssignmentContext extends ExpressionContext {
 		public TerminalNode ASSIGN() { return getToken(PascriptParser.ASSIGN, 0); }
 		public TerminalNode IDENTIFIER() { return getToken(PascriptParser.IDENTIFIER, 0); }
@@ -1528,132 +1506,6 @@ public class PascriptParser extends Parser {
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof PascriptVisitor ) return ((PascriptVisitor<? extends T>)visitor).visitAssignment(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class ConstantValueContext extends ExpressionContext {
-		public LiteralContext literal() {
-			return getRuleContext(LiteralContext.class,0);
-		}
-		public ConstantValueContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof PascriptListener ) ((PascriptListener)listener).enterConstantValue(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof PascriptListener ) ((PascriptListener)listener).exitConstantValue(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof PascriptVisitor ) return ((PascriptVisitor<? extends T>)visitor).visitConstantValue(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class MethodCallContext extends ExpressionContext {
-		public Token methodName;
-		public ArgumentListContext argumentList() {
-			return getRuleContext(ArgumentListContext.class,0);
-		}
-		public TerminalNode PAREN_CLOSE() { return getToken(PascriptParser.PAREN_CLOSE, 0); }
-		public TerminalNode DOT() { return getToken(PascriptParser.DOT, 0); }
-		public TerminalNode IDENTIFIER() { return getToken(PascriptParser.IDENTIFIER, 0); }
-		public TerminalNode PAREN_OPEN() { return getToken(PascriptParser.PAREN_OPEN, 0); }
-		public VariableValueContext variableValue() {
-			return getRuleContext(VariableValueContext.class,0);
-		}
-		public MethodCallContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof PascriptListener ) ((PascriptListener)listener).enterMethodCall(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof PascriptListener ) ((PascriptListener)listener).exitMethodCall(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof PascriptVisitor ) return ((PascriptVisitor<? extends T>)visitor).visitMethodCall(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class BinaryOperationContext extends ExpressionContext {
-		public Token operator;
-		public TerminalNode LESS_OR_EQUAL() { return getToken(PascriptParser.LESS_OR_EQUAL, 0); }
-		public TerminalNode MODULO() { return getToken(PascriptParser.MODULO, 0); }
-		public TerminalNode AND() { return getToken(PascriptParser.AND, 0); }
-		public TerminalNode XOR() { return getToken(PascriptParser.XOR, 0); }
-		public TerminalNode OR() { return getToken(PascriptParser.OR, 0); }
-		public TerminalNode MULTIPLY() { return getToken(PascriptParser.MULTIPLY, 0); }
-		public List<ExpressionContext> expression() {
-			return getRuleContexts(ExpressionContext.class);
-		}
-		public TerminalNode EQUAL() { return getToken(PascriptParser.EQUAL, 0); }
-		public TerminalNode NOT_EQUAL() { return getToken(PascriptParser.NOT_EQUAL, 0); }
-		public TerminalNode DIVIDE() { return getToken(PascriptParser.DIVIDE, 0); }
-		public TerminalNode ADD() { return getToken(PascriptParser.ADD, 0); }
-		public ExpressionContext expression(int i) {
-			return getRuleContext(ExpressionContext.class,i);
-		}
-		public TerminalNode GREATER_OR_EQUAL() { return getToken(PascriptParser.GREATER_OR_EQUAL, 0); }
-		public TerminalNode LESS() { return getToken(PascriptParser.LESS, 0); }
-		public TerminalNode SUBTRACT() { return getToken(PascriptParser.SUBTRACT, 0); }
-		public TerminalNode GREATER() { return getToken(PascriptParser.GREATER, 0); }
-		public BinaryOperationContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof PascriptListener ) ((PascriptListener)listener).enterBinaryOperation(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof PascriptListener ) ((PascriptListener)listener).exitBinaryOperation(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof PascriptVisitor ) return ((PascriptVisitor<? extends T>)visitor).visitBinaryOperation(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class ReAssignmentContext extends ExpressionContext {
-		public Token operator;
-		public TerminalNode INCREMENT() { return getToken(PascriptParser.INCREMENT, 0); }
-		public TerminalNode IDENTIFIER() { return getToken(PascriptParser.IDENTIFIER, 0); }
-		public TerminalNode DECREMENT() { return getToken(PascriptParser.DECREMENT, 0); }
-		public ReAssignmentContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof PascriptListener ) ((PascriptListener)listener).enterReAssignment(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof PascriptListener ) ((PascriptListener)listener).exitReAssignment(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof PascriptVisitor ) return ((PascriptVisitor<? extends T>)visitor).visitReAssignment(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class FunctionCallContext extends ExpressionContext {
-		public Token functionName;
-		public ArgumentListContext argumentList() {
-			return getRuleContext(ArgumentListContext.class,0);
-		}
-		public TerminalNode PAREN_CLOSE() { return getToken(PascriptParser.PAREN_CLOSE, 0); }
-		public TerminalNode IDENTIFIER() { return getToken(PascriptParser.IDENTIFIER, 0); }
-		public TerminalNode PAREN_OPEN() { return getToken(PascriptParser.PAREN_OPEN, 0); }
-		public FunctionCallContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof PascriptListener ) ((PascriptListener)listener).enterFunctionCall(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof PascriptListener ) ((PascriptListener)listener).exitFunctionCall(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof PascriptVisitor ) return ((PascriptVisitor<? extends T>)visitor).visitFunctionCall(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -1678,6 +1530,65 @@ public class PascriptParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
+	public static class UnaryOperationContext extends ExpressionContext {
+		public Token operator;
+		public TerminalNode NOT() { return getToken(PascriptParser.NOT, 0); }
+		public TerminalNode SUBTRACT() { return getToken(PascriptParser.SUBTRACT, 0); }
+		public ExpressionContext expression() {
+			return getRuleContext(ExpressionContext.class,0);
+		}
+		public UnaryOperationContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof PascriptListener ) ((PascriptListener)listener).enterUnaryOperation(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof PascriptListener ) ((PascriptListener)listener).exitUnaryOperation(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof PascriptVisitor ) return ((PascriptVisitor<? extends T>)visitor).visitUnaryOperation(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class BinaryOperationContext extends ExpressionContext {
+		public Token operator;
+		public TerminalNode LESS() { return getToken(PascriptParser.LESS, 0); }
+		public TerminalNode XOR() { return getToken(PascriptParser.XOR, 0); }
+		public TerminalNode NOT_EQUAL() { return getToken(PascriptParser.NOT_EQUAL, 0); }
+		public ExpressionContext expression(int i) {
+			return getRuleContext(ExpressionContext.class,i);
+		}
+		public TerminalNode MODULO() { return getToken(PascriptParser.MODULO, 0); }
+		public TerminalNode MULTIPLY() { return getToken(PascriptParser.MULTIPLY, 0); }
+		public TerminalNode OR() { return getToken(PascriptParser.OR, 0); }
+		public TerminalNode GREATER() { return getToken(PascriptParser.GREATER, 0); }
+		public TerminalNode GREATER_OR_EQUAL() { return getToken(PascriptParser.GREATER_OR_EQUAL, 0); }
+		public TerminalNode LESS_OR_EQUAL() { return getToken(PascriptParser.LESS_OR_EQUAL, 0); }
+		public TerminalNode EQUAL() { return getToken(PascriptParser.EQUAL, 0); }
+		public TerminalNode DIVIDE() { return getToken(PascriptParser.DIVIDE, 0); }
+		public TerminalNode SUBTRACT() { return getToken(PascriptParser.SUBTRACT, 0); }
+		public TerminalNode ADD() { return getToken(PascriptParser.ADD, 0); }
+		public TerminalNode AND() { return getToken(PascriptParser.AND, 0); }
+		public List<ExpressionContext> expression() {
+			return getRuleContexts(ExpressionContext.class);
+		}
+		public BinaryOperationContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof PascriptListener ) ((PascriptListener)listener).enterBinaryOperation(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof PascriptListener ) ((PascriptListener)listener).exitBinaryOperation(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof PascriptVisitor ) return ((PascriptVisitor<? extends T>)visitor).visitBinaryOperation(this);
+			else return visitor.visitChildren(this);
+		}
+	}
 	public static class LoadedValueContext extends ExpressionContext {
 		public VariableValueContext variableValue() {
 			return getRuleContext(VariableValueContext.class,0);
@@ -1694,6 +1605,95 @@ public class PascriptParser extends Parser {
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof PascriptVisitor ) return ((PascriptVisitor<? extends T>)visitor).visitLoadedValue(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class FunctionCallContext extends ExpressionContext {
+		public Token functionName;
+		public TerminalNode PAREN_CLOSE() { return getToken(PascriptParser.PAREN_CLOSE, 0); }
+		public TerminalNode PAREN_OPEN() { return getToken(PascriptParser.PAREN_OPEN, 0); }
+		public TerminalNode IDENTIFIER() { return getToken(PascriptParser.IDENTIFIER, 0); }
+		public ArgumentListContext argumentList() {
+			return getRuleContext(ArgumentListContext.class,0);
+		}
+		public FunctionCallContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof PascriptListener ) ((PascriptListener)listener).enterFunctionCall(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof PascriptListener ) ((PascriptListener)listener).exitFunctionCall(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof PascriptVisitor ) return ((PascriptVisitor<? extends T>)visitor).visitFunctionCall(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class ConstantValueContext extends ExpressionContext {
+		public LiteralContext literal() {
+			return getRuleContext(LiteralContext.class,0);
+		}
+		public ConstantValueContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof PascriptListener ) ((PascriptListener)listener).enterConstantValue(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof PascriptListener ) ((PascriptListener)listener).exitConstantValue(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof PascriptVisitor ) return ((PascriptVisitor<? extends T>)visitor).visitConstantValue(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class MethodCallContext extends ExpressionContext {
+		public Token methodName;
+		public TerminalNode DOT() { return getToken(PascriptParser.DOT, 0); }
+		public VariableValueContext variableValue() {
+			return getRuleContext(VariableValueContext.class,0);
+		}
+		public TerminalNode PAREN_CLOSE() { return getToken(PascriptParser.PAREN_CLOSE, 0); }
+		public TerminalNode PAREN_OPEN() { return getToken(PascriptParser.PAREN_OPEN, 0); }
+		public TerminalNode IDENTIFIER() { return getToken(PascriptParser.IDENTIFIER, 0); }
+		public ArgumentListContext argumentList() {
+			return getRuleContext(ArgumentListContext.class,0);
+		}
+		public MethodCallContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof PascriptListener ) ((PascriptListener)listener).enterMethodCall(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof PascriptListener ) ((PascriptListener)listener).exitMethodCall(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof PascriptVisitor ) return ((PascriptVisitor<? extends T>)visitor).visitMethodCall(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class ReAssignmentContext extends ExpressionContext {
+		public Token operator;
+		public TerminalNode INCREMENT() { return getToken(PascriptParser.INCREMENT, 0); }
+		public TerminalNode IDENTIFIER() { return getToken(PascriptParser.IDENTIFIER, 0); }
+		public TerminalNode DECREMENT() { return getToken(PascriptParser.DECREMENT, 0); }
+		public ReAssignmentContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof PascriptListener ) ((PascriptListener)listener).enterReAssignment(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof PascriptListener ) ((PascriptListener)listener).exitReAssignment(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof PascriptVisitor ) return ((PascriptVisitor<? extends T>)visitor).visitReAssignment(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -1906,10 +1906,10 @@ public class PascriptParser extends Parser {
 	}
 
 	public static class ArgumentListContext extends ParserRuleContext {
+		public List<TerminalNode> COMMA() { return getTokens(PascriptParser.COMMA); }
 		public ExpressionContext expression(int i) {
 			return getRuleContext(ExpressionContext.class,i);
 		}
-		public List<TerminalNode> COMMA() { return getTokens(PascriptParser.COMMA); }
 		public List<ExpressionContext> expression() {
 			return getRuleContexts(ExpressionContext.class);
 		}
@@ -1971,11 +1971,11 @@ public class PascriptParser extends Parser {
 	}
 
 	public static class DataTypeContext extends ParserRuleContext {
-		public PrimitiveDataTypeContext primitiveDataType() {
-			return getRuleContext(PrimitiveDataTypeContext.class,0);
-		}
 		public ArrayDataTypeContext arrayDataType() {
 			return getRuleContext(ArrayDataTypeContext.class,0);
+		}
+		public PrimitiveDataTypeContext primitiveDataType() {
+			return getRuleContext(PrimitiveDataTypeContext.class,0);
 		}
 		public DataTypeContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -2055,23 +2055,6 @@ public class PascriptParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class BooleanDataTypeContext extends PrimitiveDataTypeContext {
-		public TerminalNode BOOLEAN_DATATYPE() { return getToken(PascriptParser.BOOLEAN_DATATYPE, 0); }
-		public BooleanDataTypeContext(PrimitiveDataTypeContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof PascriptListener ) ((PascriptListener)listener).enterBooleanDataType(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof PascriptListener ) ((PascriptListener)listener).exitBooleanDataType(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof PascriptVisitor ) return ((PascriptVisitor<? extends T>)visitor).visitBooleanDataType(this);
-			else return visitor.visitChildren(this);
-		}
-	}
 	public static class FloatDataTypeContext extends PrimitiveDataTypeContext {
 		public TerminalNode FLOAT_DATATYPE() { return getToken(PascriptParser.FLOAT_DATATYPE, 0); }
 		public FloatDataTypeContext(PrimitiveDataTypeContext ctx) { copyFrom(ctx); }
@@ -2103,6 +2086,23 @@ public class PascriptParser extends Parser {
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof PascriptVisitor ) return ((PascriptVisitor<? extends T>)visitor).visitIntegerDataType(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class BooleanDataTypeContext extends PrimitiveDataTypeContext {
+		public TerminalNode BOOLEAN_DATATYPE() { return getToken(PascriptParser.BOOLEAN_DATATYPE, 0); }
+		public BooleanDataTypeContext(PrimitiveDataTypeContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof PascriptListener ) ((PascriptListener)listener).enterBooleanDataType(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof PascriptListener ) ((PascriptListener)listener).exitBooleanDataType(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof PascriptVisitor ) return ((PascriptVisitor<? extends T>)visitor).visitBooleanDataType(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -2157,17 +2157,17 @@ public class PascriptParser extends Parser {
 	}
 
 	public static class ArrayDataTypeContext extends ParserRuleContext {
+		public TerminalNode SQUARE_CLOSE(int i) {
+			return getToken(PascriptParser.SQUARE_CLOSE, i);
+		}
 		public List<TerminalNode> SQUARE_CLOSE() { return getTokens(PascriptParser.SQUARE_CLOSE); }
-		public List<TerminalNode> SQUARE_OPEN() { return getTokens(PascriptParser.SQUARE_OPEN); }
 		public PrimitiveDataTypeContext primitiveDataType() {
 			return getRuleContext(PrimitiveDataTypeContext.class,0);
 		}
 		public TerminalNode SQUARE_OPEN(int i) {
 			return getToken(PascriptParser.SQUARE_OPEN, i);
 		}
-		public TerminalNode SQUARE_CLOSE(int i) {
-			return getToken(PascriptParser.SQUARE_CLOSE, i);
-		}
+		public List<TerminalNode> SQUARE_OPEN() { return getTokens(PascriptParser.SQUARE_OPEN); }
 		public ArrayDataTypeContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -2251,21 +2251,22 @@ public class PascriptParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class IntegerLiteralContext extends LiteralContext {
+	public static class BooleanLiteralContext extends LiteralContext {
 		public Token value;
-		public TerminalNode INTEGER() { return getToken(PascriptParser.INTEGER, 0); }
-		public IntegerLiteralContext(LiteralContext ctx) { copyFrom(ctx); }
+		public TerminalNode FALSE() { return getToken(PascriptParser.FALSE, 0); }
+		public TerminalNode TRUE() { return getToken(PascriptParser.TRUE, 0); }
+		public BooleanLiteralContext(LiteralContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof PascriptListener ) ((PascriptListener)listener).enterIntegerLiteral(this);
+			if ( listener instanceof PascriptListener ) ((PascriptListener)listener).enterBooleanLiteral(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof PascriptListener ) ((PascriptListener)listener).exitIntegerLiteral(this);
+			if ( listener instanceof PascriptListener ) ((PascriptListener)listener).exitBooleanLiteral(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof PascriptVisitor ) return ((PascriptVisitor<? extends T>)visitor).visitIntegerLiteral(this);
+			if ( visitor instanceof PascriptVisitor ) return ((PascriptVisitor<? extends T>)visitor).visitBooleanLiteral(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -2287,22 +2288,21 @@ public class PascriptParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class BooleanLiteralContext extends LiteralContext {
+	public static class IntegerLiteralContext extends LiteralContext {
 		public Token value;
-		public TerminalNode TRUE() { return getToken(PascriptParser.TRUE, 0); }
-		public TerminalNode FALSE() { return getToken(PascriptParser.FALSE, 0); }
-		public BooleanLiteralContext(LiteralContext ctx) { copyFrom(ctx); }
+		public TerminalNode INTEGER() { return getToken(PascriptParser.INTEGER, 0); }
+		public IntegerLiteralContext(LiteralContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof PascriptListener ) ((PascriptListener)listener).enterBooleanLiteral(this);
+			if ( listener instanceof PascriptListener ) ((PascriptListener)listener).enterIntegerLiteral(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof PascriptListener ) ((PascriptListener)listener).exitBooleanLiteral(this);
+			if ( listener instanceof PascriptListener ) ((PascriptListener)listener).exitIntegerLiteral(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof PascriptVisitor ) return ((PascriptVisitor<? extends T>)visitor).visitBooleanLiteral(this);
+			if ( visitor instanceof PascriptVisitor ) return ((PascriptVisitor<? extends T>)visitor).visitIntegerLiteral(this);
 			else return visitor.visitChildren(this);
 		}
 	}
