@@ -14,4 +14,11 @@ The language's features include:
 - error messages during compilation point to the exact line and character position, that needs to be rewritten
 - support for recursive function calling
 
-To learn more please refer to the [specification](https://github.com/Player1os/Pascript/wiki/Specification)
+The language does not directly support advanced data types, some operations can however be easily implemented using the available arrays, these are a few examples:
+
+- **a.push(x)** : `a.insert(0, x);`
+- **x = a.pop()** : `x = a.get(0); a.remove(0);`
+- **a.addLast(x)** : `a.insert(a.size() - 1, x);`
+- **x = a.removeLast()** : `x = a.get(a.size() - 1); a.remove(a.size() - 1);`
+
+To learn more please read the [specification](https://github.com/Player1os/Pascript/wiki/Specification)
